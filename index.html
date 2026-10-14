@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imbera | Soluciones de Refrigeración Comercial</title>
+    <meta name="description" content="Imbera es el líder mundial en soluciones de refrigeración comercial. Innovación, sostenibilidad y calidad en cada producto.">
+    
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header id="main-header">
+        <div class="container header-top">
+            <div class="logo">
+                <a href="/">
+                    <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera Logo" id="site-logo">
+                </a>
+            </div>
+            
+            <div class="search-box">
+                <form action="#" method="GET" class="search-form">
+                    <input type="text" placeholder="¿Qué estás buscando?" aria-label="Buscar productos">
+                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
+            </div>
+            
+            <div class="region-selector">
+                <button class="region-btn" id="region-btn">
+                    <i class="fa-solid fa-globe"></i>
+                    <span>México</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Navigation Menu -->
+        <nav id="navbar">
+            <div class="container">
+                <ul class="nav-links">
+                    <li class="has-dropdown">
+                        <a href="#" id="link-productos">Productos <i class="fa-solid fa-chevron-down"></i></a>
+                        <ul class="dropdown">
+                            <li><a href="categoria.html">Refrigeradores</a></li>
+                            <li><a href="categoria.html">Congeladores</a></li>
+                            <li><a href="categoria.html">Procesamiento</a></li>
+                            <li><a href="categoria.html">Sierras y rebanadoras</a></li>
+                            <li><a href="categoria.html">Healthcare</a></li>
+                            <li><a href="categoria.html">Smart</a></li>
+                            <li><a href="categoria.html">Cuartos fríos</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">Nosotros</a></li>
+                    <li><a href="#">Distribuidores</a></li>
+                    <li><a href="#">Sostenibilidad</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Carousel Section -->
+        <section id="hero">
+            <div class="container">
+                <div class="carousel-container">
+                    <div class="carousel-track">
+                        <!-- Slide 1 -->
+                        <div class="carousel-slide active">
+                            <img src="images/banner_pc_5.webp" alt="Soluciones Imbera Banner 1">
+                        </div>
+                        <!-- Slide 2 -->
+                        <div class="carousel-slide">
+                            <img src="images/bannerHealth.webp" alt="Soluciones Imbera Banner 2">
+                        </div>
+                    </div>
+                    
+                    <!-- Carousel Controls -->
+                    <button class="carousel-btn prev" id="prevBtn"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="carousel-btn next" id="nextBtn"><i class="fa-solid fa-chevron-right"></i></button>
+                    
+                    <!-- Carousel Indicators -->
+                    <div class="carousel-indicators">
+                        <span class="indicator active" data-index="0"></span>
+                        <span class="indicator" data-index="1"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- About / Intro Section -->
+        <section id="about" class="section-padding">
+            <div class="container-narrow about-grid">
+                <div class="about-content">
+                    <h2 class="section-title-large">Somos la marca #1 de refrigeración comercial</h2>
+                    <p class="section-description">
+                        Somos líderes en refrigeración, brindando soluciones en experiencia de frío sostenible diferenciado a nuestros socios estratégicos a nivel global.
+                    </p>
+                    <a href="#" class="btn-outline-small">Conócenos</a>
+                </div>
+                <div class="about-image">
+                    <img src="images/indeximg.png" alt="Excelencia en Refrigeración Imbera">
+                </div>
+            </div>
+        </section>
+
+        <!-- Benefits Section -->
+        <section id="benefits" class="section-padding bg-white">
+            <div class="container">
+                <h2 class="section-title-center">Beneficios exclusivos al comprar refrigeración comercial con nosotros</h2>
+                
+                <div class="benefits-grid">
+                    <!-- Card 1 (Green) -->
+                    <div class="benefit-card card-green">
+                        <div class="card-header">
+                            <div class="benefit-icon-v2"><i class="fa-solid fa-circle-check"></i></div>
+                            <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                        <div class="card-body">
+                            <h3>2 años de garantía</h3>
+                            <p>En todos nuestros equipos</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2 (Green) -->
+                    <div class="benefit-card card-green">
+                        <div class="card-header">
+                            <div class="benefit-icon-v2"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                            <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                        <div class="card-body">
+                            <h3>Servicio de mantenimiento</h3>
+                            <p>Para el cuidado de tu equipo.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 3 (Blue) -->
+                    <div class="benefit-card card-blue">
+                        <div class="card-header">
+                            <div class="benefit-icon-v2"><i class="fa-solid fa-clock"></i></div>
+                            <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                        <div class="card-body">
+                            <h3>5 años más de vida útil</h3>
+                            <p>Con el uso correcto y mantenimiento preventivo.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 4 (Blue) -->
+                    <div class="benefit-card card-blue">
+                        <div class="card-header">
+                            <div class="benefit-icon-v2"><i class="fa-solid fa-bolt-lightning"></i></div>
+                            <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                        <div class="card-body">
+                            <h3>Menor consumo de energía</h3>
+                            <p>Comparado con los demás equipos del mercado.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 5 (Blue) -->
+                    <div class="benefit-card card-blue">
+                        <div class="card-header">
+                            <div class="benefit-icon-v2"><i class="fa-solid fa-recycle"></i></div>
+                            <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                        <div class="card-body">
+                            <h3>Equipos sostenibles</h3>
+                            <p>Para el cuidado de nuestro medio ambiente.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 6 (Blue) -->
+                    <div class="benefit-card card-blue">
+                        <div class="card-header">
+                            <div class="benefit-icon-v2"><i class="fa-solid fa-lightbulb"></i></div>
+                            <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                        <div class="card-body">
+                            <h3>Tecnología e innovación</h3>
+                            <p>Desarrollo de nuevas tecnologías en nuestros equipos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Unidades de Negocio Section -->
+        <section id="unidades" class="section-padding bg-light">
+            <div class="container-narrow">
+                <h2 class="section-title-center">Unidades de Negocio</h2>
+                
+                <div class="unidades-grid">
+                    <div class="unidad-item"><img src="images/grid1_institucional.jpg" alt="Unidad 1"></div>
+                    <div class="unidad-item"><img src="images/grid2.jpg" alt="Unidad 2"></div>
+                    <div class="unidad-item"><img src="images/grid3.jpg" alt="Unidad 3"></div>
+                    <div class="unidad-item"><img src="images/grid4.jpg" alt="Unidad 4"></div>
+                    <div class="unidad-item"><img src="images/grid5.jpg" alt="Unidad 5"></div>
+                    <div class="unidad-item"><img src="images/grid6.jpg" alt="Unidad 6"></div>
+                    <div class="unidad-item"><img src="images/grid7.jpg" alt="Unidad 7"></div>
+                    <div class="unidad-item"><img src="images/grid8.jpg" alt="Unidad 8"></div>
+                    <div class="unidad-item"><img src="images/grid9.jpg" alt="Unidad 9"></div>
+                </div>
+            </div>
+        </section>
+        <!-- New Products Section -->
+        <section id="new-products" class="section-padding bg-accent-light">
+            <div class="container">
+                <h2 class="section-title-center italic-title">Nuevos artículos</h2>
+                
+                <div class="product-slider-wrapper">
+                    <div class="product-slider" id="productSlider">
+                        <!-- Product 1 -->
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="images/Enfriador_G3D42_Especial.jpg" alt="Enfriador G3D42 Especial">
+                            </div>
+                            <div class="product-info">
+                                <h3>Enfriador G3D42 Especial</h3>
+                                <p>G3D42 - 1030002</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Product 2 -->
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="images/Enfriador_VR17.jpg" alt="ENFRIADOR VR17">
+                            </div>
+                            <div class="product-info">
+                                <h3>ENFRIADOR VR17</h3>
+                                <p>VR17 - 1024175</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Product 3 -->
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="images/Enfriador_VR17_especial.jpg" alt="Enfriador VR17 Especial">
+                            </div>
+                            <div class="product-info">
+                                <h3>Enfriador VR17 Especial</h3>
+                                <p>VR17 Especial - 1029961</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Product 4 -->
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="images/Enfriador_VMC19B.jpg" alt="Enfriador VMC19B">
+                            </div>
+                            <div class="product-info">
+                                <h3>Enfriador VMC19B</h3>
+                                <p>VMC19B - 1025843</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slider-controls">
+                    <button class="slider-btn" id="prodPrev"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="slider-btn" id="prodNext"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </section>
+        <!-- Stats Section -->
+        <section id="stats" class="section-padding bg-navy text-white">
+            <div class="container text-center">
+                <h2 class="stats-main-title text-center">Más de <span class="text-green counter-target" data-target="75">0</span> años de experiencia</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">+<span class="counter" data-target="1419">0</span></div>
+                        <p class="stat-label">Empleados</p>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-number">+<span class="counter" data-target="695">0</span>K</div>
+                        <p class="stat-label">Equipos vendidos</p>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-number">+<span class="counter" data-target="23">0</span></div>
+                        <p class="stat-label">Países a los que exportamos</p>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-number">+<span class="counter" data-target="75">0</span></div>
+                        <p class="stat-label">Años de experiencia</p>
+                    </div>
+                </div>
+                
+                <p class="stats-footer-text">
+                    Somos fabricantes nacionales de refrigeradores y congeladores comerciales con presencia internacional, fundados en México. Aliados a la estrategia global de Imbera, impulsamos el desarrollo del país.
+                </p>
+            </div>
+        </section>
+        <!-- CTA / Contact Form Section -->
+        <section id="cta-form" class="section-padding bg-green text-white">
+            <div class="container container-medium">
+                <div class="cta-header text-center">
+                    <h2 class="cta-title">¡Hablemos ahora!</h2>
+                    <p class="cta-desc">Usa nuestro formulario, levanta un caso al momento del llenado del mismo para que un ejecutivo atienda tu solicitud.</p>
+                </div>
+                
+                <form action="#" method="POST" class="main-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="nombre">Nombre completo</label>
+                            <input type="text" id="nombre" name="nombre" placeholder="Ingresa tu nombre" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="telefono">Celular/Teléfono</label>
+                            <input type="tel" id="telefono" name="telefono" placeholder="Ej: 5512345678" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="tu@correo.com" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cantidad">¿Cuántos equipos deseas adquirir?</label>
+                            <input type="number" id="cantidad" name="cantidad" min="1" placeholder="Ej: 5">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="estado">Estado</label>
+                            <select id="estado" name="estado" required>
+                                <option value="" disabled selected>Selecciona tu estado</option>
+                                <option value="Aguascalientes">Aguascalientes</option>
+                                <option value="Baja California">Baja California</option>
+                                <option value="Baja California Sur">Baja California Sur</option>
+                                <option value="Campeche">Campeche</option>
+                                <option value="Chiapas">Chiapas</option>
+                                <option value="Chihuahua">Chihuahua</option>
+                                <option value="Ciudad de México">Ciudad de México</option>
+                                <option value="Coahuila">Coahuila</option>
+                                <option value="Colima">Colima</option>
+                                <option value="Durango">Durango</option>
+                                <option value="Estado de México">Estado de México</option>
+                                <option value="Guanajuato">Guanajuato</option>
+                                <option value="Guerrero">Guerrero</option>
+                                <option value="Hidalgo">Hidalgo</option>
+                                <option value="Jalisco">Jalisco</option>
+                                <option value="Michoacán">Michoacán</option>
+                                <option value="Morelos">Morelos</option>
+                                <option value="Nayarit">Nayarit</option>
+                                <option value="Nuevo León">Nuevo León</option>
+                                <option value="Oaxaca">Oaxaca</option>
+                                <option value="Puebla">Puebla</option>
+                                <option value="Querétaro">Querétaro</option>
+                                <option value="Quintana Roo">Quintana Roo</option>
+                                <option value="San Luis Potosí">San Luis Potosí</option>
+                                <option value="Sinaloa">Sinaloa</option>
+                                <option value="Sonora">Sonora</option>
+                                <option value="Tabasco">Tabasco</option>
+                                <option value="Tamaulipas">Tamaulipas</option>
+                                <option value="Tlaxcala">Tlaxcala</option>
+                                <option value="Veracruz">Veracruz</option>
+                                <option value="Yucatán">Yucatán</option>
+                                <option value="Zacatecas">Zacatecas</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="interes">¿Te interesa algún equipo?</label>
+                            <input type="text" id="interes" name="interes" placeholder="Modelos o tipo de equipo">
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="mensaje">Mensaje</label>
+                            <textarea id="mensaje" name="mensaje" rows="4" placeholder="Escribe aquí tus dudas o comentarios adicionales..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-footer text-center">
+                        <button type="submit" class="btn-submit">Enviar</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Col 1 -->
+                <div class="footer-col col-info">
+                    <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera" class="footer-logo">
+                    <div class="contact-details">
+                        <p><i class="fa-solid fa-envelope"></i> <a href="mailto:marketing@imberacooling.com">marketing@imberacooling.com</a></p>
+                        <p><i class="fa-solid fa-phone"></i> <a href="tel:4272718000">427 271 8000</a></p>
+                        <p>Horario de Atención: Lunes a Viernes 9:00 a.m. a 6:00 p.m.</p>
+                    </div>
+                </div>
+
+                <!-- Col 2 -->
+                <div class="footer-col col-newsletter">
+                    <h3>Ofertas y Descuentos</h3>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Suscríbete">
+                        <button type="submit">Enviar</button>
+                    </form>
+                </div>
+
+                <!-- Col 3 -->
+                <div class="footer-col col-links">
+                    <h3>Servicio al cliente</h3>
+                    <ul>
+                        <li><a href="#">Acerca de nosotros</a></li>
+                        <li><a href="#">Contacto</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Avisos de privacidad</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4 -->
+                <div class="footer-col col-social">
+                    <h3>Síguenos en:</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="container">
+                <p>© 2025 IMBERA. Todos los derechos reservados. Nos dedicamos a desarrollar soluciones de frío sostenible, refrigeración de bebidas, productos médicos, lácteos, alimentos, procesamiento y pesaje, haciendo más eficiente la cadena de frío y sumando al cuidado de nuestro planeta.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>
