@@ -772,6 +772,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         Papa.parse(file, {
             header: true,
             skipEmptyLines: true,
+            transformHeader: function(header) {
+                // Strip UTF-8 BOM, trim whitespace, lowercase, and remove accents (e.g., Código -> codigo)
+                return header
+                    .replace(/^\ufeff/, '')
+                    .trim()
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '');
+            },
             complete: function(results) {
                 parsedCsvData = results.data;
                 renderCsvPreview(parsedCsvData);
@@ -782,22 +791,45 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // Helper to safely extract values checking multiple common aliases
+    function getCsvRowValue(r, ...aliases) {
+        for (const alias of aliases) {
+            const cleanKey = alias.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            if (r[cleanKey] !== undefined && r[cleanKey] !== null && String(r[cleanKey]).trim() !== '') {
+                return String(r[cleanKey]).trim();
+            }
+        }
+        return '';
+    }
+
     function renderCsvPreview(rows) {
         if (!csvPreviewSection || !csvPreviewTbody) return;
         csvRowsCount.innerText = rows.length;
         csvPreviewSection.style.display = 'block';
 
-        csvPreviewTbody.innerHTML = rows.slice(0, 10).map(r => `
-            <tr>
-                <td><code>${r.sku || 'N/A'}</code></td>
-                <td><strong>${r.commercial_name || 'N/A'}</strong></td>
-                <td>${r.category_slug || 'N/A'}</td>
-                <td><small>${r.datasheet_url ? '✓ Ficha adjunta' : 'Sin ficha'}</small></td>
-                <td><small>${r.manual_url ? '✓ Manual' : '-'}</small></td>
-                <td><small>${r.parts_list_url ? '✓ Partes' : '-'}</small></td>
-                <td>${r.ext_height || 0}x${r.ext_width || 0}x${r.ext_depth || 0}mm</td>
-            </tr>
-        `).join('');
+        csvPreviewTbody.innerHTML = rows.slice(0, 10).map((r, idx) => {
+            const code = getCsvRowValue(r, 'codigo', 'sku', 'code', 'clave', 'id') || `(Auto ${1030000 + idx})`;
+            const name = getCsvRowValue(r, 'commercial_name', 'nombre_comercial', 'modelo_comercial', 'nombre', 'name') || 'Equipo Imbera';
+            const cat = getCsvRowValue(r, 'category_slug', 'categoria_slug', 'categoria', 'category') || 'enfriadores';
+            const pdf1 = getCsvRowValue(r, 'datasheet_url', 'ficha', 'ficha_tecnica', 'pdf1');
+            const pdf2 = getCsvRowValue(r, 'manual_url', 'manual', 'manual_usuario', 'pdf2');
+            const pdf3 = getCsvRowValue(r, 'parts_list_url', 'partes', 'numeros_de_parte', 'pdf3');
+            const h = getCsvRowValue(r, 'ext_height', 'alto') || '0';
+            const w = getCsvRowValue(r, 'ext_width', 'ancho') || '0';
+            const d = getCsvRowValue(r, 'ext_depth', 'profundo') || '0';
+
+            return `
+                <tr>
+                    <td><code>${code}</code></td>
+                    <td><strong>${name}</strong></td>
+                    <td>${cat}</td>
+                    <td><small>${pdf1 ? '✓ Ficha adjunta' : 'Sin ficha'}</small></td>
+                    <td><small>${pdf2 ? '✓ Manual' : '-'}</small></td>
+                    <td><small>${pdf3 ? '✓ Partes' : '-'}</small></td>
+                    <td>${h}x${w}x${d}mm</td>
+                </tr>
+            `;
+        }).join('');
 
         if (rows.length > 10) {
             csvPreviewTbody.innerHTML += `<tr><td colspan="7" class="text-center py-2 text-muted">... y ${rows.length - 10} productos más listos para importar.</td></tr>`;
@@ -809,46 +841,93 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (parsedCsvData.length === 0) return;
 
             btnConfirmBulkImport.disabled = true;
-            btnConfirmBulkImport.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Importando a Supabase...';
+            btnConfirmBulkImport.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Preparando importación...';
 
+            // Build accent-tolerant category lookup map
             const categoryMap = {};
-            allCategories.forEach(c => { categoryMap[c.slug.toLowerCase()] = c.id; });
+            allCategories.forEach(c => {
+                if (c.slug) {
+                    const normSlug = c.slug.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    categoryMap[normSlug] = c.id;
+                    categoryMap[normSlug.replace(/-/g, '_')] = c.id;
+                    categoryMap[normSlug.replace(/_/g, '-')] = c.id;
+                }
+                if (c.name) {
+                    const normName = c.name.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    categoryMap[normName] = c.id;
+                }
+            });
 
-            const payloadRows = parsedCsvData.map(r => {
-                const catSlug = (r.category_slug || '').toLowerCase().trim();
-                const codeRaw = (r.codigo || r.sku || '').toString().trim();
+            // Calculate starting sequential SKU for any items that lack a numeric code
+            let autoSkuCounter = 1000000;
+            allProducts.forEach(p => {
+                const num = parseInt(p.sku, 10);
+                if (!isNaN(num) && num >= autoSkuCounter && num < 9999999) {
+                    autoSkuCounter = num + 1;
+                }
+            });
+
+            // Map rows into clean product payloads
+            const payloadRows = parsedCsvData.map((r) => {
+                let codeRaw = getCsvRowValue(r, 'codigo', 'sku', 'code', 'clave', 'id');
+                if (!codeRaw) {
+                    codeRaw = String(autoSkuCounter++);
+                }
+
+                const catRaw = getCsvRowValue(r, 'category_slug', 'categoria_slug', 'categoria', 'category');
+                const normCat = catRaw.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                const categoryId = categoryMap[normCat] || categoryMap[normCat.replace(/_/g, '-')] || null;
+
                 return {
                     sku: codeRaw,
-                    commercial_name: (r.commercial_name || 'Equipo Imbera').trim(),
-                    model_code: r.model_code || null,
-                    subtitle: r.subtitle || null,
-                    description: r.description || null,
-                    category_id: categoryMap[catSlug] || null,
-                    main_image: r.main_image || null,
-                    datasheet_url: r.datasheet_url || null,
-                    manual_url: r.manual_url || null,
-                    parts_list_url: r.parts_list_url || null,
+                    commercial_name: (getCsvRowValue(r, 'commercial_name', 'nombre_comercial', 'modelo_comercial', 'nombre', 'name') || 'Equipo Imbera').trim(),
+                    model_code: getCsvRowValue(r, 'model_code', 'modelo_tecnico', 'modelo') || null,
+                    subtitle: getCsvRowValue(r, 'subtitle', 'subtitulo', 'nombre_tecnico') || null,
+                    description: getCsvRowValue(r, 'description', 'descripcion') || null,
+                    category_id: categoryId,
+                    main_image: getCsvRowValue(r, 'main_image', 'imagen', 'foto') || null,
+                    datasheet_url: getCsvRowValue(r, 'datasheet_url', 'ficha', 'ficha_tecnica', 'pdf1') || null,
+                    manual_url: getCsvRowValue(r, 'manual_url', 'manual', 'manual_usuario', 'pdf2') || null,
+                    parts_list_url: getCsvRowValue(r, 'parts_list_url', 'partes', 'numeros_de_parte', 'pdf3') || null,
+                    is_active: true,
                     specifications: {
-                        capacity: r.capacity || null,
-                        ext_height: r.ext_height || null,
-                        ext_width: r.ext_width || null,
-                        ext_depth: r.ext_depth || null,
-                        int_height: r.int_height || null,
-                        int_width: r.int_width || null,
-                        int_depth: r.int_depth || null,
-                        temp_range: r.temp_range || null,
-                        refrigerant: r.refrigerant || null,
-                        voltage: r.voltage || null,
-                        shelves: r.shelves || null
+                        capacity: getCsvRowValue(r, 'capacity', 'capacidad') || null,
+                        ext_height: getCsvRowValue(r, 'ext_height', 'alto') || null,
+                        ext_width: getCsvRowValue(r, 'ext_width', 'ancho') || null,
+                        ext_depth: getCsvRowValue(r, 'ext_depth', 'profundo') || null,
+                        int_height: getCsvRowValue(r, 'int_height', 'alto_int') || null,
+                        int_width: getCsvRowValue(r, 'int_width', 'ancho_int') || null,
+                        int_depth: getCsvRowValue(r, 'int_depth', 'profundo_int') || null,
+                        temp_range: getCsvRowValue(r, 'temp_range', 'temperatura', 'rango_temperatura') || null,
+                        refrigerant: getCsvRowValue(r, 'refrigerant', 'refrigerante', 'gas') || null,
+                        voltage: getCsvRowValue(r, 'voltage', 'voltaje') || null,
+                        shelves: getCsvRowValue(r, 'shelves', 'parrillas') || null
                     }
                 };
             });
 
-            try {
-                const { data, error } = await sb.from('products').upsert(payloadRows, { onConflict: 'sku' });
-                if (error) throw error;
+            // CRITICAL FIX FOR POSTGRESQL "ON CONFLICT DO UPDATE command cannot affect row a second time":
+            // Deduplicate batch by SKU so no two rows in the same batch statement have identical SKUs
+            const deduplicatedMap = new Map();
+            payloadRows.forEach(item => {
+                deduplicatedMap.set(item.sku, item);
+            });
+            const uniquePayload = Array.from(deduplicatedMap.values());
 
-                alert(`¡Éxito! Se han importado / actualizado ${payloadRows.length} equipos en la base de datos.`);
+            try {
+                // Upsert in batches of 50 records for optimal reliability & progress reporting
+                const BATCH_SIZE = 50;
+                let importedCount = 0;
+
+                for (let i = 0; i < uniquePayload.length; i += BATCH_SIZE) {
+                    const chunk = uniquePayload.slice(i, i + BATCH_SIZE);
+                    const { error } = await sb.from('products').upsert(chunk, { onConflict: 'sku' });
+                    if (error) throw error;
+                    importedCount += chunk.length;
+                    btnConfirmBulkImport.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando (${importedCount}/${uniquePayload.length})...`;
+                }
+
+                alert(`¡Éxito! Se han importado / actualizado ${uniquePayload.length} equipos en la base de datos de Supabase.`);
                 csvPreviewSection.style.display = 'none';
                 parsedCsvData = [];
                 await fetchProducts();
