@@ -47,79 +47,114 @@
         <nav id="navbar">
             <div class="container">
                 <ul class="nav-links">
-                    <li class="has-dropdown">
+                    <li class="has-megamenu">
                         <a href="categoria.html?cat=enfriadores" id="link-productos">Productos <i class="fa-solid fa-chevron-down"></i></a>
-                        <ul class="dropdown-menu">
-                            <li class="has-submenu">
-                                <a href="categoria.html?cat=enfriadores">
-                                    <span>Enfriadores</span>
-                                    <i class="fa-solid fa-chevron-right submenu-arrow"></i>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-verticales">Enfriadores Verticales</a></li>
-                                    <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-cerveceros">Enfriadores Cerveceros</a></li>
-                                    <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-verticales-especiales">Enfriadores Verticales Especiales</a></li>
-                                    <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-ecoinverter">Enfriadores Ecoinverter</a></li>
-                                    <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-inverter-bluetooth">Enfriadores Inverter + Bluetooth</a></li>
-                                    <li><a href="categoria.html?cat=enfriadores&sub=linea-cobalt">Línea Cobalt</a></li>
-                                    <li><a href="categoria.html?cat=enfriadores&sub=enfriador-horizontal">Enfriador horizontal</a></li>
-                                </ul>
-                            </li>
-                            <li class="has-submenu">
-                                <a href="categoria.html?cat=healthcare">
-                                    <span>Healthcare</span>
-                                    <i class="fa-solid fa-chevron-right submenu-arrow"></i>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="categoria.html?cat=healthcare&sub=refrigeradores-para-consultorios">Refrigeradores para consultorios</a></li>
-                                    <li><a href="categoria.html?cat=healthcare&sub=refrigeradores-para-hospitales">Refrigeradores para hospitales</a></li>
-                                    <li><a href="categoria.html?cat=healthcare&sub=refrigeradores-para-laboratorios">Refrigeradores para laboratorios</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="categoria.html?cat=home-cooler"><span>Home Cooler</span></a></li>
-                            <li class="has-submenu">
-                                <a href="categoria.html?cat=congeladores">
-                                    <span>Congeladores</span>
-                                    <i class="fa-solid fa-chevron-right submenu-arrow"></i>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="categoria.html?cat=congeladores&sub=congeladores-horizontales">Congeladores horizontales</a></li>
-                                    <li><a href="categoria.html?cat=congeladores&sub=congeladores-verticales">Congeladores verticales</a></li>
-                                    <li><a href="categoria.html?cat=congeladores&sub=congeladores-horizontal-doble-temperatura">Congeladores horizontal doble temp.</a></li>
-                                    <li><a href="categoria.html?cat=congeladores&sub=congeladores-horizontal-pta-cristal">Congeladores horizontal Pta. Cristal</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="categoria.html?cat=fabricas-de-hielo"><span>Fábricas de Hielo</span></a></li>
-                            <li><a href="categoria.html?cat=conservadores-de-hielo"><span>Conservadores de Hielo</span></a></li>
-                            <li class="has-submenu">
-                                <a href="categoria.html?cat=vitrinas">
-                                    <span>Vitrinas</span>
-                                    <i class="fa-solid fa-chevron-right submenu-arrow"></i>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="categoria.html?cat=vitrinas&sub=vitrinas-cremeras">Vitrinas Cremeras</a></li>
-                                    <li><a href="categoria.html?cat=vitrinas&sub=vitrinas-carniceras">Vitrinas Carniceras</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="categoria.html?cat=cortinas-de-aire"><span>Cortinas de Aire</span></a></li>
-                            <li><a href="categoria.html?cat=linea-profesional"><span>Línea Profesional</span></a></li>
-                            <li><a href="categoria.html?cat=camaras-de-conservacion"><span>Cámaras de Conservación</span></a></li>
-                            <li class="has-submenu">
-                                <a href="categoria.html?cat=procesamiento-y-pesaje">
-                                    <span>Procesamiento y pesaje</span>
-                                    <i class="fa-solid fa-chevron-right submenu-arrow"></i>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="categoria.html?cat=procesamiento-y-pesaje&sub=pesaje">Pesaje</a></li>
-                                    <li><a href="categoria.html?cat=procesamiento-y-pesaje&sub=rebanadoras">Rebanadoras</a></li>
-                                    <li><a href="categoria.html?cat=procesamiento-y-pesaje&sub=molinos">Molinos</a></li>
-                                    <li><a href="categoria.html?cat=procesamiento-y-pesaje&sub=sierras">Sierras</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="categoria.html?cat=coccion"><span>Cocción</span></a></li>
-                            <li><a href="categoria.html?cat=procesamiento"><span>Procesamiento</span></a></li>
-                            <li><a href="categoria.html?cat=accesorios"><span>Accesorios</span></a></li>
-                        </ul>
+                        <div class="megamenu-panel">
+                            <div class="container">
+                                <div class="megamenu-grid">
+                                    
+                                    <!-- Col 1: Enfriadores -->
+                                    <div class="mega-col">
+                                        <div class="mega-col-header">
+                                            <a href="categoria.html?cat=enfriadores" class="mega-title">Enfriadores</a>
+                                            <i class="fa-solid fa-chevron-down mega-toggle-icon"></i>
+                                        </div>
+                                        <ul class="mega-list">
+                                            <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-verticales">Enfriadores Verticales</a></li>
+                                            <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-cerveceros">Enfriadores Cerveceros</a></li>
+                                            <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-verticales-especiales">Enfriadores Verticales Especiales</a></li>
+                                            <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-ecoinverter">Enfriadores Ecoinverter</a></li>
+                                            <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-inverter-bluetooth">Enfriadores Inverter + Bluetooth</a></li>
+                                            <li><a href="categoria.html?cat=enfriadores&sub=linea-cobalt">Línea Cobalt</a></li>
+                                            <li><a href="categoria.html?cat=enfriadores&sub=enfriador-horizontal">Enfriador horizontal</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Col 2: Congeladores -->
+                                    <div class="mega-col">
+                                        <div class="mega-col-header">
+                                            <a href="categoria.html?cat=congeladores" class="mega-title">Congeladores</a>
+                                            <i class="fa-solid fa-chevron-down mega-toggle-icon"></i>
+                                        </div>
+                                        <ul class="mega-list">
+                                            <li><a href="categoria.html?cat=congeladores&sub=congeladores-horizontales">Congeladores horizontales</a></li>
+                                            <li><a href="categoria.html?cat=congeladores&sub=congeladores-verticales">Congeladores verticales</a></li>
+                                            <li><a href="categoria.html?cat=congeladores&sub=congeladores-horizontal-doble-temperatura">Congeladores horizontal doble temp.</a></li>
+                                            <li><a href="categoria.html?cat=congeladores&sub=congeladores-horizontal-pta-cristal">Congeladores horizontal Pta. Cristal</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Col 3: Healthcare -->
+                                    <div class="mega-col">
+                                        <div class="mega-col-header">
+                                            <a href="categoria.html?cat=healthcare" class="mega-title">Healthcare</a>
+                                            <i class="fa-solid fa-chevron-down mega-toggle-icon"></i>
+                                        </div>
+                                        <ul class="mega-list">
+                                            <li><a href="categoria.html?cat=healthcare&sub=refrigeradores-para-consultorios">Refrigeradores para consultorios</a></li>
+                                            <li><a href="categoria.html?cat=healthcare&sub=refrigeradores-para-hospitales">Refrigeradores para hospitales</a></li>
+                                            <li><a href="categoria.html?cat=healthcare&sub=refrigeradores-para-laboratorios">Refrigeradores para laboratorios</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Col 4: Vitrinas -->
+                                    <div class="mega-col">
+                                        <div class="mega-col-header">
+                                            <a href="categoria.html?cat=vitrinas" class="mega-title">Vitrinas</a>
+                                            <i class="fa-solid fa-chevron-down mega-toggle-icon"></i>
+                                        </div>
+                                        <ul class="mega-list">
+                                            <li><a href="categoria.html?cat=vitrinas&sub=vitrinas-cremeras">Vitrinas Cremeras</a></li>
+                                            <li><a href="categoria.html?cat=vitrinas&sub=vitrinas-carniceras">Vitrinas Carniceras</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Col 5: Procesamiento y Pesaje -->
+                                    <div class="mega-col">
+                                        <div class="mega-col-header">
+                                            <a href="categoria.html?cat=procesamiento-y-pesaje" class="mega-title">Procesamiento y Pesaje</a>
+                                            <i class="fa-solid fa-chevron-down mega-toggle-icon"></i>
+                                        </div>
+                                        <ul class="mega-list">
+                                            <li><a href="categoria.html?cat=procesamiento-y-pesaje&sub=pesaje">Pesaje</a></li>
+                                            <li><a href="categoria.html?cat=procesamiento-y-pesaje&sub=rebanadoras">Rebanadoras</a></li>
+                                            <li><a href="categoria.html?cat=procesamiento-y-pesaje&sub=molinos">Molinos</a></li>
+                                            <li><a href="categoria.html?cat=procesamiento-y-pesaje&sub=sierras">Sierras</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Col 6: Hielo y Climatización -->
+                                    <div class="mega-col">
+                                        <div class="mega-col-header">
+                                            <span class="mega-title static-title">Hielo y Clima</span>
+                                            <i class="fa-solid fa-chevron-down mega-toggle-icon"></i>
+                                        </div>
+                                        <ul class="mega-list">
+                                            <li><a href="categoria.html?cat=fabricas-de-hielo">Fábricas de Hielo</a></li>
+                                            <li><a href="categoria.html?cat=conservadores-de-hielo">Conservadores de Hielo</a></li>
+                                            <li><a href="categoria.html?cat=cortinas-de-aire">Cortinas de Aire</a></li>
+                                            <li><a href="categoria.html?cat=camaras-de-conservacion">Cámaras de Conservación</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Col 7: Cocción y Especiales -->
+                                    <div class="mega-col">
+                                        <div class="mega-col-header">
+                                            <span class="mega-title static-title">Cocción y Especiales</span>
+                                            <i class="fa-solid fa-chevron-down mega-toggle-icon"></i>
+                                        </div>
+                                        <ul class="mega-list">
+                                            <li><a href="categoria.html?cat=home-cooler">Home Cooler</a></li>
+                                            <li><a href="categoria.html?cat=linea-profesional">Línea Profesional</a></li>
+                                            <li><a href="categoria.html?cat=coccion">Cocción</a></li>
+                                            <li><a href="categoria.html?cat=procesamiento">Procesamiento</a></li>
+                                            <li><a href="categoria.html?cat=accesorios">Accesorios</a></li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
                     </li>
                     <li><a href="#">Nosotros</a></li>
                     <li><a href="#">Distribuidores</a></li>
