@@ -217,28 +217,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (prodSlider && prodNext && prodPrev) {
         prodNext.addEventListener('click', () => {
-            prodSlider.scrollBy({ left: 300, behavior: 'smooth' });
+            const firstCard = prodSlider.querySelector('.product-card');
+            const scrollDistance = firstCard ? (firstCard.offsetWidth + 22) : 280;
+            prodSlider.scrollBy({ left: scrollDistance, behavior: 'smooth' });
         });
 
         prodPrev.addEventListener('click', () => {
-            prodSlider.scrollBy({ left: -300, behavior: 'smooth' });
+            const firstCard = prodSlider.querySelector('.product-card');
+            const scrollDistance = firstCard ? (firstCard.offsetWidth + 22) : 280;
+            prodSlider.scrollBy({ left: -scrollDistance, behavior: 'smooth' });
         });
     }
 
-    // Dynamic feed of latest uploaded products from Supabase for the carousel
+    // Dynamic feed of latest uploaded products from Supabase for the carousel (Last 6, randomly shuffled)
     async function loadLatestProductsIntoSlider() {
         if (!prodSlider || !window.imberaSupabase) return;
         try {
             const sb = window.imberaSupabase.client();
+            // Fetch the last 6 products entered into database
             const { data, error } = await sb.from('products')
                 .select('*, categories(*)')
                 .eq('is_active', true)
                 .order('created_at', { ascending: false })
-                .limit(8);
+                .limit(6);
 
             if (data && data.length > 0) {
+                // Shuffle the last 6 products randomly so they display in random order
+                const shuffled = [...data].sort(() => Math.random() - 0.5);
+
                 // Cache products in sessionStorage for 0ms instant loading
-                data.forEach(p => {
+                shuffled.forEach(p => {
                     try {
                         if (p.sku) sessionStorage.setItem('imbera_prod_sku_' + p.sku, JSON.stringify(p));
                         if (p.model_code) {
@@ -248,19 +256,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     } catch(e) {}
                 });
 
-                prodSlider.innerHTML = data.map(p => {
+                prodSlider.innerHTML = shuffled.map(p => {
                     const displayName = p.model_code || p.commercial_name;
                     const catSlug = p.categories?.slug || 'enfriadores';
                     const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
                     const targetUrl = `/${catSlug}/equipos/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
+                    const imgUrl = p.main_image || 'images/Enfriador_G3D42_Especial.jpg';
+                    const subtitle = p.subtitle ? `<p class="product-subtitle">${p.subtitle}</p>` : '';
                     return `
                         <div class="product-card" onclick="window.location.href='${targetUrl}'" role="link" tabindex="0" aria-label="Ver equipo ${displayName}">
                             <div class="product-image">
-                                <img src="${p.main_image || 'images/Enfriador_G3D42_Especial.jpg'}" alt="${displayName} - Imbera México" loading="lazy">
+                                <img src="${imgUrl}" alt="${displayName} - Imbera México" loading="lazy">
                             </div>
                             <div class="product-info">
                                 <h3>${displayName}</h3>
-                                <p>Código: <strong>${p.sku}</strong></p>
+                                ${subtitle}
+                                <p class="product-sku">Código: <strong>${p.sku}</strong></p>
                             </div>
                         </div>
                     `;
@@ -276,7 +287,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
             }
-        } catch(e) {}
+        } catch(e) {
+            console.error('Error loading latest products into slider:', e);
+        }
     }
     loadLatestProductsIntoSlider();
 
@@ -290,45 +303,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    /* Stats Counter Animation */
+    /* Stats Counter Animation (Smooth requestAnimationFrame & Robust Observers) */
     const statsSection = document.getElementById('stats');
     const counters = document.querySelectorAll('.counter, .counter-target');
-    const speed = 200;
+    let hasAnimatedStats = false;
 
     const animateCounters = () => {
-        counters.forEach(counter => {
-            const updateCount = () => {
-                const target = +counter.getAttribute('data-target');
-                const count = +counter.innerText.replace(/,/g, '');
-                
-                const inc = target / speed;
+        if (hasAnimatedStats) return;
+        hasAnimatedStats = true;
 
-                if (count < target) {
-                    counter.innerText = Math.ceil(count + inc).toLocaleString();
-                    setTimeout(updateCount, 1);
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-target'), 10) || 0;
+            const duration = 1600;
+            const startTime = performance.now();
+
+            const updateCount = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                // Ease out cubic
+                const ease = 1 - Math.pow(1 - progress, 3);
+                const current = Math.round(ease * target);
+
+                counter.textContent = current.toLocaleString('es-MX');
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateCount);
                 } else {
-                    counter.innerText = target.toLocaleString();
+                    counter.textContent = target.toLocaleString('es-MX');
                 }
             };
-            updateCount();
+
+            requestAnimationFrame(updateCount);
         });
     };
 
     if (statsSection) {
-        const observerOptions = {
-            threshold: 0.5
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounters();
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+            observer.observe(statsSection);
+        } else {
+            animateCounters();
+        }
+
+        // Failsafe: check immediately and after 350ms if already in view
+        const checkVisibility = () => {
+            const rect = statsSection.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                animateCounters();
+            }
         };
-
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateCounters();
-                    observer.unobserve(entry.target); // Only animate once
-                }
-            });
-        }, observerOptions);
-
-        observer.observe(statsSection);
+        checkVisibility();
+        setTimeout(checkVisibility, 350);
     }
 
     /* Modal Helper */
