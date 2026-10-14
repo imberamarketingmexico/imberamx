@@ -19,6 +19,10 @@
       "destination": "/sostenibilidad.html"
     },
     {
+      "source": "/nosotros",
+      "destination": "/nosotros.html"
+    },
+    {
       "source": "/producto/:path*",
       "destination": "/producto"
     },
@@ -35,7 +39,7 @@
       "destination": "/categoria"
     },
     {
-      "source": "/:cat((?!admin|api|_next|static|images|distribuidores|contacto|sostenibilidad|.*\\..*).*)",
+      "source": "/:cat((?!admin|api|_next|static|images|distribuidores|contacto|sostenibilidad|nosotros|.*\\..*).*)",
       "destination": "/categoria"
     }
   ]

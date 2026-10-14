@@ -2990,7 +2990,43 @@ ul {
 }
 
 .report-card.featured {
-    border: 2px solid #1ebb55;
+    background: linear-gradient(135deg, #107c41 0%, #0d6334 100%);
+    border: 2px solid #107c41;
+    color: #ffffff;
+    box-shadow: 0 6px 20px rgba(16, 124, 65, 0.25);
+}
+
+.report-card.featured:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(16, 124, 65, 0.35);
+}
+
+.report-card.featured h3 {
+    color: #ffffff;
+}
+
+.report-card.featured p {
+    color: #e2f4ea;
+}
+
+.report-card.featured .report-year-pill {
+    background: rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+}
+
+.report-card.featured .report-icon-box {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+.report-card.featured .btn-report-download {
+    background: #ffffff;
+    color: #0d6334 !important;
+}
+
+.report-card.featured .btn-report-download:hover {
+    background: #f0fdf4;
+    color: #0a4f29 !important;
 }
 
 .report-card.featured::before {
@@ -2998,7 +3034,7 @@ ul {
     position: absolute;
     top: 10px;
     right: -30px;
-    background: #1ebb55;
+    background: #002D62;
     color: #ffffff;
     font-size: 9px;
     font-weight: 800;
@@ -3011,8 +3047,8 @@ ul {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background-color: #fee2e2;
-    color: #dc2626;
+    background-color: #eaf3f9;
+    color: #002D62;
     display: grid;
     place-items: center;
     font-size: 26px;
@@ -3022,6 +3058,8 @@ ul {
 
 .report-card:hover .report-icon-box {
     transform: scale(1.1);
+    background-color: #d8eaf6;
+    color: #0f6ea8;
 }
 
 .report-year-pill {
@@ -3205,6 +3243,177 @@ ul {
         padding: 18px 16px;
     }
 }
+
+/* ==========================================================================
+   Nosotros Page Styles (Grupo AERITEK & Cifras Imbera)
+   ========================================================================== */
+.nosotros-intro-section {
+    padding: 70px 0;
+    background-color: #ffffff;
+}
+
+.nosotros-intro-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 50px;
+    align-items: center;
+}
+
+.nosotros-intro-text h2 {
+    font-size: clamp(28px, 3.5vw, 38px);
+    font-weight: 800;
+    color: #002D62;
+    margin: 0 0 20px;
+    line-height: 1.25;
+}
+
+.nosotros-intro-text p {
+    font-size: 16.5px;
+    color: #475569;
+    line-height: 1.7;
+    margin-bottom: 18px;
+}
+
+.nosotros-intro-quote {
+    border-left: 4px solid var(--accent-green, #1ebb55);
+    padding-left: 20px;
+    margin-top: 25px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #002D62;
+    line-height: 1.55;
+    font-style: italic;
+}
+
+/* Grupo AERITEK Section */
+.aeritek-brands-section {
+    padding: 70px 0 80px;
+    background-color: #ffffff;
+    border-top: 1px solid #f1f5f9;
+}
+
+.aeritek-logos-container {
+    max-width: 1100px;
+    margin: 0 auto 50px;
+    text-align: center;
+    background: #ffffff;
+    padding: 20px;
+}
+
+.aeritek-logos-img {
+    max-width: 100%;
+    width: 980px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+.aeritek-map-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 45, 98, 0.15);
+}
+
+.aeritek-map-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+/* Imbera Stats & Highlights Section */
+.imbera-highlights-section {
+    padding: 80px 0;
+    background-color: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+}
+
+.imbera-banner-container {
+    max-width: 1200px;
+    margin: 0 auto 50px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+}
+
+.imbera-banner-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.imbera-strengths-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.strength-item-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px 22px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    transition: all 0.25s ease;
+}
+
+.strength-item-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 45, 98, 0.08);
+    border-color: #cbd5e1;
+}
+
+.strength-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: #eaf3f9;
+    color: #002D62;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.strength-text h4 {
+    font-size: 15.5px;
+    font-weight: 700;
+    color: #002D62;
+    margin: 0 0 5px;
+}
+
+.strength-text p {
+    font-size: 13.5px;
+    color: #64748b;
+    line-height: 1.5;
+    margin: 0;
+}
+
+@media (max-width: 992px) {
+    .nosotros-intro-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    .imbera-strengths-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .imbera-strengths-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 
 
 
