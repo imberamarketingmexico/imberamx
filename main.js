@@ -74,24 +74,27 @@ document.addEventListener('DOMContentLoaded', () => {
         startAutoPlay();
     }
 
-    startAutoPlay();
+    if (slides.length > 0) {
+        startAutoPlay();
+    }
 
     /* Dropdown Hover Optimization (Optional: handled by CSS but JS can add delay for better UX) */
     const productsLink = document.querySelector('.has-dropdown');
     const dropdown = document.querySelector('.dropdown');
     
     let timeout;
-    
-    productsLink.addEventListener('mouseenter', () => {
-        clearTimeout(timeout);
-        dropdown.classList.add('visible');
-    });
-    
-    productsLink.addEventListener('mouseleave', () => {
-        timeout = setTimeout(() => {
-            dropdown.classList.remove('visible');
-        }, 300);
-    });
+    if (productsLink && dropdown) {
+        productsLink.addEventListener('mouseenter', () => {
+            clearTimeout(timeout);
+            dropdown.classList.add('visible');
+        });
+        
+        productsLink.addEventListener('mouseleave', () => {
+            timeout = setTimeout(() => {
+                dropdown.classList.remove('visible');
+            }, 300);
+        });
+    }
 
     /* ==========================================================================
        Search Bar: Universal Submit & Live Supabase Autocomplete

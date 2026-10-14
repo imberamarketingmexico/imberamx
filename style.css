@@ -237,9 +237,11 @@ ul {
     gap: 50px; /* Increased from 30px */
 }
 
-.nav-links > li > a {
-    color: var(--white);
-    display: flex;
+.nav-links > li > a,
+.nav-links .mobile-nav-link-row > a,
+#link-productos {
+    color: #ffffff !important;
+    display: inline-flex;
     align-items: center;
     gap: 6px;
     padding: 15px 0;
@@ -247,12 +249,33 @@ ul {
     font-size: 15px;
     font-family: 'Montserrat', sans-serif;
     text-transform: none;
+    text-decoration: none;
     transition: color 0.22s ease, opacity 0.22s ease;
 }
 
-.nav-links > li > a:hover {
-    color: var(--accent-green);
-    opacity: 1;
+.nav-links > li > a:hover,
+.nav-links .mobile-nav-link-row > a:hover,
+.nav-links > li.has-megamenu:hover .mobile-nav-link-row > a,
+.nav-links > li.has-megamenu:hover #link-productos,
+#link-productos:hover {
+    color: #22c55e !important; /* Verde claro visible */
+    opacity: 1 !important;
+}
+
+.nav-links .desktop-arrow {
+    font-size: 11px;
+    transition: transform 0.22s ease, color 0.22s ease;
+    color: inherit;
+}
+
+.nav-links > li.has-megamenu:hover .desktop-arrow {
+    transform: rotate(180deg);
+    color: #22c55e !important;
+}
+
+.nav-links > li.active > a,
+.nav-links > li.active .mobile-nav-link-row > a {
+    color: #22c55e !important;
 }
 
 /* Dropdown Menu */
