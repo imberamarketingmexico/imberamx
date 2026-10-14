@@ -871,13 +871,119 @@ body.admin-body {
     margin-top: 6px;
 }
 
+/* High Visibility Buttons */
+.btn-primary {
+    background-color: var(--admin-primary) !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 12px 24px !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-family: 'Montserrat', sans-serif !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: var(--transition) !important;
+    box-shadow: 0 4px 12px rgba(11, 67, 114, 0.25) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--admin-accent) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 166, 81, 0.35) !important;
+}
+
+/* Field Dropzones inside Modal */
+.field-dropzone {
+    border: 2px dashed #94a3b8;
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.field-dropzone:hover,
+.field-dropzone.dragover {
+    border-color: var(--admin-primary);
+    background: #eef6fc;
+}
+
+.field-dropzone i {
+    font-size: 22px;
+}
+
+.field-dropzone .dropzone-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.field-dropzone.uploaded {
+    border-color: #16a34a;
+    background: #f0fdf4;
+}
+
+.field-dropzone.uploaded .dropzone-text {
+    color: #166534;
+}
+
+/* Modal Footer Buttons */
 .admin-modal-footer {
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid var(--admin-border);
+    gap: 15px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 2px solid #e2e8f0;
+}
+
+.btn-modal-cancel {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1.5px solid #cbd5e1;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+}
+
+.btn-modal-cancel:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.btn-modal-save {
+    background: #00a651;
+    color: #ffffff;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+    box-shadow: 0 4px 15px rgba(0, 166, 81, 0.3);
+}
+
+.btn-modal-save:hover {
+    background: #008742;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 166, 81, 0.4);
 }
 
 /* 7. RESPONSIVE ADMIN */

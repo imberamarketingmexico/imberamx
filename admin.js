@@ -636,38 +636,64 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // UPLOAD SHORTCUTS IN PRODUCT MODAL (Image & PDFs)
-    setupModalFileUpload('pUploadImageFile', 'pInputMainImage', 'product-images');
-    setupModalFileUpload('pUploadPdf1', 'pInputDatasheet', 'product-docs');
-    setupModalFileUpload('pUploadPdf2', 'pInputManual', 'product-docs');
-    setupModalFileUpload('pUploadPdf3', 'pInputPartsList', 'product-docs');
+    // UPLOAD DRAG & DROP IN PRODUCT MODAL (Image & PDFs)
+    setupModalDropzone('dropzoneMainImage', 'pUploadImageFile', 'pInputMainImage', 'product-images', 'Foto subida con éxito');
+    setupModalDropzone('dropzonePdf1', 'pUploadPdf1', 'pInputDatasheet', 'product-docs', 'Ficha Técnica subida');
+    setupModalDropzone('dropzonePdf2', 'pUploadPdf2', 'pInputManual', 'product-docs', 'Manual de Usuario subido');
+    setupModalDropzone('dropzonePdf3', 'pUploadPdf3', 'pInputPartsList', 'product-docs', 'Números de Parte subido');
 
-    function setupModalFileUpload(fileInputId, targetUrlInputId, bucketName) {
-        const input = document.getElementById(fileInputId);
-        if (!input) return;
-        input.addEventListener('change', async () => {
-            const file = input.files[0];
-            if (!file) return;
+    function setupModalDropzone(dropzoneId, fileInputId, targetUrlInputId, bucketName, successLabel) {
+        const dropzone = document.getElementById(dropzoneId);
+        const fileInput = document.getElementById(fileInputId);
+        const targetInput = document.getElementById(targetUrlInputId);
+        if (!dropzone || !fileInput || !targetInput) return;
 
-            const targetInput = document.getElementById(targetUrlInputId);
-            const originalVal = targetInput.value;
-            targetInput.value = 'Subiendo archivo a Supabase...';
+        dropzone.addEventListener('click', () => fileInput.click());
 
-            try {
-                const ext = file.name.split('.').pop();
-                const cleanName = file.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-                const filePath = `${Date.now()}_${cleanName}.${ext}`;
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        });
 
-                const { data, error } = await sb.storage.from(bucketName).upload(filePath, file);
-                if (error) throw error;
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
 
-                const { data: publicData } = sb.storage.from(bucketName).getPublicUrl(filePath);
-                targetInput.value = publicData.publicUrl;
-            } catch (err) {
-                alert('No se pudo subir el archivo: ' + err.message);
-                targetInput.value = originalVal;
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                uploadSingleModalFile(e.dataTransfer.files[0], dropzone, targetInput, bucketName, successLabel);
             }
         });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                uploadSingleModalFile(fileInput.files[0], dropzone, targetInput, bucketName, successLabel);
+            }
+        });
+    }
+
+    async function uploadSingleModalFile(file, dropzone, targetInput, bucketName, successLabel) {
+        const labelText = dropzone.querySelector('.dropzone-text');
+        const originalText = labelText ? labelText.innerText : '';
+        if (labelText) labelText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Subiendo a Supabase...';
+
+        try {
+            const ext = file.name.split('.').pop();
+            const cleanName = file.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+            const filePath = `${Date.now()}_${cleanName}.${ext}`;
+
+            const { data, error } = await sb.storage.from(bucketName).upload(filePath, file);
+            if (error) throw error;
+
+            const { data: publicData } = sb.storage.from(bucketName).getPublicUrl(filePath);
+            targetInput.value = publicData.publicUrl;
+
+            dropzone.classList.add('uploaded');
+            if (labelText) labelText.innerHTML = `<i class="fa-solid fa-circle-check text-green"></i> ${successLabel} (${file.name})`;
+        } catch (err) {
+            alert('No se pudo subir el archivo: ' + err.message);
+            if (labelText) labelText.innerText = originalText;
+        }
     }
 
     // --------------------------------------------------------------------------

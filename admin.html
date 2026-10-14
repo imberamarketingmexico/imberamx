@@ -446,56 +446,54 @@
                     <input type="text" id="specShelves" placeholder="Ej: 8 parrillas ajustables">
                 </div>
 
-                <!-- Files & PDFs: PDF 1, PDF 2, PDF 3 -->
-                <div class="form-section-title">3. Fotografía y Documentos PDF</div>
+                <!-- Files & PDFs: PDF 1, PDF 2, PDF 3 with Drag & Drop -->
+                <div class="form-section-title">3. Fotografía y Documentos PDF (Arrastra y Suelta)</div>
 
                 <div class="form-group full-col">
-                    <label for="pInputMainImage">URL Fotografía Principal (JPG, PNG o WebP)</label>
-                    <div class="file-input-combo">
-                        <input type="text" id="pInputMainImage" placeholder="https://... o imágenes/...">
-                        <label class="btn-file-browse">
-                            <i class="fa-solid fa-upload"></i> Subir
-                            <input type="file" id="pUploadImageFile" accept="image/*" style="display: none;">
-                        </label>
+                    <label>Fotografía Principal (JPG, PNG, WebP) *</label>
+                    <div class="field-dropzone" id="dropzoneMainImage">
+                        <i class="fa-solid fa-image"></i>
+                        <span class="dropzone-text">Arrastra la foto aquí o haz clic para seleccionarla</span>
+                        <input type="file" id="pUploadImageFile" accept="image/*" style="display: none;">
                     </div>
+                    <input type="text" id="pInputMainImage" placeholder="URL resultante o externa..." class="mt-2">
                 </div>
 
                 <div class="form-group full-col">
-                    <label for="pInputDatasheet">PDF 1: Ficha Técnica (URL)</label>
-                    <div class="file-input-combo">
-                        <input type="text" id="pInputDatasheet" placeholder="https://... o enlace de Supabase Storage">
-                        <label class="btn-file-browse">
-                            <i class="fa-solid fa-file-pdf"></i> Subir PDF
-                            <input type="file" id="pUploadPdf1" accept=".pdf" style="display: none;">
-                        </label>
+                    <label>PDF 1: Ficha Técnica</label>
+                    <div class="field-dropzone" id="dropzonePdf1">
+                        <i class="fa-solid fa-file-pdf text-danger"></i>
+                        <span class="dropzone-text">Arrastra la Ficha Técnica (PDF) aquí</span>
+                        <input type="file" id="pUploadPdf1" accept=".pdf" style="display: none;">
                     </div>
+                    <input type="text" id="pInputDatasheet" placeholder="URL resultante o externa..." class="mt-2">
                 </div>
 
                 <div class="form-group full-col">
-                    <label for="pInputManual">PDF 2: Manual de Usuario (URL)</label>
-                    <div class="file-input-combo">
-                        <input type="text" id="pInputManual" placeholder="https://... o enlace de Supabase Storage">
-                        <label class="btn-file-browse">
-                            <i class="fa-solid fa-file-pdf"></i> Subir PDF
-                            <input type="file" id="pUploadPdf2" accept=".pdf" style="display: none;">
-                        </label>
+                    <label>PDF 2: Manual de Usuario (Opcional)</label>
+                    <div class="field-dropzone" id="dropzonePdf2">
+                        <i class="fa-solid fa-book text-primary"></i>
+                        <span class="dropzone-text">Arrastra el Manual de Usuario (PDF) aquí</span>
+                        <input type="file" id="pUploadPdf2" accept=".pdf" style="display: none;">
                     </div>
+                    <input type="text" id="pInputManual" placeholder="URL resultante o externa..." class="mt-2">
                 </div>
 
                 <div class="form-group full-col">
-                    <label for="pInputPartsList">PDF 3: Números de Parte (URL)</label>
-                    <div class="file-input-combo">
-                        <input type="text" id="pInputPartsList" placeholder="https://... o enlace de Supabase Storage">
-                        <label class="btn-file-browse">
-                            <i class="fa-solid fa-file-pdf"></i> Subir PDF
-                            <input type="file" id="pUploadPdf3" accept=".pdf" style="display: none;">
-                        </label>
+                    <label>PDF 3: Números de Parte (Opcional)</label>
+                    <div class="field-dropzone" id="dropzonePdf3">
+                        <i class="fa-solid fa-gears text-green"></i>
+                        <span class="dropzone-text">Arrastra el documento de Números de Parte (PDF) aquí</span>
+                        <input type="file" id="pUploadPdf3" accept=".pdf" style="display: none;">
                     </div>
+                    <input type="text" id="pInputPartsList" placeholder="URL resultante o externa..." class="mt-2">
                 </div>
 
                 <div class="admin-modal-footer full-col">
-                    <button type="button" class="btn-secondary" id="btnCancelProductModal">Cancelar</button>
-                    <button type="submit" class="btn-primary" id="btnSaveProduct">
+                    <button type="button" class="btn-modal-cancel" id="btnCancelProductModal">
+                        <i class="fa-solid fa-xmark"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn-modal-save" id="btnSaveProduct">
                         <i class="fa-solid fa-floppy-disk"></i> Guardar Equipo
                     </button>
                 </div>
