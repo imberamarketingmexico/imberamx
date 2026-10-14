@@ -362,6 +362,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        // Cache products into sessionStorage for 0ms instant loading upon click
+        products.forEach(p => {
+            try {
+                if (p.sku) sessionStorage.setItem('imbera_prod_sku_' + p.sku, JSON.stringify(p));
+                if (p.model_code) {
+                    const mSlug = p.model_code.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+                    sessionStorage.setItem('imbera_prod_slug_' + mSlug, JSON.stringify(p));
+                }
+            } catch(e) {}
+        });
+
         catalogGridEl.innerHTML = products.map(p => {
             // Short model name preferred, fallback to commercial name
             const displayName = p.model_code || p.commercial_name;

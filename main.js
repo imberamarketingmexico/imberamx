@@ -157,6 +157,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         return;
                     }
 
+                    // Cache products in sessionStorage for 0ms instant loading
+                    data.forEach(p => {
+                        try {
+                            if (p.sku) sessionStorage.setItem('imbera_prod_sku_' + p.sku, JSON.stringify(p));
+                            if (p.model_code) {
+                                const mSlug = p.model_code.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+                                sessionStorage.setItem('imbera_prod_slug_' + mSlug, JSON.stringify(p));
+                            }
+                        } catch(e) {}
+                    });
+
                     dropdown.innerHTML = data.map(p => {
                         const displayName = p.model_code || p.commercial_name;
                         const catSlug = p.categories?.slug || 'enfriadores';
@@ -226,6 +237,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 .limit(8);
 
             if (data && data.length > 0) {
+                // Cache products in sessionStorage for 0ms instant loading
+                data.forEach(p => {
+                    try {
+                        if (p.sku) sessionStorage.setItem('imbera_prod_sku_' + p.sku, JSON.stringify(p));
+                        if (p.model_code) {
+                            const mSlug = p.model_code.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+                            sessionStorage.setItem('imbera_prod_slug_' + mSlug, JSON.stringify(p));
+                        }
+                    } catch(e) {}
+                });
+
                 prodSlider.innerHTML = data.map(p => {
                     const displayName = p.model_code || p.commercial_name;
                     const catSlug = p.categories?.slug || 'enfriadores';
