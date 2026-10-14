@@ -410,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 contactForm.reset();
             } catch (err) {
                 console.error('Error al enviar formulario a Supabase:', err);
-                alert('Hubo un inconveniente al enviar tu información. Por favor intenta de nuevo o comunícate al 427 271 8000.');
+                alert('Hubo un inconveniente al enviar tu información. Por favor intenta de nuevo o contáctanos a marketing@imberacooling.com');
             } finally {
                 if (submitBtn) {
                     submitBtn.disabled = false;

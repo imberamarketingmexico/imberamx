@@ -2686,65 +2686,37 @@ ul {
     text-decoration: underline;
 }
 
-/* Contact Social Badges */
-.contact-social-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-top: 10px;
-}
-
-.contact-social-link {
+/* Contact Social Icons (Circular like footer) */
+.contact-social-icons {
     display: flex;
+    gap: 14px;
+    margin-top: 15px;
+}
+
+.contact-social-icons a {
+    width: 44px;
+    height: 44px;
+    background-color: #002D62;
+    color: #ffffff;
+    border-radius: 50%;
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    border-radius: 8px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    color: #334155;
-    text-decoration: none;
-    font-size: 13.5px;
-    font-weight: 600;
-    transition: all 0.25s ease;
-}
-
-.contact-social-link i {
+    justify-content: center;
     font-size: 18px;
-    transition: transform 0.25s ease;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 8px rgba(0, 45, 98, 0.12);
 }
 
-.contact-social-link.fb:hover {
-    background: #1877f2;
-    border-color: #1877f2;
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(24, 119, 242, 0.25);
+.contact-social-icons a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
 }
 
-.contact-social-link.yt:hover {
-    background: #ff0000;
-    border-color: #ff0000;
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.25);
-}
-
-.contact-social-link.ig:hover {
-    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-    border-color: #dc2743;
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(220, 39, 67, 0.25);
-}
-
-.contact-social-link.li:hover {
-    background: #0077b5;
-    border-color: #0077b5;
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 119, 181, 0.25);
-}
-
-.contact-social-link:hover i {
-    transform: scale(1.15);
-}
+.contact-social-icons a.social-fb:hover { background-color: #1877f2; }
+.contact-social-icons a.social-yt:hover { background-color: #ff0000; }
+.contact-social-icons a.social-ig:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+.contact-social-icons a.social-li:hover { background-color: #0077b5; }
 
 /* Map Frame Wrapper */
 .contact-map-wrapper {
