@@ -20,7 +20,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 { name: 'Enfriador horizontal', slug: 'enfriador-horizontal' }
             ]
         },
-        { name: 'Cuidado de la Salud', slug: 'cuidado-de-la-salud', subcategories: [] },
+        {
+            name: 'Healthcare',
+            slug: 'healthcare',
+            subcategories: [
+                { name: 'Refrigeradores para consultorios', slug: 'refrigeradores-para-consultorios' },
+                { name: 'Refrigeradores para hospitales', slug: 'refrigeradores-para-hospitales' },
+                { name: 'Refrigeradores para laboratorios', slug: 'refrigeradores-para-laboratorios' }
+            ]
+        },
         { name: 'Home Cooler', slug: 'home-cooler', subcategories: [] },
         {
             name: 'Congeladores',

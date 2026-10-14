@@ -243,4 +243,42 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // 5. Mobile Navigation Dropdown & Submenu Support
+    const hasDropdown = document.querySelector('.has-dropdown');
+    if (hasDropdown) {
+        const prodLink = hasDropdown.querySelector(':scope > a');
+        if (prodLink) {
+            prodLink.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768) {
+                    if (!hasDropdown.classList.contains('mobile-open')) {
+                        e.preventDefault();
+                        hasDropdown.classList.add('mobile-open');
+                    }
+                }
+            });
+        }
+
+        // Submenu arrows toggle on mobile
+        document.querySelectorAll('.has-submenu').forEach(subItem => {
+            const arrow = subItem.querySelector('.submenu-arrow');
+            if (arrow) {
+                arrow.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        subItem.classList.toggle('mobile-sub-open');
+                    }
+                });
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!hasDropdown.contains(e.target)) {
+                hasDropdown.classList.remove('mobile-open');
+                document.querySelectorAll('.has-submenu').forEach(s => s.classList.remove('mobile-sub-open'));
+            }
+        });
+    }
 });

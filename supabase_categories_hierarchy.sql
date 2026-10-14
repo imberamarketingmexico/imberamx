@@ -12,7 +12,7 @@ TRUNCATE TABLE public.categories CASCADE;
 -- 3. INSERTAR CATEGORÍAS PRINCIPALES (PADRES)
 INSERT INTO public.categories (id, name, slug, display_order) VALUES
     ('11111111-1111-1111-1111-111111111101', 'Enfriadores', 'enfriadores', 1),
-    ('11111111-1111-1111-1111-111111111102', 'Cuidado de la Salud', 'cuidado-de-la-salud', 2),
+    ('11111111-1111-1111-1111-111111111102', 'Healthcare', 'healthcare', 2),
     ('11111111-1111-1111-1111-111111111103', 'Home Cooler', 'home-cooler', 3),
     ('11111111-1111-1111-1111-111111111104', 'Congeladores', 'congeladores', 4),
     ('11111111-1111-1111-1111-111111111105', 'Fábricas de Hielo', 'fabricas-de-hielo', 5),
@@ -37,6 +37,12 @@ INSERT INTO public.categories (name, slug, parent_id, display_order) VALUES
     ('Enfriadores Inverter + Bluetooth', 'enfriadores-inverter-bluetooth', '11111111-1111-1111-1111-111111111101', 5),
     ('Línea Cobalt', 'linea-cobalt', '11111111-1111-1111-1111-111111111101', 6),
     ('Enfriador horizontal', 'enfriador-horizontal', '11111111-1111-1111-1111-111111111101', 7);
+
+-- Subcategorías de Healthcare
+INSERT INTO public.categories (name, slug, parent_id, display_order) VALUES
+    ('Refrigeradores para consultorios', 'refrigeradores-para-consultorios', '11111111-1111-1111-1111-111111111102', 1),
+    ('Refrigeradores para hospitales', 'refrigeradores-para-hospitales', '11111111-1111-1111-1111-111111111102', 2),
+    ('Refrigeradores para laboratorios', 'refrigeradores-para-laboratorios', '11111111-1111-1111-1111-111111111102', 3);
 
 -- Subcategorías de Congeladores
 INSERT INTO public.categories (name, slug, parent_id, display_order) VALUES
