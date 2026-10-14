@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrativo | Imbera México</title>
+    
+    <!-- Google Fonts: Outfit & Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- PapaParse for CSV import -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+    <!-- LOGIN SCREEN -->
+    <div id="adminLoginScreen" class="admin-login-screen">
+        <div class="login-card">
+            <div class="login-logo text-center">
+                <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera Logo">
+                <h2>Panel de Control B2B</h2>
+                <p>Ingresa con tus credenciales de administrador</p>
+            </div>
+
+            <form id="adminLoginForm" class="login-form">
+                <div class="form-group">
+                    <label for="loginEmail">Correo electrónico</label>
+                    <input type="email" id="loginEmail" placeholder="admin@imbera.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Contraseña</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                </div>
+                <div id="loginErrorMsg" class="login-error-msg" style="display: none;"></div>
+                <button type="submit" class="btn-login-submit" id="btnLoginSubmit">
+                    <span>Iniciar sesión</span> <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+            <div class="login-footer">
+                <p><a href="index.html"><i class="fa-solid fa-arrow-left"></i> Volver al sitio web público</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD (HIDDEN UNTIL AUTHENTICATED) -->
+    <div id="adminDashboardScreen" class="admin-dashboard-layout" style="display: none;">
+        
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera" class="sidebar-logo">
+                <span class="badge-role">Admin</span>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#tab-dashboard" class="menu-item active" data-tab="tab-dashboard">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Resumen & Métricas</span>
+                </a>
+                <a href="#tab-leads" class="menu-item" data-tab="tab-leads">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Prospectos / Leads</span>
+                    <span class="badge-count" id="badgeLeadsCount">0</span>
+                </a>
+                <a href="#tab-products" class="menu-item" data-tab="tab-products">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    <span>Catálogo de Equipos</span>
+                </a>
+                <a href="#tab-bulk-upload" class="menu-item" data-tab="tab-bulk-upload">
+                    <i class="fa-solid fa-file-csv"></i>
+                    <span>Carga Masiva (CSV)</span>
+                </a>
+                <a href="#tab-files" class="menu-item" data-tab="tab-files">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <span>Almacenamiento (Storage)</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <i class="fa-solid fa-circle-user"></i>
+                    <div class="user-text">
+                        <strong id="adminUserEmail">admin@imbera.com</strong>
+                        <small>Sesión activa</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-logout" id="btnLogout" title="Cerrar sesión">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="admin-main-content">
+            
+            <!-- TOP NAVBAR -->
+            <header class="admin-topbar">
+                <div class="topbar-left">
+                    <button class="btn-mobile-sidebar-toggle" id="btnToggleSidebar">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <h2 class="topbar-page-title" id="pageTitle">Resumen & Métricas</h2>
+                </div>
+                <div class="topbar-right">
+                    <a href="index.html" target="_blank" class="btn-view-site">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> <span>Ver sitio web</span>
+                    </a>
+                </div>
+            </header>
+
+            <div class="admin-tab-content-wrapper">
+                
+                <!-- ========================================================================= -->
+                <!-- TAB 1: RESUMEN / ANALYTICS -->
+                <!-- ========================================================================= -->
+                <section id="tab-dashboard" class="tab-pane active">
+                    
+                    <!-- KPI Cards Grid -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card card-kpi-leads">
+                            <div class="kpi-icon"><i class="fa-solid fa-user-check"></i></div>
+                            <div class="kpi-info">
+                                <span class="kpi-label">Total de Leads Recibidos</span>
+                                <h3 class="kpi-value" id="kpiTotalLeads">0</h3>
+                                <span class="kpi-sub" id="kpiNewLeads">0 nuevos hoy</span>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card card-kpi-products">
+                            <div class="kpi-icon"><i class="fa-solid fa-cube"></i></div>
+                            <div class="kpi-info">
+                                <span class="kpi-label">Equipos en Catálogo</span>
+                                <h3 class="kpi-value" id="kpiTotalProducts">0</h3>
+                                <span class="kpi-sub">Listos para cotizar</span>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card card-kpi-specific">
+                            <div class="kpi-icon"><i class="fa-solid fa-tag"></i></div>
+                            <div class="kpi-info">
+                                <span class="kpi-label">Cotizaciones Específicas</span>
+                                <h3 class="kpi-value" id="kpiSpecificLeads">0</h3>
+                                <span class="kpi-sub">Con modelo seleccionado</span>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card card-kpi-views">
+                            <div class="kpi-icon"><i class="fa-solid fa-eye"></i></div>
+                            <div class="kpi-info">
+                                <span class="kpi-label">Páginas Vistas (Analytics)</span>
+                                <h3 class="kpi-value" id="kpiTotalViews">0</h3>
+                                <span class="kpi-sub">Interacciones registradas</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Breakdown Table & Chart Summary -->
+                    <div class="dashboard-panels-grid">
+                        <div class="panel-box">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-fire text-primary"></i> Equipos Más Cotizados</h3>
+                            </div>
+                            <div class="panel-body">
+                                <ul class="top-products-list" id="topProductsList">
+                                    <li class="empty-state">No hay cotizaciones registradas aún.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="panel-box">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-location-dot text-green"></i> Distribución de Leads por Estado</h3>
+                            </div>
+                            <div class="panel-body">
+                                <ul class="top-states-list" id="topStatesList">
+                                    <li class="empty-state">Esperando registros de prospectos.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- ========================================================================= -->
+                <!-- TAB 2: PROSPECTOS / LEADS CRM -->
+                <!-- ========================================================================= -->
+                <section id="tab-leads" class="tab-pane">
+                    <div class="content-toolbar">
+                        <div class="toolbar-search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="searchLeadsInput" placeholder="Buscar por nombre, teléfono, correo o modelo...">
+                        </div>
+                        <div class="toolbar-actions">
+                            <select id="filterLeadStatus" class="select-filter">
+                                <option value="all">Todos los estados</option>
+                                <option value="nuevo">Nuevo</option>
+                                <option value="contactado">Contactado</option>
+                                <option value="en_negociacion">En negociación</option>
+                                <option value="cerrado">Cerrado</option>
+                                <option value="descartado">Descartado</option>
+                            </select>
+                            <button type="button" class="btn-refresh" id="btnRefreshLeads" title="Refrescar">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-box">
+                        <table class="admin-data-table" id="leadsTable">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Prospecto</th>
+                                    <th>Contacto</th>
+                                    <th>Interés / Modelo</th>
+                                    <th>Unidades</th>
+                                    <th>Estado / Región</th>
+                                    <th>Estatus</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leadsTableBody">
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">Cargando prospectos...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+
+                <!-- ========================================================================= -->
+                <!-- TAB 3: CATÁLOGO DE EQUIPOS (CRUD) -->
+                <!-- ========================================================================= -->
+                <section id="tab-products" class="tab-pane">
+                    <div class="content-toolbar">
+                        <div class="toolbar-search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="searchProductsInput" placeholder="Buscar por SKU, modelo o nombre comercial...">
+                        </div>
+                        <div class="toolbar-actions">
+                            <select id="filterProductCategory" class="select-filter">
+                                <option value="all">Todas las categorías</option>
+                            </select>
+                            <button type="button" class="btn-primary" id="btnOpenNewProductModal">
+                                <i class="fa-solid fa-plus"></i> Nuevo Equipo
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-box">
+                        <table class="admin-data-table" id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th>Foto</th>
+                                    <th>Modelo Comercial</th>
+                                    <th>SKU / Código</th>
+                                    <th>Categoría</th>
+                                    <th>Documentos Adjuntos</th>
+                                    <th>Dimensiones Ext.</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody">
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">Cargando catálogo...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+
+                <!-- ========================================================================= -->
+                <!-- TAB 4: CARGA MASIVA CSV (200+ PRODUCTOS) -->
+                <!-- ========================================================================= -->
+                <section id="tab-bulk-upload" class="tab-pane">
+                    <div class="bulk-instructions-card">
+                        <div class="bulk-icon"><i class="fa-solid fa-file-csv"></i></div>
+                        <div>
+                            <h3>Importador Masivo de Catálogo</h3>
+                            <p>Sube un archivo <code>.csv</code> con tus 200+ modelos para darlos de alta en la base de datos sin necesidad de recargar la página ni registrarlos uno a uno.</p>
+                            <button type="button" class="btn-outline-small" id="btnDownloadCsvTemplate">
+                                <i class="fa-solid fa-download"></i> Descargar Plantilla CSV Oficial
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="dropzone-box" id="csvDropzone">
+                        <i class="fa-solid fa-cloud-arrow-up dropzone-icon"></i>
+                        <h4>Arrastra y suelta tu archivo CSV aquí</h4>
+                        <p>o haz clic para examinar en tu computadora</p>
+                        <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+                    </div>
+
+                    <div id="csvPreviewSection" style="display: none;" class="csv-preview-section">
+                        <div class="preview-header">
+                            <h4>Vista previa de importación (<span id="csvRowsCount">0</span> productos detectados)</h4>
+                            <button type="button" class="btn-primary" id="btnConfirmBulkImport">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Iniciar Importación Masiva
+                            </button>
+                        </div>
+                        <div class="table-responsive-box">
+                            <table class="admin-data-table" id="csvPreviewTable">
+                                <thead>
+                                    <tr>
+                                        <th>SKU</th>
+                                        <th>Modelo Comercial</th>
+                                        <th>Categoría</th>
+                                        <th>Ficha Técnica (URL o Archivo)</th>
+                                        <th>Manual (URL)</th>
+                                        <th>Partes (URL)</th>
+                                        <th>Dimensiones Ext (HxWxD)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="csvPreviewTbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- ========================================================================= -->
+                <!-- TAB 5: STORAGE / SUBIDA DE DOCUMENTOS Y FOTOS -->
+                <!-- ========================================================================= -->
+                <section id="tab-files" class="tab-pane">
+                    <div class="storage-uploader-card">
+                        <h3><i class="fa-solid fa-upload"></i> Subir Imágenes y Documentos PDF a Supabase Storage</h3>
+                        <p>Arrastra imágenes (.jpg, .png, .webp) o fichas técnicas / manuales (.pdf). El sistema te devolverá de inmediato su enlace público seguro para vincularlo a cualquier equipo.</p>
+                        
+                        <div class="dropzone-box" id="fileStorageDropzone">
+                            <i class="fa-solid fa-folder-open dropzone-icon"></i>
+                            <h4>Arrastra fotografías o archivos PDF aquí</h4>
+                            <p>Se subirán automáticamente a los buckets <code>product-images</code> o <code>product-docs</code></p>
+                            <input type="file" id="storageFileInput" multiple accept="image/*,.pdf" style="display: none;">
+                        </div>
+
+                        <div id="storageUploadProgress" class="upload-progress-list"></div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: CREAR / EDITAR PRODUCTO -->
+    <div id="productModal" class="admin-modal-backdrop">
+        <div class="admin-modal-card">
+            <div class="admin-modal-header">
+                <h3 id="productModalTitle">Agregar Nuevo Equipo</h3>
+                <button type="button" class="btn-close-modal" id="btnCloseProductModal">&times;</button>
+            </div>
+            
+            <form id="productForm" class="product-form-grid">
+                <input type="hidden" id="editProductId">
+
+                <!-- Basic Info -->
+                <div class="form-section-title">1. Información Comercial</div>
+                
+                <div class="form-group">
+                    <label for="pInputCommercialName">Nombre del Modelo Comercial *</label>
+                    <input type="text" id="pInputCommercialName" placeholder="Ej: Enfriador G3D42 Especial" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="pInputSku">Código / SKU *</label>
+                    <input type="text" id="pInputSku" placeholder="Ej: G3D42-1030002" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="pInputModelCode">Código Técnico Interno</label>
+                    <input type="text" id="pInputModelCode" placeholder="Ej: G342-2P-HC">
+                </div>
+
+                <div class="form-group">
+                    <label for="pInputCategory">Categoría *</label>
+                    <select id="pInputCategory" required>
+                        <option value="">Selecciona categoría</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-col">
+                    <label for="pInputSubtitle">Nombre Técnico (Más largo y detallado)</label>
+                    <input type="text" id="pInputSubtitle" placeholder="Ej: Enfriador vertical de 2 puertas de cristal de alta eficiencia con tecnología HC R290">
+                </div>
+
+                <div class="form-group full-col">
+                    <label for="pInputDescription">Descripción / Bullets (Separados por renglón)</label>
+                    <textarea id="pInputDescription" rows="4" placeholder="• Control inteligente de temperatura&#10;• Iluminación LED perimetral&#10;• Gas refrigerante ecológico"></textarea>
+                </div>
+
+                <!-- Technical Specs (Dimensions) -->
+                <div class="form-section-title">2. Dimensiones y Datos Técnicos</div>
+
+                <div class="dim-form-container full-col">
+                    <div class="dim-box">
+                        <strong>Dimensiones Externas (mm)</strong>
+                        <div class="dim-inputs">
+                            <input type="number" id="specExtHeight" placeholder="Alto (mm)">
+                            <input type="number" id="specExtWidth" placeholder="Ancho (mm)">
+                            <input type="number" id="specExtDepth" placeholder="Profundo (mm)">
+                        </div>
+                    </div>
+
+                    <div class="dim-box">
+                        <strong>Dimensiones Internas (mm)</strong>
+                        <div class="dim-inputs">
+                            <input type="number" id="specIntHeight" placeholder="Alto (mm)">
+                            <input type="number" id="specIntWidth" placeholder="Ancho (mm)">
+                            <input type="number" id="specIntDepth" placeholder="Profundo (mm)">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="specTempRange">Rango de Temperatura</label>
+                    <input type="text" id="specTempRange" placeholder="Ej: 0°C a 4°C">
+                </div>
+
+                <div class="form-group">
+                    <label for="specRefrigerant">Refrigerante</label>
+                    <input type="text" id="specRefrigerant" placeholder="Ej: R290">
+                </div>
+
+                <div class="form-group">
+                    <label for="specVoltage">Voltaje / Frecuencia</label>
+                    <input type="text" id="specVoltage" placeholder="Ej: 115 V / 60 Hz">
+                </div>
+
+                <div class="form-group">
+                    <label for="specShelves">Parrillas</label>
+                    <input type="text" id="specShelves" placeholder="Ej: 8 parrillas ajustables">
+                </div>
+
+                <!-- Files & PDFs: PDF 1, PDF 2, PDF 3 -->
+                <div class="form-section-title">3. Fotografía y Documentos PDF</div>
+
+                <div class="form-group full-col">
+                    <label for="pInputMainImage">URL Fotografía Principal (JPG, PNG o WebP)</label>
+                    <div class="file-input-combo">
+                        <input type="text" id="pInputMainImage" placeholder="https://... o imágenes/...">
+                        <label class="btn-file-browse">
+                            <i class="fa-solid fa-upload"></i> Subir
+                            <input type="file" id="pUploadImageFile" accept="image/*" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group full-col">
+                    <label for="pInputDatasheet">PDF 1: Ficha Técnica (URL)</label>
+                    <div class="file-input-combo">
+                        <input type="text" id="pInputDatasheet" placeholder="https://... o enlace de Supabase Storage">
+                        <label class="btn-file-browse">
+                            <i class="fa-solid fa-file-pdf"></i> Subir PDF
+                            <input type="file" id="pUploadPdf1" accept=".pdf" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group full-col">
+                    <label for="pInputManual">PDF 2: Manual de Usuario (URL)</label>
+                    <div class="file-input-combo">
+                        <input type="text" id="pInputManual" placeholder="https://... o enlace de Supabase Storage">
+                        <label class="btn-file-browse">
+                            <i class="fa-solid fa-file-pdf"></i> Subir PDF
+                            <input type="file" id="pUploadPdf2" accept=".pdf" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group full-col">
+                    <label for="pInputPartsList">PDF 3: Números de Parte (URL)</label>
+                    <div class="file-input-combo">
+                        <input type="text" id="pInputPartsList" placeholder="https://... o enlace de Supabase Storage">
+                        <label class="btn-file-browse">
+                            <i class="fa-solid fa-file-pdf"></i> Subir PDF
+                            <input type="file" id="pUploadPdf3" accept=".pdf" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="admin-modal-footer full-col">
+                    <button type="button" class="btn-secondary" id="btnCancelProductModal">Cancelar</button>
+                    <button type="submit" class="btn-primary" id="btnSaveProduct">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Equipo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: DETALLE DEL LEAD -->
+    <div id="leadModal" class="admin-modal-backdrop">
+        <div class="admin-modal-card modal-card-sm">
+            <div class="admin-modal-header">
+                <h3>Detalle de Cotización / Prospecto</h3>
+                <button type="button" class="btn-close-modal" id="btnCloseLeadModal">&times;</button>
+            </div>
+            <div class="lead-modal-content" id="leadModalContent">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic Script -->
+    <script src="admin.js"></script>
+</body>
+</html>

@@ -57,8 +57,41 @@ document.addEventListener('DOMContentLoaded', async () => {
                     mainImg.src = data.main_image;
                 }
 
-                if (data.datasheet_url && pdfBtn) {
-                    pdfBtn.href = data.datasheet_url;
+                // Handle 3 PDF buttons: only show if URL exists
+                const pdf1Btn = document.getElementById('downloadPdfBtn');
+                const pdf2Btn = document.getElementById('downloadManualBtn');
+                const pdf3Btn = document.getElementById('downloadPartsBtn');
+
+                if (pdf1Btn) {
+                    if (data.datasheet_url) {
+                        pdf1Btn.href = data.datasheet_url;
+                        pdf1Btn.style.display = 'inline-flex';
+                    } else {
+                        pdf1Btn.style.display = 'none';
+                    }
+                }
+
+                if (pdf2Btn) {
+                    if (data.manual_url) {
+                        pdf2Btn.href = data.manual_url;
+                        pdf2Btn.style.display = 'inline-flex';
+                    } else {
+                        pdf2Btn.style.display = 'none';
+                    }
+                }
+
+                if (pdf3Btn) {
+                    if (data.parts_list_url) {
+                        pdf3Btn.href = data.parts_list_url;
+                        pdf3Btn.style.display = 'inline-flex';
+                    } else {
+                        pdf3Btn.style.display = 'none';
+                    }
+                }
+
+                // If default template fallback has datasheet
+                if (!skuParam && !idParam && pdf1Btn) {
+                    pdf1Btn.style.display = 'inline-flex';
                 }
 
                 // Update specs if available
@@ -72,10 +105,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (specs.int_width) document.getElementById('int-width').innerText = `${specs.int_width} mm`;
                     if (specs.int_depth) document.getElementById('int-depth').innerText = `${specs.int_depth} mm`;
                 }
+
+                // Register page view metric
+                sb.from('page_views').insert([{
+                    page_path: window.location.pathname + window.location.search,
+                    referrer: document.referrer || null,
+                    device_type: window.innerWidth < 768 ? 'mobile' : 'desktop'
+                }]).then();
             }
         } catch (e) {
             console.log('Cargando con plantilla predeterminada.');
         }
+    } else {
+        // Fallback default sample view
+        const defaultPdf = document.getElementById('downloadPdfBtn');
+        if (defaultPdf) defaultPdf.style.display = 'inline-flex';
     }
 
     // 3. Product Specific Lead Form Submission to Supabase

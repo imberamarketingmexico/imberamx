@@ -1,4 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Lightweight Analytics Tracker
+    if (window.imberaSupabase) {
+        try {
+            const sb = window.imberaSupabase.client();
+            if (sb) {
+                sb.from('page_views').insert([{
+                    page_path: window.location.pathname || '/',
+                    referrer: document.referrer || null,
+                    device_type: window.innerWidth < 768 ? 'mobile' : 'desktop'
+                }]).then();
+            }
+        } catch(e) {}
+    }
+
     /* Carousel Logic */
     const slides = document.querySelectorAll('.carousel-slide');
     const prevBtn = document.getElementById('prevBtn');
