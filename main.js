@@ -144,6 +144,38 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(statsSection);
     }
 
+    /* Modal Helper */
+    window.showSuccessModal = (title, message) => {
+        let modalBackdrop = document.getElementById('imberaSuccessModal');
+        if (!modalBackdrop) {
+            modalBackdrop = document.createElement('div');
+            modalBackdrop.id = 'imberaSuccessModal';
+            modalBackdrop.className = 'modal-backdrop';
+            modalBackdrop.innerHTML = `
+                <div class="modal-card">
+                    <div class="modal-icon-circle">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <h3 class="modal-title" id="imberaModalTitle">¡Solicitud Recibida!</h3>
+                    <p class="modal-message" id="imberaModalMsg">Tu información ha sido registrada exitosamente. Un ejecutivo especializado de Imbera se pondrá en contacto contigo.</p>
+                    <button type="button" class="btn-modal-close" id="btnModalClose">Aceptar</button>
+                </div>
+            `;
+            document.body.appendChild(modalBackdrop);
+
+            modalBackdrop.addEventListener('click', (e) => {
+                if (e.target === modalBackdrop || e.target.id === 'btnModalClose') {
+                    modalBackdrop.classList.remove('active');
+                }
+            });
+        }
+
+        if (title) document.getElementById('imberaModalTitle').innerText = title;
+        if (message) document.getElementById('imberaModalMsg').innerText = message;
+        
+        setTimeout(() => modalBackdrop.classList.add('active'), 10);
+    };
+
     /* Supabase Form Submission (Leads) */
     const contactForm = document.querySelector('.main-form');
     if (contactForm) {
@@ -181,7 +213,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw error;
                 }
 
-                alert('¡Gracias por comunicarte con Imbera! Tu solicitud ha sido recibida con éxito y un ejecutivo te contactará en breve.');
+                window.showSuccessModal(
+                    '¡Solicitud Registrada!',
+                    'Muchas gracias por tu interés en Imbera. Hemos recibido tus datos y un ejecutivo comercial te contactará a la brevedad.'
+                );
                 contactForm.reset();
             } catch (err) {
                 console.error('Error al enviar formulario a Supabase:', err);

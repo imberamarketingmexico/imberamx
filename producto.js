@@ -111,9 +111,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const { data, error } = await sb.from('leads').insert([payload]);
 
-                if (error) throw error;
-
-                alert('¡Solicitud de cotización enviada con éxito! Un ejecutivo especializado de Imbera se pondrá en contacto contigo.');
+                if (window.showSuccessModal) {
+                    window.showSuccessModal(
+                        '¡Cotización Solicitada!',
+                        'Hemos registrado tu solicitud para este equipo. Un asesor comercial especializado de Imbera se pondrá en contacto contigo a la brevedad con la cotización formal.'
+                    );
+                } else {
+                    alert('¡Solicitud de cotización enviada con éxito!');
+                }
                 quoteForm.reset();
             } catch (err) {
                 console.error('Error enviando cotización:', err);

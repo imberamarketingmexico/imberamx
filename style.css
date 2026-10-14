@@ -149,14 +149,14 @@ ul {
     top: 100%;
     left: 0;
     background: var(--white);
-    min-width: 200px;
-    box-shadow: var(--shadow);
-    border-radius: 0 0 10px 10px;
+    min-width: 270px; /* Wider to comfortably fit 'Sierras y rebanadoras' */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border-radius: 0 0 12px 12px;
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
     transition: var(--transition);
-    z-index: 100;
+    z-index: 999;
 }
 
 .has-dropdown:hover .dropdown {
@@ -165,20 +165,28 @@ ul {
     transform: translateY(0);
 }
 
+.dropdown li {
+    width: 100%;
+}
+
 .dropdown li a {
     display: block;
-    padding: 12px 20px;
+    padding: 13px 22px;
     border-bottom: 1px solid #f0f0f0;
     color: var(--text-color);
+    white-space: nowrap; /* Prevents wrapping and layout breaks */
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .dropdown li:last-child a {
     border-bottom: none;
+    border-radius: 0 0 12px 12px;
 }
 
 .dropdown li a:hover {
-    background: var(--bg-light);
-    padding-left: 25px;
+    background: #f8fafc;
+    padding-left: 28px;
     color: var(--primary-color);
 }
 
@@ -1687,10 +1695,52 @@ ul {
 
 .product-quote-form {
     background: #ffffff;
-    padding: 40px;
+    padding: 45px;
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e2e8f0;
+    border: 1px solid #cbd5e1;
+}
+
+/* Explicit high-contrast inputs for product quote form */
+.product-quote-form .form-group label {
+    color: #1e293b;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.product-quote-form .form-group input,
+.product-quote-form .form-group select,
+.product-quote-form .form-group textarea {
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    color: #0f172a;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 15px;
+    width: 100%;
+    transition: var(--transition);
+}
+
+.product-quote-form .form-group input:hover,
+.product-quote-form .form-group select:hover,
+.product-quote-form .form-group textarea:hover {
+    border-color: #94a3b8;
+}
+
+.product-quote-form .form-group input:focus,
+.product-quote-form .form-group select:focus,
+.product-quote-form .form-group textarea:focus {
+    background: #ffffff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(11, 67, 114, 0.12);
+    outline: none;
+}
+
+.product-quote-form .form-group input::placeholder,
+.product-quote-form .form-group textarea::placeholder {
+    color: #94a3b8;
 }
 
 /* Responsive adjustments for product detail */
@@ -1731,4 +1781,126 @@ ul {
         padding: 25px 20px;
     }
 }
+
+/* ==========================================================================
+   SUCCESS MODAL COMPONENT (Replaces browser alert)
+   ========================================================================== */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease-in-out;
+    padding: 20px;
+}
+
+.modal-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-card {
+    background: #ffffff;
+    border-radius: 20px;
+    max-width: 480px;
+    width: 100%;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+}
+
+.modal-backdrop.active .modal-card {
+    transform: scale(1) translateY(0);
+}
+
+.modal-icon-circle {
+    width: 80px;
+    height: 80px;
+    background: #dcfce7;
+    color: #16a34a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    margin: 0 auto 20px;
+}
+
+.modal-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 12px;
+}
+
+.modal-message {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.btn-modal-close {
+    background: var(--primary-color);
+    color: #ffffff;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 30px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.btn-modal-close:hover {
+    background: #00a651;
+    box-shadow: 0 4px 15px rgba(0, 166, 81, 0.3);
+}
+
+/* General Mobile Navigation & Responsiveness */
+@media (max-width: 768px) {
+    #navbar {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .nav-links {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        padding: 10px 15px;
+        gap: 25px;
+        min-width: max-content;
+    }
+
+    .nav-links > li > a {
+        padding: 8px 0;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .dropdown {
+        position: fixed;
+        left: 5%;
+        right: 5%;
+        top: auto;
+        min-width: 90%;
+    }
+}
+
 
