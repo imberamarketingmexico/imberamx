@@ -93,13 +93,110 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     });
 
-    /* Search Bar Interaction */
-    const searchInput = document.querySelector('.search-form input');
-    searchInput.addEventListener('focus', () => {
-        document.querySelector('.search-form').style.boxShadow = '0 0 0 2px rgba(0, 51, 102, 0.2)';
-    });
-    searchInput.addEventListener('blur', () => {
-        document.querySelector('.search-form').style.boxShadow = 'none';
+    /* ==========================================================================
+       Search Bar: Universal Submit & Live Supabase Autocomplete
+       ========================================================================== */
+    const searchBoxes = document.querySelectorAll('.search-box');
+    searchBoxes.forEach(box => {
+        const form = box.querySelector('.search-form');
+        const searchInput = form ? form.querySelector('input') : null;
+        if (!form || !searchInput) return;
+
+        // Ensure form submission targets categoria.html?q=...
+        form.setAttribute('action', 'categoria.html');
+        form.setAttribute('method', 'GET');
+        searchInput.setAttribute('name', 'q');
+
+        // Create or locate autocomplete container
+        let dropdown = box.querySelector('.search-autocomplete-dropdown');
+        if (!dropdown) {
+            dropdown = document.createElement('div');
+            dropdown.className = 'search-autocomplete-dropdown';
+            box.appendChild(dropdown);
+        }
+
+        let debounceTimer = null;
+
+        form.addEventListener('submit', (e) => {
+            const query = searchInput.value.trim();
+            if (!query) {
+                e.preventDefault();
+                return;
+            }
+            window.location.href = `categoria.html?q=${encodeURIComponent(query)}`;
+            e.preventDefault();
+        });
+
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            const val = searchInput.value.trim();
+
+            if (val.length < 2) {
+                dropdown.innerHTML = '';
+                dropdown.classList.remove('active');
+                return;
+            }
+
+            debounceTimer = setTimeout(async () => {
+                if (!window.imberaSupabase) return;
+                try {
+                    const sb = window.imberaSupabase.client();
+                    const { data, error } = await sb.from('products')
+                        .select('*, categories(*)')
+                        .eq('is_active', true)
+                        .or(`commercial_name.ilike.%${val}%,model_code.ilike.%${val}%,sku.ilike.%${val}%,subtitle.ilike.%${val}%`)
+                        .limit(5);
+
+                    if (error || !data || data.length === 0) {
+                        dropdown.innerHTML = `
+                            <div style="padding: 15px; text-align: center; color: #94a3b8; font-size: 13px;">
+                                No se encontraron resultados para "<strong>${val}</strong>"
+                            </div>
+                        `;
+                        dropdown.classList.add('active');
+                        return;
+                    }
+
+                    dropdown.innerHTML = data.map(p => {
+                        const displayName = p.model_code || p.commercial_name;
+                        const catSlug = p.categories?.slug || 'enfriadores';
+                        const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+                        const targetUrl = `/${catSlug}/equipos/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
+                        const img = p.main_image || 'images/Enfriador_G3D42_Especial.jpg';
+
+                        return `
+                            <a href="${targetUrl}" class="search-result-item">
+                                <img src="${img}" alt="${displayName}" class="search-result-thumb">
+                                <div class="search-result-info">
+                                    <span class="search-result-title">${displayName}</span>
+                                    <span class="search-result-sku" style="font-size: 11px; color: #64748b;">Código: ${p.sku}</span>
+                                </div>
+                            </a>
+                        `;
+                    }).join('') + `
+                        <a href="categoria.html?q=${encodeURIComponent(val)}" class="search-view-all" style="display: block; padding: 10px; text-align: center; background: #f8fafc; font-size: 12px; font-weight: 700; color: var(--primary-color); border-top: 1px solid #e2e8f0; text-decoration: none;">
+                            Ver todos los resultados para "${val}" <i class="fa-solid fa-arrow-right" style="font-size: 10px; margin-left: 4px;"></i>
+                        </a>
+                    `;
+                    dropdown.classList.add('active');
+                } catch(e) {
+                    dropdown.classList.remove('active');
+                }
+            }, 250);
+        });
+
+        // Hide autocomplete on Escape or outside click
+        document.addEventListener('click', (e) => {
+            if (!box.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                dropdown.classList.remove('active');
+            }
+        });
     });
     
     /* Product Slider Logic */

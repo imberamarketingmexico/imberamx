@@ -68,17 +68,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         { name: 'Accesorios', slug: 'accesorios', subcategories: [] }
     ];
 
-    // Read URL query params (?cat=... or ?sub=...) or path segments (/categoria/enfriadores/verticales or /enfriadores/verticales)
+    // Read URL query params (?cat=... or ?sub=... or ?q=...) or path segments (/categoria/enfriadores/verticales or /enfriadores/verticales)
     const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = (urlParams.get('q') || '').trim();
     let selectedCatSlug = urlParams.get('cat') || '';
     let selectedSubSlug = urlParams.get('sub') || '';
 
-    if (!selectedCatSlug) {
+    if (!selectedCatSlug && !searchQuery) {
         const segments = window.location.pathname.split('/').filter(p => p && !p.endsWith('.html') && p !== 'categoria');
         if (segments.length >= 1) selectedCatSlug = segments[0];
         if (segments.length >= 2) selectedSubSlug = segments[1];
     }
-    if (!selectedCatSlug) selectedCatSlug = 'enfriadores';
+    if (!selectedCatSlug && !searchQuery) selectedCatSlug = 'enfriadores';
 
     let dbCategories = [];
     let dbProducts = [];
@@ -177,6 +178,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function updateHeaderAndBreadcrumbs(tree) {
+        if (searchQuery) {
+            const titleText = `Búsqueda: "${searchQuery}"`;
+            document.title = `${titleText} | Catálogo Oficial Imbera México`;
+            let metaDesc = document.querySelector('meta[name="description"]');
+            if (!metaDesc) {
+                metaDesc = document.createElement('meta');
+                metaDesc.name = 'description';
+                document.head.appendChild(metaDesc);
+            }
+            metaDesc.content = `Resultados de búsqueda para "${searchQuery}" en el catálogo oficial de refrigeración comercial Imbera México.`;
+
+            if (heroTitleEl) {
+                heroTitleEl.innerText = titleText;
+            }
+
+            if (breadcrumbsSubEl) {
+                breadcrumbsSubEl.innerHTML = `<a href="categoria.html">Catálogo</a> | <span>Búsqueda: <strong>"${searchQuery}"</strong></span>`;
+            }
+
+            const searchInput = document.querySelector('.search-form input');
+            if (searchInput) {
+                searchInput.value = searchQuery;
+            }
+            return;
+        }
+
         const currentCat = tree.find(c => c.slug === selectedCatSlug) || tree[0];
         const currentSub = currentCat?.subcategories?.find(s => s.slug === selectedSubSlug);
         const titleText = currentSub ? currentSub.name : (currentCat ? currentCat.name : 'Catálogo de Equipos');
@@ -248,8 +275,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (sb) {
                 let query = sb.from('products').select('*, categories(*)').eq('is_active', true);
                 
-                // If a subcategory or category is chosen, filter by category_id or parent
-                if (dbCategories.length > 0) {
+                if (searchQuery) {
+                    query = query.or(`commercial_name.ilike.%${searchQuery}%,model_code.ilike.%${searchQuery}%,sku.ilike.%${searchQuery}%,subtitle.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+                } else if (dbCategories.length > 0) {
                     if (selectedSubSlug) {
                         const targetSub = dbCategories.find(c => c.slug === selectedSubSlug);
                         if (targetSub) {
@@ -266,8 +294,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 const { data, error } = await query;
-                if (data && !error && data.length > 0) {
-                    dbProducts = data;
+                if (!error) {
+                    dbProducts = data || [];
                     renderProductsGrid(dbProducts);
                     return;
                 }
@@ -275,7 +303,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch(e) {}
 
         // Fallback default sample grid if no products yet in Supabase for this category
-        renderFallbackGrid();
+        if (!searchQuery) {
+            renderFallbackGrid();
+        } else {
+            renderProductsGrid([]);
+        }
     }
 
     // Sorting functionality
@@ -302,16 +334,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function renderProductsGrid(products) {
-        if (resultsCountEl) resultsCountEl.innerText = `Mostrando ${products.length} productos`;
+        if (resultsCountEl) {
+            resultsCountEl.innerText = searchQuery 
+                ? `${products.length} resultado${products.length === 1 ? '' : 's'} para "${searchQuery}"`
+                : `Mostrando ${products.length} productos`;
+        }
 
         if (!products || products.length === 0) {
-            catalogGridEl.innerHTML = `
-                <div style="grid-column: span 3; text-align: center; padding: 60px 20px;">
-                    <i class="fa-solid fa-box-open fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i>
-                    <h3 style="font-size: 18px; color: #475569; margin-bottom: 8px;">No hay equipos registrados en esta categoría</h3>
-                    <p style="color: #94a3b8; font-size: 14px;">Pronto agregaremos más modelos a esta sección.</p>
-                </div>
-            `;
+            if (searchQuery) {
+                catalogGridEl.innerHTML = `
+                    <div style="grid-column: span 3; text-align: center; padding: 60px 20px;">
+                        <i class="fa-solid fa-magnifying-glass fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i>
+                        <h3 style="font-size: 20px; color: #475569; margin-bottom: 8px;">No se encontraron productos para "${searchQuery}"</h3>
+                        <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Intenta con otro modelo, código numérico o categoría.</p>
+                        <a href="categoria.html" class="btn-view" style="display: inline-block; padding: 10px 24px; text-decoration: none;">Ver todo el catálogo</a>
+                    </div>
+                `;
+            } else {
+                catalogGridEl.innerHTML = `
+                    <div style="grid-column: span 3; text-align: center; padding: 60px 20px;">
+                        <i class="fa-solid fa-box-open fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i>
+                        <h3 style="font-size: 18px; color: #475569; margin-bottom: 8px;">No hay equipos registrados en esta categoría</h3>
+                        <p style="color: #94a3b8; font-size: 14px;">Pronto agregaremos más modelos a esta sección.</p>
+                    </div>
+                `;
+            }
             return;
         }
 

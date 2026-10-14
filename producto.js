@@ -109,19 +109,71 @@ document.addEventListener('DOMContentLoaded', async () => {
                     mainImg.alt = `${displayName} - Imbera México`;
                 }
 
-                // Render Description bullets if provided
+                // Helper to format bullets and strip out ANY price information
+                function parseDescriptionBullets(rawDesc) {
+                    if (!rawDesc) return [];
+
+                    // Split by pipes, newlines, semicolons or bullets
+                    let chunks = [];
+                    if (rawDesc.includes('|')) {
+                        chunks = rawDesc.split('|');
+                    } else if (rawDesc.includes('\n')) {
+                        chunks = rawDesc.split('\n');
+                    } else if (rawDesc.includes('•')) {
+                        chunks = rawDesc.split('•');
+                    } else if (rawDesc.includes(';')) {
+                        chunks = rawDesc.split(';');
+                    } else {
+                        chunks = [rawDesc];
+                    }
+
+                    // Price patterns to completely eradicate:
+                    // e.g. "Precio de Lista: $49,206.00 MXN (Pág. 10)", "$49,206", "Precio: $..."
+                    const priceFilterRegex = /precio|\$|mxn|usd/i;
+                    const cleanItemRegex = /(?:precio(?:\s+de\s+lista)?[:\s]*\$?[\d,.]+(?:\s*mxn|\s*usd)?(?:\s*\([^)]*\))?|\$[\d,.]+(?:\s*mxn|\s*usd)?)/gi;
+                    const pageRegex = /\(?p[aá]g\.?\s*\d+\)?/gi;
+
+                    const validBullets = [];
+
+                    chunks.forEach(c => {
+                        let text = c.trim();
+                        // If the entire chunk is just a price or page mention, skip it completely
+                        if (priceFilterRegex.test(text) && text.replace(cleanItemRegex, '').replace(pageRegex, '').trim().length < 4) {
+                            return;
+                        }
+
+                        // Remove internal price references if embedded inside a bullet
+                        text = text.replace(cleanItemRegex, '').replace(pageRegex, '').trim();
+                        // Strip leading bullets, dashes, numbers or dots
+                        text = text.replace(/^[•\-\*\.0-9\)]+\s*/, '').trim();
+                        // Strip trailing pipes or semicolons
+                        text = text.replace(/[|;]+$/, '').trim();
+
+                        if (text && text.length > 2) {
+                            validBullets.push(text);
+                        }
+                    });
+
+                    return validBullets;
+                }
+
+                // Render Description bullets if provided (split by pipe, bullet, newline and strip prices)
                 if (data.description) {
                     const bulletsList = document.querySelector('.product-bullets');
                     if (bulletsList) {
-                        const lines = data.description.split('\n').map(l => l.replace(/^[•\-\*]\s*/, '').trim()).filter(Boolean);
-                        if (lines.length > 0) {
-                            bulletsList.innerHTML = lines.map(line => `<li>${line}</li>`).join('');
+                        const bullets = parseDescriptionBullets(data.description);
+                        if (bullets.length > 0) {
+                            bulletsList.innerHTML = bullets.map(line => `<li>${line}</li>`).join('');
                         }
                     }
                 }
 
-                // Dynamic SEO Tags
-                const descText = data.description ? data.description.replace(/\n/g, ' ').slice(0, 160) : `Ficha técnica oficial, dimensiones y cotización del equipo Imbera ${displayName} (Código: ${data.sku}).`;
+                // Dynamic SEO Tags (guaranteed without prices)
+                const cleanBullets = parseDescriptionBullets(data.description);
+                const descText = cleanBullets.length > 0 
+                    ? cleanBullets.join('. ').slice(0, 160) 
+                    : `Ficha técnica oficial, dimensiones y cotización del equipo Imbera ${displayName} (Código: ${data.sku}).`;
+
                 const metaDesc = document.querySelector('meta[name="description"]');
                 if (metaDesc) metaDesc.content = descText;
 

@@ -624,7 +624,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 model_code: document.getElementById('pInputModelCode').value.trim() || null,
                 category_id: document.getElementById('pInputCategory').value || null,
                 subtitle: document.getElementById('pInputSubtitle').value.trim() || null,
-                description: document.getElementById('pInputDescription').value.trim() || null,
+                description: (document.getElementById('pInputDescription').value.trim()
+                    .replace(/(?:precio(?:\s+de\s+lista)?[:\s]*\$?[\d,.]+(?:\s*mxn|\s*usd)?(?:\s*\([^)]*\))?|\$[\d,.]+(?:\s*mxn|\s*usd)?)/gi, '')
+                    .replace(/\(?p[aá]g\.?\s*\d+\)?/gi, '')
+                    .trim()) || null,
                 main_image: document.getElementById('pInputMainImage').value.trim() || null,
                 datasheet_url: document.getElementById('pInputDatasheet').value.trim() || null,
                 manual_url: document.getElementById('pInputManual').value.trim() || null,
@@ -878,12 +881,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const normCat = catRaw.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
                 const categoryId = categoryMap[normCat] || categoryMap[normCat.replace(/_/g, '-')] || null;
 
+                const rawDesc = getCsvRowValue(r, 'description', 'descripcion') || '';
+                const cleanDesc = rawDesc
+                    .replace(/(?:precio(?:\s+de\s+lista)?[:\s]*\$?[\d,.]+(?:\s*mxn|\s*usd)?(?:\s*\([^)]*\))?|\$[\d,.]+(?:\s*mxn|\s*usd)?)/gi, '')
+                    .replace(/\(?p[aá]g\.?\s*\d+\)?/gi, '')
+                    .trim() || null;
+
                 return {
                     sku: codeRaw,
                     commercial_name: (getCsvRowValue(r, 'commercial_name', 'nombre_comercial', 'modelo_comercial', 'nombre', 'name') || 'Equipo Imbera').trim(),
                     model_code: getCsvRowValue(r, 'model_code', 'modelo_tecnico', 'modelo') || null,
                     subtitle: getCsvRowValue(r, 'subtitle', 'subtitulo', 'nombre_tecnico') || null,
-                    description: getCsvRowValue(r, 'description', 'descripcion') || null,
+                    description: cleanDesc,
                     category_id: categoryId,
                     main_image: getCsvRowValue(r, 'main_image', 'imagen', 'foto') || null,
                     datasheet_url: getCsvRowValue(r, 'datasheet_url', 'ficha', 'ficha_tecnica', 'pdf1') || null,
