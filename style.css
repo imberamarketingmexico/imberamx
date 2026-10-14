@@ -190,6 +190,200 @@ ul {
     color: var(--primary-color);
 }
 
+/* ==========================================================================
+   MEGA MENU SYSTEM (4 Columns Category Hierarchy)
+   ========================================================================== */
+.has-megamenu {
+    position: static !important; /* Panel aligns with navbar container */
+}
+
+#navbar .container {
+    position: relative;
+}
+
+.megamenu-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border-top: 3px solid var(--primary-color);
+    padding: 30px 40px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+    transition: all 0.25s ease-in-out;
+    z-index: 9999;
+}
+
+.has-megamenu:hover .megamenu-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.megamenu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    align-items: start;
+}
+
+.megamenu-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.mega-cat-title {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: var(--primary-color) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 10px;
+    text-decoration: none;
+    transition: var(--transition);
+    display: block;
+}
+
+.mega-cat-title:hover {
+    color: #00a651 !important;
+    border-bottom-color: #00a651;
+}
+
+.mega-sub-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mega-sub-list li a {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 13px !important;
+    color: #475569 !important;
+    text-decoration: none;
+    padding: 4px 0 !important;
+    transition: var(--transition);
+    display: block;
+    font-weight: 500;
+}
+
+.mega-sub-list li a:hover {
+    color: var(--primary-color) !important;
+    padding-left: 6px !important;
+    font-weight: 600;
+}
+
+/* Category Sidebar Tree & Filter Styles */
+.cat-tree {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cat-item {
+    margin-bottom: 6px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 6px;
+}
+
+.cat-parent-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cat-parent-link {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    text-decoration: none;
+    padding: 6px 0;
+    transition: var(--transition);
+}
+
+.cat-parent-link:hover,
+.cat-parent-link.selected {
+    color: var(--primary-color);
+}
+
+.btn-toggle-sub {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 11px;
+    padding: 6px;
+    transition: var(--transition);
+}
+
+.btn-toggle-sub:hover {
+    color: var(--primary-color);
+}
+
+.sub-cat {
+    list-style: none;
+    padding-left: 12px;
+    margin: 6px 0 10px;
+    border-left: 2px solid #e2e8f0;
+}
+
+.sub-cat li a {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    color: #64748b;
+    text-decoration: none;
+    padding: 4px 0;
+    display: block;
+    transition: var(--transition);
+}
+
+.sub-cat li a:hover,
+.sub-cat li a.selected {
+    color: #00a651;
+    font-weight: 600;
+    padding-left: 4px;
+}
+
+.grid-capacity-badge {
+    display: inline-block;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+/* Responsive Mega Menu */
+@media (max-width: 992px) {
+    .megamenu-panel {
+        position: static;
+        box-shadow: none;
+        padding: 15px;
+        border-top: none;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .megamenu-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
 /* Hero Section */
 #hero {
     margin-top: 30px;

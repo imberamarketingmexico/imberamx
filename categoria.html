@@ -45,17 +45,72 @@
         <nav id="navbar">
             <div class="container">
                 <ul class="nav-links">
-                    <li class="has-dropdown">
-                        <a href="#" id="link-productos">Productos <i class="fa-solid fa-chevron-down"></i></a>
-                        <ul class="dropdown">
-                            <li><a href="categoria.html">Refrigeradores</a></li>
-                            <li><a href="categoria.html">Congeladores</a></li>
-                            <li><a href="categoria.html">Procesamiento</a></li>
-                            <li><a href="categoria.html">Sierras y rebanadoras</a></li>
-                            <li><a href="categoria.html">Healthcare</a></li>
-                            <li><a href="categoria.html">Smart</a></li>
-                            <li><a href="categoria.html">Cuartos fríos</a></li>
-                        </ul>
+                    <li class="has-megamenu">
+                        <a href="categoria.html?cat=enfriadores" id="link-productos">Productos <i class="fa-solid fa-chevron-down"></i></a>
+                        <div class="megamenu-panel">
+                            <div class="megamenu-grid">
+                                
+                                <!-- Col 1: Enfriadores -->
+                                <div class="megamenu-col">
+                                    <a href="categoria.html?cat=enfriadores" class="mega-cat-title">Enfriadores</a>
+                                    <ul class="mega-sub-list">
+                                        <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-verticales">Enfriadores Verticales</a></li>
+                                        <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-cerveceros">Enfriadores Cerveceros</a></li>
+                                        <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-verticales-especiales">Enfriadores Verticales Especiales</a></li>
+                                        <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-ecoinverter">Enfriadores Ecoinverter</a></li>
+                                        <li><a href="categoria.html?cat=enfriadores&sub=enfriadores-inverter-bluetooth">Enfriadores Inverter + Bluetooth</a></li>
+                                        <li><a href="categoria.html?cat=enfriadores&sub=linea-cobalt">Línea Cobalt</a></li>
+                                        <li><a href="categoria.html?cat=enfriadores&sub=enfriador-horizontal">Enfriador horizontal</a></li>
+                                    </ul>
+
+                                    <a href="categoria.html?cat=cuidado-de-la-salud" class="mega-cat-title mt-3">Cuidado de la Salud</a>
+                                    <a href="categoria.html?cat=home-cooler" class="mega-cat-title mt-2">Home Cooler</a>
+                                </div>
+
+                                <!-- Col 2: Congeladores & Hielo -->
+                                <div class="megamenu-col">
+                                    <a href="categoria.html?cat=congeladores" class="mega-cat-title">Congeladores</a>
+                                    <ul class="mega-sub-list">
+                                        <li><a href="categoria.html?cat=congeladores&sub=congeladores-horizontales">Congeladores horizontales</a></li>
+                                        <li><a href="categoria.html?cat=congeladores&sub=congeladores-verticales">Congeladores verticales</a></li>
+                                        <li><a href="categoria.html?cat=congeladores&sub=congeladores-horizontal-doble-temperatura">Congeladores horizontal doble temp.</a></li>
+                                        <li><a href="categoria.html?cat=congeladores&sub=congeladores-horizontal-pta-cristal">Congeladores horizontal Pta. Cristal</a></li>
+                                    </ul>
+
+                                    <a href="categoria.html?cat=fabricas-de-hielo" class="mega-cat-title mt-3">Fábricas de Hielo</a>
+                                    <a href="categoria.html?cat=conservadores-de-hielo" class="mega-cat-title mt-2">Conservadores de Hielo</a>
+                                </div>
+
+                                <!-- Col 3: Vitrinas & Climatización -->
+                                <div class="megamenu-col">
+                                    <a href="categoria.html?cat=vitrinas" class="mega-cat-title">Vitrinas</a>
+                                    <ul class="mega-sub-list">
+                                        <li><a href="categoria.html?cat=vitrinas&sub=vitrinas-cremeras">Vitrinas Cremeras</a></li>
+                                        <li><a href="categoria.html?cat=vitrinas&sub=vitrinas-carniceras">Vitrinas Carniceras</a></li>
+                                    </ul>
+
+                                    <a href="categoria.html?cat=cortinas-de-aire" class="mega-cat-title mt-3">Cortinas de Aire</a>
+                                    <a href="categoria.html?cat=linea-profesional" class="mega-cat-title mt-2">Línea Profesional</a>
+                                    <a href="categoria.html?cat=camaras-de-conservacion" class="mega-cat-title mt-2">Cámaras de Conservación</a>
+                                </div>
+
+                                <!-- Col 4: Procesamiento, Pesaje, Cocción & Accesorios -->
+                                <div class="megamenu-col">
+                                    <a href="categoria.html?cat=procesamiento-y-pesaje" class="mega-cat-title">Procesamiento y pesaje</a>
+                                    <ul class="mega-sub-list">
+                                        <li><a href="categoria.html?cat=procesamiento-y-pesaje&sub=pesaje">Pesaje</a></li>
+                                        <li><a href="categoria.html?cat=procesamiento-y-pesaje&sub=rebanadoras">Rebanadoras</a></li>
+                                        <li><a href="categoria.html?cat=procesamiento-y-pesaje&sub=molinos">Molinos</a></li>
+                                        <li><a href="categoria.html?cat=procesamiento-y-pesaje&sub=sierras">Sierras</a></li>
+                                    </ul>
+
+                                    <a href="categoria.html?cat=coccion" class="mega-cat-title mt-3">Cocción</a>
+                                    <a href="categoria.html?cat=procesamiento" class="mega-cat-title mt-2">Procesamiento</a>
+                                    <a href="categoria.html?cat=accesorios" class="mega-cat-title mt-2">Accesorios</a>
+                                </div>
+
+                            </div>
+                        </div>
                     </li>
                     <li><a href="#">Nosotros</a></li>
                     <li><a href="#">Distribuidores</a></li>
@@ -72,9 +127,9 @@
         <section class="category-hero bg-navy">
             <div class="container">
                 <div class="breadcrumbs">
-                    <a href="index.html">Principal</a> | <span>Foodservice</span>
+                    <a href="index.html">Principal</a> | <span id="breadcrumbSub">Enfriadores</span>
                 </div>
-                <h1 class="category-title text-center main-category-label">Refrigeradores</h1>
+                <h1 class="category-title text-center main-category-label" id="categoryHeroTitle">Enfriadores</h1>
             </div>
         </section>
 
@@ -85,33 +140,9 @@
                     <!-- Sidebar Filters -->
                     <aside class="category-sidebar">
                         <div class="filter-group">
-                            <h4 class="filter-title">Precio</h4>
-                            <div class="price-range">
-                                <input type="range" min="0" max="50000" value="0">
-                                <div class="price-labels">
-                                    <span>$0.00</span>
-                                    <span>$0.00</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="filter-group">
-                            <h4 class="filter-title">Atributo</h4>
-                            <button class="btn-clear">Limpiar</button>
-                        </div>
-
-                        <div class="filter-group">
                             <h4 class="filter-title">Categorías</h4>
-                            <ul class="cat-tree">
-                                <li><a href="#">Institucional</a></li>
-                                <li class="active">
-                                    <a href="#">Foodservice <i class="fa-solid fa-minus"></i></a>
-                                    <ul class="sub-cat">
-                                        <li><a href="#">Cámaras paquete</a></li>
-                                        <li class="active"><a href="#">Enfriadores Verticales</a></li>
-                                        <li><a href="#">Enfriadores verticales especial</a></li>
-                                    </ul>
-                                </li>
+                            <ul class="cat-tree" id="categoryTree">
+                                <!-- Dynamically loaded from categoria.js -->
                             </ul>
                         </div>
                     </aside>
@@ -119,91 +150,18 @@
                     <!-- Product Grid -->
                     <div class="category-content">
                         <div class="catalog-header">
-                            <div class="results-count">Mostrando 12 de 35 productos</div>
+                            <div class="results-count" id="resultsCount">Mostrando productos</div>
                             <div class="sort-options">
-                                <select>
-                                    <option>- Reiniciar -</option>
-                                    <option>Menor Precio</option>
-                                    <option>Mayor Precio</option>
+                                <select id="sortSelect">
+                                    <option value="default">Recomendados</option>
+                                    <option value="name_asc">Nombre: A - Z</option>
+                                    <option value="name_desc">Nombre: Z - A</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="catalog-grid">
-                            <!-- Repeat products -->
-                            <div class="catalog-item">
-                                <div class="item-img"><img src="images/Enfriador_G3D42_Especial.jpg" alt="Producto"></div>
-                                <div class="item-info">
-                                    <h3>ENFRIADOR BVC01</h3>
-                                    <p>BVC01 - 1016414</p>
-                                    <a href="producto.html" class="btn-view">Ver equipo</a>
-                                </div>
-                            </div>
-                            <div class="catalog-item">
-                                <div class="item-img"><img src="images/Enfriador_VR17.jpg" alt="Producto"></div>
-                                <div class="item-info">
-                                    <h3>ENFRIADOR G342 2P</h3>
-                                    <p>G342 - 1023306</p>
-                                    <a href="producto.html" class="btn-view">Ver equipo</a>
-                                </div>
-                            </div>
-                            <div class="catalog-item">
-                                <div class="item-img"><img src="images/Enfriador_VR17_especial.jpg" alt="Producto"></div>
-                                <div class="item-info">
-                                    <h3>ENFRIADOR G342 3P</h3>
-                                    <p>G342 - 1023825</p>
-                                    <a href="producto.html" class="btn-view">Ver equipo</a>
-                                </div>
-                            </div>
-                            <div class="catalog-item">
-                                <div class="item-img"><img src="images/Enfriador_VMC19B.jpg" alt="Producto"></div>
-                                <div class="item-info">
-                                    <h3>ENFRIADOR G3T72</h3>
-                                    <p>G3T72 - 1023871</p>
-                                    <a href="producto.html" class="btn-view">Ver equipo</a>
-                                </div>
-                            </div>
-                            <div class="catalog-item">
-                                <div class="item-img"><img src="images/Enfriador_G3D42_Especial.jpg" alt="Producto"></div>
-                                <div class="item-info">
-                                    <h3>ENFRIADOR VL40</h3>
-                                    <p>VRL40 - 1024353</p>
-                                    <a href="producto.html" class="btn-view">Ver equipo</a>
-                                </div>
-                            </div>
-                            <div class="catalog-item">
-                                <div class="item-img"><img src="images/Enfriador_VR17.jpg" alt="Producto"></div>
-                                <div class="item-info">
-                                    <h3>ENFRIADOR VR04</h3>
-                                    <p>VR04</p>
-                                    <a href="producto.html" class="btn-view">Ver equipo</a>
-                                </div>
-                            </div>
-                            <!-- Repeat more to fill visual grid -->
-                            <div class="catalog-item">
-                                <div class="item-img"><img src="images/Enfriador_VMC19B.jpg" alt="Producto"></div>
-                                <div class="item-info">
-                                    <h3>ENFRIADOR VR17</h3>
-                                    <p>VR17 - 1024175</p>
-                                    <a href="producto.html" class="btn-view">Ver equipo</a>
-                                </div>
-                            </div>
-                            <div class="catalog-item">
-                                <div class="item-img"><img src="images/Enfriador_VR17_especial.jpg" alt="Producto"></div>
-                                <div class="item-info">
-                                    <h3>ENFRIADOR G3D42</h3>
-                                    <p>G3D42 - 1030002</p>
-                                    <a href="producto.html" class="btn-view">Ver equipo</a>
-                                </div>
-                            </div>
-                            <div class="catalog-item">
-                                <div class="item-img"><img src="images/Enfriador_VR17.jpg" alt="Producto"></div>
-                                <div class="item-info">
-                                    <h3>ENFRIADOR VMC19B</h3>
-                                    <p>VMC19B - 1025843</p>
-                                    <a href="producto.html" class="btn-view">Ver equipo</a>
-                                </div>
-                            </div>
+                        <div class="catalog-grid" id="catalogGrid">
+                            <!-- Injected dynamically by categoria.js -->
                         </div>
                     </div>
                 </div>
@@ -265,6 +223,10 @@
         </div>
     </footer>
 
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
     <script src="main.js"></script>
+    <script src="categoria.js"></script>
 </body>
 </html>

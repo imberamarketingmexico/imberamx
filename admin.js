@@ -193,17 +193,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function populateCategoryDropdowns() {
-        if (filterProductCategory) {
-            filterProductCategory.innerHTML = '<option value="all">Todas las categorías</option>';
-            allCategories.forEach(c => {
-                filterProductCategory.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+        const parents = allCategories.filter(c => !c.parent_id);
+        
+        // Helper to build grouped options
+        const buildOptionsHtml = (includeAllOption) => {
+            let html = includeAllOption ? '<option value="all">Todas las categorías</option>' : '<option value="">Selecciona categoría o subcategoría</option>';
+            
+            parents.forEach(p => {
+                const subs = allCategories.filter(s => s.parent_id === p.id);
+                if (subs.length > 0) {
+                    html += `<optgroup label="${p.name}">`;
+                    html += `<option value="${p.id}">${p.name} (Todo el grupo)</option>`;
+                    subs.forEach(s => {
+                        html += `<option value="${s.id}">↳ ${s.name}</option>`;
+                    });
+                    html += `</optgroup>`;
+                } else {
+                    html += `<option value="${p.id}">${p.name}</option>`;
+                }
             });
+            return html;
+        };
+
+        if (filterProductCategory) {
+            filterProductCategory.innerHTML = buildOptionsHtml(true);
         }
         if (pInputCategory) {
-            pInputCategory.innerHTML = '<option value="">Selecciona categoría</option>';
-            allCategories.forEach(c => {
-                pInputCategory.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-            });
+            pInputCategory.innerHTML = buildOptionsHtml(false);
         }
     }
 
