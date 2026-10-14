@@ -364,8 +364,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /* Supabase Form Submission (Leads) */
-    const contactForm = document.querySelector('.main-form');
-    if (contactForm) {
+    /* Supabase Form Submission (Leads) */
+    const contactForms = document.querySelectorAll('.main-form, #mainContactForm, #contactoPageForm');
+    contactForms.forEach(contactForm => {
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -377,15 +378,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.innerText = 'Enviando...';
             }
 
+            const isContactoPage = window.location.pathname.toLowerCase().includes('contacto');
+
             const formData = {
-                full_name: document.getElementById('nombre')?.value?.trim(),
-                phone: document.getElementById('telefono')?.value?.trim(),
-                email: document.getElementById('email')?.value?.trim(),
-                units_count: parseInt(document.getElementById('cantidad')?.value, 10) || null,
-                state: document.getElementById('estado')?.value || null,
-                product_interest: document.getElementById('interes')?.value?.trim() || null,
-                message: document.getElementById('mensaje')?.value?.trim() || null,
-                source_page: 'inicio'
+                full_name: contactForm.querySelector('[name="nombre"]')?.value?.trim() || '',
+                phone: contactForm.querySelector('[name="telefono"]')?.value?.trim() || '',
+                email: contactForm.querySelector('[name="email"]')?.value?.trim() || '',
+                units_count: parseInt(contactForm.querySelector('[name="cantidad"]')?.value, 10) || null,
+                state: contactForm.querySelector('[name="estado"]')?.value || null,
+                product_interest: contactForm.querySelector('[name="interes"]')?.value?.trim() || null,
+                message: contactForm.querySelector('[name="mensaje"]')?.value?.trim() || null,
+                source_page: isContactoPage ? 'contacto' : 'inicio'
             };
 
             try {
@@ -415,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-    }
+    });
 
     // 5. Mobile Navigation Mega Menu & Accordion Support
     const hasMegamenu = document.querySelector('.has-megamenu');

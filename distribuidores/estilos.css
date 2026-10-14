@@ -1,0 +1,152 @@
+/* Directorio Imbera - fondo blanco #FFFFFF */
+:root {
+  --blue: #002D62;
+  --blue-light: #eaf3f9;
+  --border: #e1e8ed;
+  --text: #243746;
+  --muted: #687783;
+  --accent: #0f6ea8;
+}
+* { box-sizing: border-box; }
+html, body { background: #FFFFFF; }
+button, select { font: inherit; }
+#sucursales-container { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 36px; background: #FFFFFF; color: var(--text); font-family: 'Outfit', Arial, Helvetica, sans-serif; }
+.directory-header { text-align: center; margin: 0 auto 26px; }
+.eyebrow { margin: 0 0 7px; color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; }
+.directory-header h1 { margin: 0; color: #002D62; font-size: clamp(27px, 4vw, 40px); line-height: 1.12; }
+.intro { max-width: 680px; margin: 10px auto 0; color: var(--muted); font-size: 16px; line-height: 1.55; }
+.state-selector { width: min(620px, 100%); margin: 0 auto 30px; }
+.state-selector label { display: block; margin-bottom: 9px; color: #002D62; font-size: 15px; font-weight: 700; }
+.state-selector select { width: 100%; min-height: 52px; padding: 0 16px; border: 1px solid #b9cbd8; border-radius: 7px; background: #FFFFFF; color: var(--text); cursor: pointer; font-size: 15px; }
+.state-selector select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(15,110,168,.12); }
+.welcome-message { width: min(620px, 100%); margin: 0 auto; padding: 30px 20px; text-align: center; border: 1px solid var(--border); border-radius: 10px; background: #FFFFFF; }
+.welcome-icon { width: 46px; height: 46px; margin: 0 auto 12px; display: grid; place-items: center; border-radius: 50%; background: var(--blue-light); color: #002D62; font-size: 25px; }
+.welcome-message h2 { margin: 0; color: #002D62; font-size: 22px; }
+.welcome-message p { margin: 7px 0 0; color: var(--muted); line-height: 1.5; }
+.state-section[hidden], .welcome-message[hidden], .no-results[hidden] { display: none !important; }
+
+/* Banner de Título por Estado (Azul Marino con esquinas redondeadas) */
+.state-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 12px 0 22px;
+  padding: 14px 20px;
+  background: #002D62;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 45, 98, 0.15);
+}
+.state-heading h2 {
+  margin: 0;
+  color: #FFFFFF;
+  font-size: clamp(20px, 2.5vw, 26px);
+  font-weight: 700;
+}
+.state-heading .eyebrow {
+  display: none;
+}
+.change-state {
+  padding: 7px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  background: transparent;
+  color: #FFFFFF;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  transition: background 0.2s ease;
+}
+.change-state:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* Rejilla de 3 Columnas */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+/* Tarjeta de Distribuidor */
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  background: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 18px;
+}
+.card-title {
+  margin: 0 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e8ecef;
+  color: #002b49;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+.card-title span {
+  color: #5b7083;
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: none;
+}
+.card-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.card-content p {
+  margin: 6px 0;
+  color: #243746;
+  font-size: 14px;
+  line-height: 1.48;
+}
+.card-content strong {
+  color: #334155;
+  font-weight: 600;
+}
+.card-content a {
+  color: #0f6ea8;
+  text-decoration: underline;
+}
+.card-content a:hover {
+  color: #002D62;
+}
+
+/* Botón Destacado Azul Marino */
+.action-link {
+  display: inline-block;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none !important;
+  font-size: 13px;
+  font-weight: 700;
+  background: #002D62;
+  color: #FFFFFF !important;
+  transition: background 0.2s ease;
+}
+.action-link:hover {
+  background: #001C3D;
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+}
+
+.no-results { margin: 20px auto; text-align: center; color: var(--muted); }
+
+/* Adaptación Responsiva */
+@media (max-width: 992px) {
+  .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+}
+@media (max-width: 640px) {
+  #sucursales-container { width: min(100% - 24px, 680px); padding-top: 20px; }
+  .cards-grid { grid-template-columns: 1fr; gap: 14px; }
+  .state-heading { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .change-state { width: 100%; text-align: center; }
+}
