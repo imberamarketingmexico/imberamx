@@ -36,26 +36,81 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const { data, error } = await query.single();
             if (data && !error) {
+                // Short model version preferred as requested by user
+                const displayName = data.model_code || data.commercial_name;
+
                 // Update DOM elements dynamically
-                document.title = `${data.commercial_name} | Imbera`;
+                document.title = `${displayName} (Código: ${data.sku}) | Imbera México`;
                 const breadcrumbName = document.getElementById('breadcrumb-product-name');
                 const commName = document.getElementById('pCommercialName');
                 const skuCode = document.getElementById('pSkuCode');
-                const techName = document.getElementById('pTechName');
                 const quoteModelField = document.getElementById('quoteModelField');
                 const quoteProductTitle = document.querySelector('.quote-product-name');
-                const pdfBtn = document.getElementById('downloadPdfBtn');
 
-                if (breadcrumbName) breadcrumbName.innerText = data.commercial_name;
-                if (commName) commName.innerText = data.commercial_name;
+                if (breadcrumbName) breadcrumbName.innerText = displayName;
+                if (commName) commName.innerText = displayName;
                 if (skuCode) skuCode.innerText = data.sku;
-                if (techName) techName.innerText = data.subtitle || data.model_code || '';
-                if (quoteModelField) quoteModelField.value = `${data.commercial_name} (Código: ${data.sku})`;
-                if (quoteProductTitle) quoteProductTitle.innerText = data.commercial_name;
+                if (quoteModelField) quoteModelField.value = `${displayName} (Código: ${data.sku})`;
+                if (quoteProductTitle) quoteProductTitle.innerText = displayName;
 
-                if (data.main_image && mainImg) {
-                    mainImg.src = data.main_image;
+                if (mainImg) {
+                    if (data.main_image) mainImg.src = data.main_image;
+                    mainImg.alt = `${displayName} - Imbera México`;
                 }
+
+                // Render Description bullets if provided
+                if (data.description) {
+                    const bulletsList = document.querySelector('.product-bullets');
+                    if (bulletsList) {
+                        const lines = data.description.split('\n').map(l => l.replace(/^[•\-\*]\s*/, '').trim()).filter(Boolean);
+                        if (lines.length > 0) {
+                            bulletsList.innerHTML = lines.map(line => `<li>${line}</li>`).join('');
+                        }
+                    }
+                }
+
+                // Dynamic SEO Tags
+                const descText = data.description ? data.description.replace(/\n/g, ' ').slice(0, 160) : `Ficha técnica oficial, dimensiones y cotización del equipo Imbera ${displayName} (Código: ${data.sku}).`;
+                const metaDesc = document.querySelector('meta[name="description"]');
+                if (metaDesc) metaDesc.content = descText;
+
+                const ogTitle = document.querySelector('meta[property="og:title"]');
+                if (ogTitle) ogTitle.content = `${displayName} | Imbera México`;
+                const ogDesc = document.querySelector('meta[property="og:description"]');
+                if (ogDesc) ogDesc.content = descText;
+                const ogImg = document.querySelector('meta[property="og:image"]');
+                if (ogImg && data.main_image) ogImg.content = data.main_image;
+                const ogUrl = document.querySelector('meta[property="og:url"]');
+                if (ogUrl) ogUrl.content = window.location.href;
+
+                // Dynamic Schema.org Product JSON-LD
+                let productSchemaScript = document.getElementById('schema-product');
+                if (!productSchemaScript) {
+                    productSchemaScript = document.createElement('script');
+                    productSchemaScript.id = 'schema-product';
+                    productSchemaScript.type = 'application/ld+json';
+                    document.head.appendChild(productSchemaScript);
+                }
+                productSchemaScript.text = JSON.stringify({
+                    "@context": "https://schema.org/",
+                    "@type": "Product",
+                    "name": displayName,
+                    "image": [data.main_image || (window.location.origin + "/images/Enfriador_G3D42_Especial.jpg")],
+                    "description": descText,
+                    "sku": data.sku,
+                    "mpn": data.model_code || data.sku,
+                    "brand": {
+                        "@type": "Brand",
+                        "name": "Imbera"
+                    },
+                    "offers": {
+                        "@type": "Offer",
+                        "url": window.location.href,
+                        "priceCurrency": "MXN",
+                        "availability": "https://schema.org/InStock",
+                        "itemCondition": "https://schema.org/NewCondition"
+                    }
+                });
 
                 // Handle 3 PDF buttons: only show if URL exists
                 const pdf1Btn = document.getElementById('downloadPdfBtn');

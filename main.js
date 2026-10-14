@@ -117,6 +117,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Keyboard accessibility for product cards
+    document.querySelectorAll('.product-card').forEach(card => {
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                card.click();
+            }
+        });
+    });
+
     /* Stats Counter Animation */
     const statsSection = document.getElementById('stats');
     const counters = document.querySelectorAll('.counter, .counter-target');

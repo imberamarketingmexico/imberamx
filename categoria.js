@@ -172,9 +172,56 @@ document.addEventListener('DOMContentLoaded', async () => {
     function updateHeaderAndBreadcrumbs(tree) {
         const currentCat = tree.find(c => c.slug === selectedCatSlug) || tree[0];
         const currentSub = currentCat?.subcategories?.find(s => s.slug === selectedSubSlug);
+        const titleText = currentSub ? currentSub.name : (currentCat ? currentCat.name : 'Catálogo de Equipos');
+
+        // Dynamic SEO Page Title & Description
+        document.title = `${titleText} | Catálogo Oficial Imbera México`;
+        let metaDesc = document.querySelector('meta[name="description"]');
+        if (!metaDesc) {
+            metaDesc = document.createElement('meta');
+            metaDesc.name = 'description';
+            document.head.appendChild(metaDesc);
+        }
+        metaDesc.content = `Descubre los equipos de refrigeración comercial Imbera en la categoría ${titleText}. Alta eficiencia energética, durabilidad y garantía oficial.`;
+
+        // BreadcrumbList JSON-LD for Search Engines
+        const breadcrumbSchema = {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Inicio",
+                    "item": window.location.origin + "/index.html"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": currentCat ? currentCat.name : "Catálogo",
+                    "item": window.location.origin + `/categoria.html?cat=${currentCat?.slug || ''}`
+                }
+            ]
+        };
+        if (currentSub) {
+            breadcrumbSchema.itemListElement.push({
+                "@type": "ListItem",
+                "position": 3,
+                "name": currentSub.name,
+                "item": window.location.href
+            });
+        }
+        let bcScript = document.getElementById('schema-breadcrumbs');
+        if (!bcScript) {
+            bcScript = document.createElement('script');
+            bcScript.id = 'schema-breadcrumbs';
+            bcScript.type = 'application/ld+json';
+            document.head.appendChild(bcScript);
+        }
+        bcScript.text = JSON.stringify(breadcrumbSchema);
 
         if (heroTitleEl) {
-            heroTitleEl.innerText = currentSub ? currentSub.name : (currentCat ? currentCat.name : 'Catálogo de Equipos');
+            heroTitleEl.innerText = titleText;
         }
 
         if (breadcrumbsSubEl) {
@@ -231,9 +278,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             const val = sortSelectEl.value;
             let sorted = [...dbProducts];
             if (val === 'name_asc') {
-                sorted.sort((a, b) => a.commercial_name.localeCompare(b.commercial_name));
+                sorted.sort((a, b) => {
+                    const nameA = a.model_code || a.commercial_name;
+                    const nameB = b.model_code || b.commercial_name;
+                    return nameA.localeCompare(nameB);
+                });
             } else if (val === 'name_desc') {
-                sorted.sort((a, b) => b.commercial_name.localeCompare(a.commercial_name));
+                sorted.sort((a, b) => {
+                    const nameA = a.model_code || a.commercial_name;
+                    const nameB = b.model_code || b.commercial_name;
+                    return nameB.localeCompare(nameA);
+                });
             }
             renderProductsGrid(sorted);
         });
@@ -254,15 +309,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         catalogGridEl.innerHTML = products.map(p => {
+            // Short model name preferred, fallback to commercial name
+            const displayName = p.model_code || p.commercial_name;
+            const targetUrl = `producto.html?sku=${encodeURIComponent(p.sku)}`;
+
             return `
-                <div class="catalog-item">
+                <div class="catalog-item" onclick="window.location.href='${targetUrl}'" role="link" tabindex="0" aria-label="Ver detalles de ${displayName}">
                     <div class="item-img">
-                        <img src="${p.main_image || 'images/Enfriador_G3D42_Especial.jpg'}" alt="${p.commercial_name}">
+                        <img src="${p.main_image || 'images/Enfriador_G3D42_Especial.jpg'}" alt="${displayName} - Código ${p.sku}" loading="lazy">
                     </div>
                     <div class="item-info">
-                        <h3>${p.commercial_name}</h3>
+                        <h3>${displayName}</h3>
                         <p>Código: <strong>${p.sku}</strong></p>
-                        <a href="producto.html?sku=${encodeURIComponent(p.sku)}" class="btn-view">Ver equipo</a>
+                        <a href="${targetUrl}" class="btn-view" onclick="event.stopPropagation();">Ver equipo</a>
                     </div>
                 </div>
             `;
@@ -271,23 +330,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function renderFallbackGrid() {
         const sampleProducts = [
-            { name: 'ENFRIADOR G3D42 ESPECIAL', code: '1030002', img: 'images/Enfriador_G3D42_Especial.jpg' },
-            { name: 'ENFRIADOR VR17', code: '1024175', img: 'images/Enfriador_VR17.jpg' },
-            { name: 'ENFRIADOR VR17 ESPECIAL', code: '1023825', img: 'images/Enfriador_VR17_especial.jpg' },
-            { name: 'ENFRIADOR VMC19B', code: '1025843', img: 'images/Enfriador_VMC19B.jpg' }
+            { name: 'G3D42 ESPECIAL', code: '1030002', img: 'images/Enfriador_G3D42_Especial.jpg' },
+            { name: 'VR17', code: '1024175', img: 'images/Enfriador_VR17.jpg' },
+            { name: 'VR17 ESPECIAL', code: '1023825', img: 'images/Enfriador_VR17_especial.jpg' },
+            { name: 'VMC19B', code: '1025843', img: 'images/Enfriador_VMC19B.jpg' }
         ];
 
         if (resultsCountEl) resultsCountEl.innerText = `Mostrando ${sampleProducts.length} productos`;
 
-        catalogGridEl.innerHTML = sampleProducts.map(p => `
-            <div class="catalog-item">
-                <div class="item-img"><img src="${p.img}" alt="${p.name}"></div>
-                <div class="item-info">
-                    <h3>${p.name}</h3>
-                    <p>Código: <strong>${p.code}</strong></p>
-                    <a href="producto.html?sku=${p.code}" class="btn-view">Ver equipo</a>
+        catalogGridEl.innerHTML = sampleProducts.map(p => {
+            const targetUrl = `producto.html?sku=${encodeURIComponent(p.code)}`;
+            return `
+                <div class="catalog-item" onclick="window.location.href='${targetUrl}'" role="link" tabindex="0" aria-label="Ver detalles de ${p.name}">
+                    <div class="item-img"><img src="${p.img}" alt="${p.name} - Código ${p.code}" loading="lazy"></div>
+                    <div class="item-info">
+                        <h3>${p.name}</h3>
+                        <p>Código: <strong>${p.code}</strong></p>
+                        <a href="${targetUrl}" class="btn-view" onclick="event.stopPropagation();">Ver equipo</a>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
+    }
+
+    // Keyboard accessibility: Enter or Space activates card link
+    if (catalogGridEl) {
+        catalogGridEl.addEventListener('keydown', (e) => {
+            const item = e.target.closest('.catalog-item');
+            if (item && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                item.click();
+            }
+        });
     }
 });

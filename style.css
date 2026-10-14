@@ -771,6 +771,13 @@ ul {
     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.1);
 }
 
 .product-image {
@@ -1485,12 +1492,17 @@ ul {
     transition: var(--transition);
     text-align: center;
     border: 1px solid #f2f2f2;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
 }
 
-.catalog-item:hover {
+.catalog-item:hover,
+.catalog-item:focus-visible {
     transform: translateY(-8px);
     box-shadow: 0 15px 35px rgba(0,0,0,0.08);
     border-color: var(--accent-color);
+    outline: none;
 }
 
 .item-img {

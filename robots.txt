@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /admin.css
+Disallow: /admin.js
+
+Sitemap: https://imberamx-u5gh.vercel.app/sitemap.xml
