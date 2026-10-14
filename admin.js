@@ -464,9 +464,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const specs = p.specifications || {};
             const extDim = (specs.ext_height && specs.ext_width) ? `${specs.ext_height}x${specs.ext_width}x${specs.ext_depth || 0}mm` : 'N/D';
             const capacityStr = specs.capacity || 'N/D';
+            const isVisible = p.is_active !== false; // Default true
 
             return `
-                <tr>
+                <tr class="${isVisible ? '' : 'row-product-hidden'}">
                     <td>
                         <img src="${p.main_image || 'images/indeximg.png'}" alt="Foto" class="table-thumb">
                     </td>
@@ -484,12 +485,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </td>
                     <td><small>${extDim}</small></td>
                     <td>
-                        <span class="badge-status ${p.is_active ? 'status-cerrado' : 'status-descartado'}">
-                            ${p.is_active ? 'Activo' : 'Inactivo'}
+                        <span class="badge-status ${isVisible ? 'status-cerrado' : 'status-descartado'}" style="display: inline-flex; align-items: center; gap: 4px;">
+                            <i class="fa-solid ${isVisible ? 'fa-circle-check' : 'fa-eye-slash'}"></i>
+                            ${isVisible ? 'Visible' : 'Oculto'}
                         </span>
                     </td>
                     <td>
                         <div class="table-actions">
+                            <button type="button" class="btn-table-action btn-toggle-visibility ${isVisible ? 'visible' : 'hidden'}" data-id="${p.id}" data-active="${isVisible ? 'true' : 'false'}" title="${isVisible ? 'Visible en el sitio (Clic para ocultar)' : 'Oculto del sitio (Clic para mostrar)'}">
+                                <i class="fa-solid ${isVisible ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                            </button>
                             <a href="producto.html?sku=${encodeURIComponent(p.sku)}" target="_blank" class="btn-table-action" title="Ver en sitio web">
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </a>
@@ -504,6 +509,44 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </tr>
             `;
         }).join('');
+
+        // Visibility Toggle (Eye Button) Handlers
+        document.querySelectorAll('.btn-toggle-visibility').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const prodId = btn.getAttribute('data-id');
+                const p = allProducts.find(x => x.id === prodId);
+                if (!p) return;
+
+                const currentActive = p.is_active !== false;
+                const newActive = !currentActive;
+
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+                try {
+                    const { error } = await sb.from('products').update({ is_active: newActive }).eq('id', prodId);
+                    if (error) throw error;
+
+                    p.is_active = newActive;
+
+                    // Invalidate sessionStorage cache for this SKU
+                    try {
+                        sessionStorage.removeItem('imbera_prod_sku_' + p.sku);
+                        if (p.model_code) {
+                            const mSlug = p.model_code.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+                            sessionStorage.removeItem('imbera_prod_slug_' + mSlug);
+                        }
+                    } catch(err) {}
+
+                    applyProductFilters();
+                } catch(err) {
+                    alert('Error al actualizar visibilidad: ' + err.message);
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid ${currentActive ? 'fa-eye' : 'fa-eye-slash'}"></i>`;
+                }
+            });
+        });
 
         // Edit handlers
         document.querySelectorAll('.btn-edit-product').forEach(btn => {
@@ -537,9 +580,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         filterProductCategory.addEventListener('change', () => applyProductFilters());
     }
 
+    const filterProductStatus = document.getElementById('filterProductStatus');
+    if (filterProductStatus) {
+        filterProductStatus.addEventListener('change', () => applyProductFilters());
+    }
+
     function applyProductFilters() {
         const query = (searchProductsInput?.value || '').toLowerCase();
         const catId = filterProductCategory?.value || 'all';
+        const statusFilter = document.getElementById('filterProductStatus')?.value || 'all';
 
         const filtered = allProducts.filter(p => {
             const matchesQuery = (
@@ -548,7 +597,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 (p.model_code && p.model_code.toLowerCase().includes(query))
             );
             const matchesCat = (catId === 'all' || p.category_id === catId);
-            return matchesQuery && matchesCat;
+
+            const isVisible = p.is_active !== false;
+            let matchesStatus = true;
+            if (statusFilter === 'active') matchesStatus = isVisible;
+            if (statusFilter === 'hidden') matchesStatus = !isVisible;
+
+            return matchesQuery && matchesCat && matchesStatus;
         });
 
         renderProductsTable(filtered);
@@ -560,6 +615,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             productForm.reset();
             editProductId.value = '';
             productModalTitle.innerText = 'Agregar Nuevo Equipo';
+            const activeCheckbox = document.getElementById('pInputIsActive');
+            if (activeCheckbox) activeCheckbox.checked = true; // Default: visible upon creation
             productModal.classList.add('active');
         });
     }
@@ -568,6 +625,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         productForm.reset();
         editProductId.value = p.id;
         productModalTitle.innerText = `Editar Equipo: ${p.commercial_name}`;
+
+        const activeCheckbox = document.getElementById('pInputIsActive');
+        if (activeCheckbox) activeCheckbox.checked = (p.is_active !== false);
 
         document.getElementById('pInputCommercialName').value = p.commercial_name || '';
         document.getElementById('pInputSku').value = p.sku || '';
@@ -645,6 +705,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     voltage: document.getElementById('specVoltage').value || null,
                     shelves: document.getElementById('specShelves').value || null
                 },
+                is_active: document.getElementById('pInputIsActive') ? document.getElementById('pInputIsActive').checked : true,
                 updated_at: new Date().toISOString()
             };
 
@@ -656,6 +717,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const { error } = await sb.from('products').insert([payload]);
                     if (error) throw error;
                 }
+
+                // Invalidate cache
+                try {
+                    sessionStorage.removeItem('imbera_prod_sku_' + codeVal);
+                } catch(e) {}
 
                 productModal.classList.remove('active');
                 await fetchProducts();
