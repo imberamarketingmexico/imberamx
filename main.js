@@ -143,4 +143,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
         observer.observe(statsSection);
     }
+
+    /* Supabase Form Submission (Leads) */
+    const contactForm = document.querySelector('.main-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = contactForm.querySelector('.btn-submit');
+            const originalBtnText = submitBtn ? submitBtn.innerText : 'Enviar';
+            
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Enviando...';
+            }
+
+            const formData = {
+                full_name: document.getElementById('nombre')?.value?.trim(),
+                phone: document.getElementById('telefono')?.value?.trim(),
+                email: document.getElementById('email')?.value?.trim(),
+                units_count: parseInt(document.getElementById('cantidad')?.value, 10) || null,
+                state: document.getElementById('estado')?.value || null,
+                product_interest: document.getElementById('interes')?.value?.trim() || null,
+                message: document.getElementById('mensaje')?.value?.trim() || null,
+                source_page: 'inicio'
+            };
+
+            try {
+                const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
+                if (!sb) {
+                    throw new Error('Supabase no está inicializado.');
+                }
+
+                const { data, error } = await sb.from('leads').insert([formData]);
+
+                if (error) {
+                    throw error;
+                }
+
+                alert('¡Gracias por comunicarte con Imbera! Tu solicitud ha sido recibida con éxito y un ejecutivo te contactará en breve.');
+                contactForm.reset();
+            } catch (err) {
+                console.error('Error al enviar formulario a Supabase:', err);
+                alert('Hubo un inconveniente al enviar tu información. Por favor intenta de nuevo o comunícate al 427 271 8000.');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalBtnText;
+                }
+            }
+        });
+    }
 });
