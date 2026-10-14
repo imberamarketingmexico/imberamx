@@ -13,69 +13,141 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e) {}
     }
 
-    /* Carousel Logic */
-    const slides = document.querySelectorAll('.carousel-slide');
+    /* Carousel Logic with Dynamic Banners & Responsive Picture Support */
+    const carouselTrack = document.querySelector('.carousel-track');
+    const carouselIndicators = document.querySelector('.carousel-indicators');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
-    const indicators = document.querySelectorAll('.indicator');
     
     let currentSlide = 0;
-    const totalSlides = slides.length;
-    let autoPlayInterval;
+    let autoPlayInterval = null;
 
-    function showSlide(index) {
-        // Reset all
-        slides.forEach(slide => slide.classList.remove('active'));
-        indicators.forEach(ind => ind.classList.remove('active'));
+    function bindCarouselControls() {
+        const slides = document.querySelectorAll('.carousel-slide');
+        const indicators = document.querySelectorAll('.indicator');
+        const totalSlides = slides.length;
+        if (totalSlides === 0) return;
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            indicators.forEach(ind => ind.classList.remove('active'));
+            
+            if (index >= totalSlides) currentSlide = 0;
+            else if (index < 0) currentSlide = totalSlides - 1;
+            else currentSlide = index;
+            
+            if (slides[currentSlide]) slides[currentSlide].classList.add('active');
+            if (indicators[currentSlide]) indicators[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function startAutoPlay() {
+            clearInterval(autoPlayInterval);
+            if (totalSlides > 1) {
+                autoPlayInterval = setInterval(nextSlide, 5000);
+            }
+        }
+
+        function resetAutoPlay() {
+            clearInterval(autoPlayInterval);
+            startAutoPlay();
+        }
+
+        if (nextBtn) {
+            nextBtn.onclick = (e) => {
+                e.preventDefault();
+                nextSlide();
+                resetAutoPlay();
+            };
+        }
         
-        // Handle index bounds
-        if (index >= totalSlides) currentSlide = 0;
-        else if (index < 0) currentSlide = totalSlides - 1;
-        else currentSlide = index;
-        
-        // Show current
-        slides[currentSlide].classList.add('active');
-        indicators[currentSlide].classList.add('active');
-    }
+        if (prevBtn) {
+            prevBtn.onclick = (e) => {
+                e.preventDefault();
+                prevSlide();
+                resetAutoPlay();
+            };
+        }
 
-    function nextSlide() {
-        showSlide(currentSlide + 1);
-    }
-
-    function prevSlide() {
-        showSlide(currentSlide - 1);
-    }
-
-    // Event Listeners
-    if(nextBtn) nextBtn.addEventListener('click', () => {
-        nextSlide();
-        resetAutoPlay();
-    });
-    
-    if(prevBtn) prevBtn.addEventListener('click', () => {
-        prevSlide();
-        resetAutoPlay();
-    });
-
-    indicators.forEach((indicator, index) => {
-        indicator.addEventListener('click', () => {
-            showSlide(index);
-            resetAutoPlay();
+        indicators.forEach((indicator, index) => {
+            indicator.onclick = (e) => {
+                e.preventDefault();
+                showSlide(index);
+                resetAutoPlay();
+            };
         });
-    });
 
-    // Auto Play
-    function startAutoPlay() {
-        autoPlayInterval = setInterval(nextSlide, 5000);
-    }
-
-    function resetAutoPlay() {
-        clearInterval(autoPlayInterval);
         startAutoPlay();
     }
 
-    if (slides.length > 0) {
-        startAutoPlay();
+    // Dynamic Loader for Hero Banners from Supabase or Cache
+    async function loadHeroBanners() {
+        if (!carouselTrack) return;
+        try {
+            let banners = [];
+            // Check Supabase first
+            if (window.imberaSupabase) {
+                try {
+                    const sb = window.imberaSupabase.client();
+                    const { data, error } = await sb.from('banners')
+                        .select('*')
+                        .eq('is_active', true)
+                        .order('display_order', { ascending: true });
+                    if (data && !error && data.length > 0) {
+                        banners = data;
+                    }
+                } catch(e) {
+                    // Fallback silently
+                }
+            }
+
+            // Fallback to localStorage if no Supabase response
+            if (!banners || banners.length === 0) {
+                const cached = localStorage.getItem('imbera_banners');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    banners = parsed.filter(b => b.is_active !== false);
+                }
+            }
+
+            // If we have custom active banners, inject them dynamically
+            if (banners && banners.length > 0) {
+                carouselTrack.innerHTML = banners.map((b, idx) => `
+                    <div class="carousel-slide ${idx === 0 ? 'active' : ''}">
+                        <a href="${b.link_url || 'javascript:void(0)'}" 
+                           ${b.link_url && b.target_blank ? 'target="_blank" rel="noopener noreferrer"' : ''} 
+                           class="carousel-slide-link ${!b.link_url ? 'no-click' : ''}" 
+                           aria-label="${b.title || 'Banner Imbera'}">
+                            <picture>
+                                ${b.mobile_image ? `<source media="(max-width: 768px)" srcset="${b.mobile_image}">` : ''}
+                                <img src="${b.desktop_image}" alt="${b.title || 'Banner Imbera'}" ${idx > 0 ? 'loading="lazy"' : ''}>
+                            </picture>
+                        </a>
+                    </div>
+                `).join('');
+
+                if (carouselIndicators) {
+                    carouselIndicators.innerHTML = banners.map((_, idx) => `
+                        <span class="indicator ${idx === 0 ? 'active' : ''}" data-index="${idx}"></span>
+                    `).join('');
+                }
+            }
+        } catch(err) {
+            console.warn('Hero banner dynamic load error:', err);
+        } finally {
+            bindCarouselControls();
+        }
+    }
+
+    if (carouselTrack) {
+        loadHeroBanners();
     }
 
     /* Dropdown Hover Optimization (Optional: handled by CSS but JS can add delay for better UX) */

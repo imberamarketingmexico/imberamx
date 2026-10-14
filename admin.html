@@ -87,6 +87,10 @@
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                     <span>Almacenamiento (Storage)</span>
                 </a>
+                <a href="#tab-banners" class="menu-item" data-tab="tab-banners">
+                    <i class="fa-solid fa-images"></i>
+                    <span>Banners & Contenido</span>
+                </a>
             </nav>
 
             <div class="sidebar-footer">
@@ -358,6 +362,55 @@
                         <div id="storageUploadProgress" class="upload-progress-list"></div>
                     </div>
                 </section>
+                
+                <!-- ========================================================================= -->
+                <!-- TAB 6: BANNERS & CONTENIDO HERO -->
+                <!-- ========================================================================= -->
+                <section id="tab-banners" class="tab-pane">
+                    <div class="content-toolbar">
+                        <div class="toolbar-search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="searchBannersInput" placeholder="Buscar banners por título o enlace...">
+                        </div>
+                        <div class="toolbar-actions">
+                            <button type="button" class="btn-refresh" id="btnRefreshBanners" title="Refrescar banners">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                            <button type="button" class="btn-add-primary" id="btnOpenAddBannerModal">
+                                <i class="fa-solid fa-plus"></i> Agregar Nuevo Banner
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="info-alert-box" style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px;">
+                        <i class="fa-solid fa-circle-info" style="color: #2563eb; font-size: 18px; margin-top: 2px;"></i>
+                        <div style="font-size: 13px; color: #1e3a8a; line-height: 1.5;">
+                            <strong>Personalización de Banners para Escritorio y Móviles:</strong><br>
+                            Sube una versión apaisada (panorámica) para pantallas de computadora y una versión cuadrada (o vertical adaptada) para smartphones. También puedes definir el enlace a la sección o página correspondiente (ej. <code>categoria.html?cat=enfriadores</code> o <code>#contacto</code>).
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-box">
+                        <table class="admin-data-table" id="bannersTable">
+                            <thead>
+                                <tr>
+                                    <th>Orden</th>
+                                    <th>Desktop (Apaisada)</th>
+                                    <th>Móvil (Cuadrada)</th>
+                                    <th>Título / Identificador</th>
+                                    <th>Enlace Destino</th>
+                                    <th>Estatus</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bannersTableBody">
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">Cargando banners...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
 
             </div>
         </main>
@@ -554,6 +607,94 @@
             <div class="lead-modal-content" id="leadModalContent">
                 <!-- Injected via JS -->
             </div>
+        </div>
+    <!-- MODAL: CREAR / EDITAR BANNER -->
+    <div id="bannerModal" class="admin-modal-backdrop">
+        <div class="admin-modal-card" style="max-width: 780px;">
+            <div class="admin-modal-header">
+                <h3 id="bannerModalTitle">Agregar Nuevo Banner</h3>
+                <button type="button" class="btn-close-modal" id="btnCloseBannerModal">&times;</button>
+            </div>
+            
+            <form id="bannerForm" class="product-form-grid">
+                <input type="hidden" id="editBannerId">
+
+                <div class="form-group full-col" style="background: #f8fafc; padding: 12px 18px; border-radius: 10px; border: 1.5px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                    <div>
+                        <strong style="color: #0f172a; font-size: 14px;"><i class="fa-solid fa-eye" style="color: #10b981; margin-right: 6px;"></i> Publicar en el Carrusel de Inicio</strong>
+                        <p style="margin: 3px 0 0; font-size: 12px; color: #64748b;">Si está activo, el banner se mostrará de inmediato en el carrusel de la página principal.</p>
+                    </div>
+                    <label class="switch-toggle" title="Activar / Desactivar visibilidad">
+                        <input type="checkbox" id="bInputIsActive" checked>
+                        <span class="slider-toggle"></span>
+                    </label>
+                </div>
+
+                <div class="form-group full-col">
+                    <label for="bInputTitle">Título o Identificador del Banner *</label>
+                    <input type="text" id="bInputTitle" placeholder="Ej: Soluciones Imbera Refrigeración Comercial" required>
+                </div>
+
+                <!-- Imagen Desktop -->
+                <div class="form-group full-col">
+                    <label><strong>1. Imagen Desktop (Apaisada / Panorámica) *</strong></label>
+                    <p style="font-size: 12px; color: #64748b; margin-top: -4px; margin-bottom: 8px;">Recomendado: Formato horizontal apaisado (~1920x600 px o similar).</p>
+                    
+                    <div class="field-dropzone" id="bannerDropzoneDesktop">
+                        <i class="fa-solid fa-desktop text-primary"></i>
+                        <span class="dropzone-text">Arrastra aquí la imagen apaisada o haz clic para subir</span>
+                        <input type="file" id="bannerFileDesktop" accept="image/*" style="display: none;">
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <input type="url" id="bInputDesktopImage" placeholder="O pega la URL directa de la imagen desktop..." required>
+                    </div>
+                    <div id="previewDesktopContainer" style="margin-top: 10px; display: none;">
+                        <img id="imgPreviewDesktop" src="" alt="Vista previa desktop" style="width: 100%; max-height: 140px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    </div>
+                </div>
+
+                <!-- Imagen Mobile -->
+                <div class="form-group full-col">
+                    <label><strong>2. Imagen Móvil (Versión más cuadrada para celulares)</strong></label>
+                    <p style="font-size: 12px; color: #64748b; margin-top: -4px; margin-bottom: 8px;">Recomendado: Formato más cuadrado (~800x800 o 600x700 px) para pantallas verticales. (Opcional, si se deja vacío se ajustará la versión desktop).</p>
+                    
+                    <div class="field-dropzone" id="bannerDropzoneMobile">
+                        <i class="fa-solid fa-mobile-screen-button text-green"></i>
+                        <span class="dropzone-text">Arrastra aquí la imagen móvil cuadrada o haz clic para subir</span>
+                        <input type="file" id="bannerFileMobile" accept="image/*" style="display: none;">
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <input type="url" id="bInputMobileImage" placeholder="O pega la URL de la imagen móvil...">
+                    </div>
+                    <div id="previewMobileContainer" style="margin-top: 10px; display: none;">
+                        <img id="imgPreviewMobile" src="" alt="Vista previa móvil" style="max-width: 150px; max-height: 150px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    </div>
+                </div>
+
+                <!-- Enlace y opciones -->
+                <div class="form-group">
+                    <label for="bInputLinkUrl">Enlace de Redirección (Link / URL)</label>
+                    <input type="text" id="bInputLinkUrl" placeholder="Ej: categoria.html?cat=enfriadores o #contacto">
+                    <small style="color: #64748b; font-size: 11px;">Al dar clic en el banner, redirigirá a esta sección o página.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="bInputOrder">Orden de visualización (1, 2, 3...)</label>
+                    <input type="number" id="bInputOrder" value="1" min="1" max="99">
+                </div>
+
+                <div class="form-group full-col" style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+                    <input type="checkbox" id="bInputTargetBlank" style="width: 18px; height: 18px; cursor: pointer;">
+                    <label for="bInputTargetBlank" style="margin: 0; cursor: pointer; font-size: 13px; font-weight: 500;">Abrir enlace en pestaña nueva (_blank)</label>
+                </div>
+
+                <div class="modal-footer-actions full-col">
+                    <button type="button" class="btn-modal-cancel" id="btnCancelBannerModal">Cancelar</button>
+                    <button type="submit" class="btn-modal-save" id="btnSaveBanner">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Banner
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 

@@ -80,6 +80,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     const storageFileInput = document.getElementById('storageFileInput');
     const storageUploadProgress = document.getElementById('storageUploadProgress');
 
+    // DOM: Banners & Contenido
+    let allBanners = [];
+    const bannersTableBody = document.getElementById('bannersTableBody');
+    const searchBannersInput = document.getElementById('searchBannersInput');
+    const btnRefreshBanners = document.getElementById('btnRefreshBanners');
+    const btnOpenAddBannerModal = document.getElementById('btnOpenAddBannerModal');
+    const bannerModal = document.getElementById('bannerModal');
+    const btnCloseBannerModal = document.getElementById('btnCloseBannerModal');
+    const btnCancelBannerModal = document.getElementById('btnCancelBannerModal');
+    const bannerForm = document.getElementById('bannerForm');
+    const bannerModalTitle = document.getElementById('bannerModalTitle');
+    const editBannerId = document.getElementById('editBannerId');
+    const bInputTitle = document.getElementById('bInputTitle');
+    const bInputIsActive = document.getElementById('bInputIsActive');
+    const bInputDesktopImage = document.getElementById('bInputDesktopImage');
+    const bInputMobileImage = document.getElementById('bInputMobileImage');
+    const bInputLinkUrl = document.getElementById('bInputLinkUrl');
+    const bInputOrder = document.getElementById('bInputOrder');
+    const bInputTargetBlank = document.getElementById('bInputTargetBlank');
+    const imgPreviewDesktop = document.getElementById('imgPreviewDesktop');
+    const previewDesktopContainer = document.getElementById('previewDesktopContainer');
+    const imgPreviewMobile = document.getElementById('imgPreviewMobile');
+    const previewMobileContainer = document.getElementById('previewMobileContainer');
+
     // --------------------------------------------------------------------------
     // 1. AUTHENTICATION (SUPABASE AUTH)
     // --------------------------------------------------------------------------
@@ -179,7 +203,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             fetchCategories(),
             fetchProducts(),
             fetchLeads(),
-            fetchAnalytics()
+            fetchAnalytics(),
+            fetchBanners()
         ]);
         renderKPIs();
     }
@@ -1074,6 +1099,322 @@ document.addEventListener('DOMContentLoaded', async () => {
                 card.innerHTML = `<span>${file.name}</span> <span class="text-danger">Error: ${err.message}</span>`;
             }
         }
+    }
+
+    // --------------------------------------------------------------------------
+    // 9. BANNERS MANAGEMENT (HERO CAROUSEL)
+    // --------------------------------------------------------------------------
+    const defaultInitialBanners = [
+        {
+            id: 'banner-default-1',
+            title: 'Soluciones Imbera Refrigeración Comercial',
+            desktop_image: 'images/banner_pc_5.webp',
+            mobile_image: 'images/banner_pc_5.webp',
+            link_url: 'categoria.html?cat=enfriadores',
+            target_blank: false,
+            display_order: 1,
+            is_active: true
+        },
+        {
+            id: 'banner-default-2',
+            title: 'Línea Health & Laboratorio',
+            desktop_image: 'images/bannerHealth.webp',
+            mobile_image: 'images/bannerHealth.webp',
+            link_url: 'categoria.html?cat=salud-y-laboratorio',
+            target_blank: false,
+            display_order: 2,
+            is_active: true
+        }
+    ];
+
+    async function fetchBanners() {
+        if (!bannersTableBody) return;
+        try {
+            const { data, error } = await sb.from('banners').select('*').order('display_order', { ascending: true });
+            if (data && !error && data.length > 0) {
+                allBanners = data;
+                localStorage.setItem('imbera_banners', JSON.stringify(data));
+            } else {
+                const cached = localStorage.getItem('imbera_banners');
+                if (cached) {
+                    allBanners = JSON.parse(cached);
+                } else {
+                    allBanners = defaultInitialBanners;
+                    localStorage.setItem('imbera_banners', JSON.stringify(defaultInitialBanners));
+                }
+            }
+        } catch(e) {
+            console.warn('Error fetching banners from Supabase, using localStorage fallback:', e);
+            const cached = localStorage.getItem('imbera_banners');
+            allBanners = cached ? JSON.parse(cached) : defaultInitialBanners;
+        }
+        renderBannersTable(allBanners);
+    }
+
+    function renderBannersTable(banners) {
+        if (!bannersTableBody) return;
+        if (!banners || banners.length === 0) {
+            bannersTableBody.innerHTML = '<tr><td colspan="7" class="text-center py-4">No hay banners registrados aún. Haz clic en "Agregar Nuevo Banner".</td></tr>';
+            return;
+        }
+
+        bannersTableBody.innerHTML = banners.map(b => {
+            const isVisible = b.is_active !== false;
+            const mobileSrc = b.mobile_image || b.desktop_image;
+            return `
+                <tr>
+                    <td><strong>#${b.display_order || 1}</strong></td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <img src="${b.desktop_image}" class="table-thumb" style="width: 85px; height: 38px; object-fit: cover; border-radius: 4px;" onerror="this.src='images/indeximg.png'">
+                            <small class="text-muted" style="font-size: 11px;">16:9 / Apaisado</small>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <img src="${mobileSrc}" class="table-thumb" style="width: 38px; height: 38px; object-fit: cover; border-radius: 4px;" onerror="this.src='images/indeximg.png'">
+                            <small class="text-muted" style="font-size: 11px;">${b.mobile_image ? 'Adaptada' : 'Heredada'}</small>
+                        </div>
+                    </td>
+                    <td>
+                        <strong>${b.title || 'Sin título'}</strong>
+                    </td>
+                    <td>
+                        ${b.link_url ? `<a href="${b.link_url}" target="_blank" style="color: #0b4372; font-weight: 600; text-decoration: underline; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-arrow-up-right-from-square"></i> ${b.link_url} ${b.target_blank ? '<span class="badge-pdf-check" style="font-size: 10px;">_blank</span>' : ''}</a>` : '<span style="color: #94a3b8; font-size: 12px;">Sin redirección</span>'}
+                    </td>
+                    <td>
+                        <span class="badge-status ${isVisible ? 'status-cerrado' : 'status-descartado'}" style="display: inline-flex; align-items: center; gap: 4px;">
+                            <i class="fa-solid ${isVisible ? 'fa-circle-check' : 'fa-eye-slash'}"></i>
+                            ${isVisible ? 'Visible' : 'Oculto'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <button type="button" class="btn-table-action btn-toggle-banner-vis ${isVisible ? 'visible' : 'hidden'}" data-id="${b.id}" title="${isVisible ? 'Clic para ocultar del carrusel' : 'Clic para mostrar en el carrusel'}">
+                                <i class="fa-solid ${isVisible ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                            </button>
+                            <button type="button" class="btn-table-action btn-edit-banner" data-id="${b.id}" title="Editar banner">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button type="button" class="btn-table-action delete btn-delete-banner" data-id="${b.id}" title="Eliminar banner">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        // Attach listeners for banner table actions
+        document.querySelectorAll('.btn-toggle-banner-vis').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const bId = btn.getAttribute('data-id');
+                const banner = allBanners.find(x => String(x.id) === String(bId));
+                if (!banner) return;
+
+                const newActive = !banner.is_active;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+                try {
+                    await sb.from('banners').update({ is_active: newActive }).eq('id', bId);
+                } catch(e) {
+                    console.warn('Supabase banner toggle fallback to local:', e);
+                }
+
+                banner.is_active = newActive;
+                localStorage.setItem('imbera_banners', JSON.stringify(allBanners));
+                renderBannersTable(allBanners);
+            });
+        });
+
+        document.querySelectorAll('.btn-edit-banner').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const bId = btn.getAttribute('data-id');
+                openEditBannerModal(bId);
+            });
+        });
+
+        document.querySelectorAll('.btn-delete-banner').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const bId = btn.getAttribute('data-id');
+                const banner = allBanners.find(x => String(x.id) === String(bId));
+                if (!banner) return;
+
+                if (!confirm(`¿Estás seguro de eliminar el banner "${banner.title || 'seleccionado'}"?`)) return;
+
+                try {
+                    await sb.from('banners').delete().eq('id', bId);
+                } catch(e) {
+                    console.warn('Supabase banner delete fallback to local:', e);
+                }
+
+                allBanners = allBanners.filter(x => String(x.id) !== String(bId));
+                localStorage.setItem('imbera_banners', JSON.stringify(allBanners));
+                renderBannersTable(allBanners);
+            });
+        });
+    }
+
+    function openEditBannerModal(bannerId) {
+        const b = allBanners.find(x => String(x.id) === String(bannerId));
+        if (!b) return;
+
+        bannerModalTitle.innerText = 'Editar Banner';
+        editBannerId.value = b.id;
+        bInputTitle.value = b.title || '';
+        bInputIsActive.checked = b.is_active !== false;
+        bInputDesktopImage.value = b.desktop_image || '';
+        bInputMobileImage.value = b.mobile_image || '';
+        bInputLinkUrl.value = b.link_url || '';
+        bInputOrder.value = b.display_order || 1;
+        bInputTargetBlank.checked = !!b.target_blank;
+
+        updateDesktopPreview(b.desktop_image);
+        updateMobilePreview(b.mobile_image);
+
+        bannerModal.classList.add('active');
+    }
+
+    function openAddBannerModal() {
+        bannerModalTitle.innerText = 'Agregar Nuevo Banner';
+        bannerForm.reset();
+        editBannerId.value = '';
+        bInputIsActive.checked = true;
+        bInputOrder.value = allBanners.length + 1;
+        updateDesktopPreview('');
+        updateMobilePreview('');
+        bannerModal.classList.add('active');
+    }
+
+    function updateDesktopPreview(url) {
+        if (!imgPreviewDesktop || !previewDesktopContainer) return;
+        if (url && url.trim().length > 0) {
+            imgPreviewDesktop.src = url.trim();
+            previewDesktopContainer.style.display = 'block';
+        } else {
+            previewDesktopContainer.style.display = 'none';
+        }
+    }
+
+    function updateMobilePreview(url) {
+        if (!imgPreviewMobile || !previewMobileContainer) return;
+        if (url && url.trim().length > 0) {
+            imgPreviewMobile.src = url.trim();
+            previewMobileContainer.style.display = 'block';
+        } else {
+            previewMobileContainer.style.display = 'none';
+        }
+    }
+
+    if (bInputDesktopImage) {
+        bInputDesktopImage.addEventListener('input', (e) => updateDesktopPreview(e.target.value));
+    }
+    if (bInputMobileImage) {
+        bInputMobileImage.addEventListener('input', (e) => updateMobilePreview(e.target.value));
+    }
+
+    if (btnOpenAddBannerModal) {
+        btnOpenAddBannerModal.addEventListener('click', openAddBannerModal);
+    }
+    if (btnCloseBannerModal) {
+        btnCloseBannerModal.addEventListener('click', () => bannerModal.classList.remove('active'));
+    }
+    if (btnCancelBannerModal) {
+        btnCancelBannerModal.addEventListener('click', () => bannerModal.classList.remove('active'));
+    }
+    if (btnRefreshBanners) {
+        btnRefreshBanners.addEventListener('click', () => fetchBanners());
+    }
+
+    if (searchBannersInput) {
+        searchBannersInput.addEventListener('input', () => {
+            const q = searchBannersInput.value.toLowerCase().trim();
+            const filtered = allBanners.filter(b => 
+                (b.title && b.title.toLowerCase().includes(q)) || 
+                (b.link_url && b.link_url.toLowerCase().includes(q))
+            );
+            renderBannersTable(filtered);
+        });
+    }
+
+    // Modal Dropzone setup for Banners
+    setupModalDropzone('bannerDropzoneDesktop', 'bannerFileDesktop', 'bInputDesktopImage', 'product-images', 'Imagen Desktop subida');
+    setupModalDropzone('bannerDropzoneMobile', 'bannerFileMobile', 'bInputMobileImage', 'product-images', 'Imagen Móvil subida');
+
+    const bannerFileDesktopEl = document.getElementById('bannerFileDesktop');
+    if (bannerFileDesktopEl) {
+        bannerFileDesktopEl.addEventListener('change', () => {
+            setTimeout(() => updateDesktopPreview(bInputDesktopImage.value), 600);
+        });
+    }
+    const bannerFileMobileEl = document.getElementById('bannerFileMobile');
+    if (bannerFileMobileEl) {
+        bannerFileMobileEl.addEventListener('change', () => {
+            setTimeout(() => updateMobilePreview(bInputMobileImage.value), 600);
+        });
+    }
+
+    if (bannerForm) {
+        bannerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const bId = editBannerId.value;
+            const submitBtn = document.getElementById('btnSaveBanner');
+            const originalBtnText = submitBtn.innerHTML;
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+
+            const payload = {
+                title: bInputTitle.value.trim(),
+                desktop_image: bInputDesktopImage.value.trim(),
+                mobile_image: bInputMobileImage.value.trim() || null,
+                link_url: bInputLinkUrl.value.trim() || null,
+                target_blank: bInputTargetBlank.checked,
+                display_order: parseInt(bInputOrder.value, 10) || 1,
+                is_active: bInputIsActive.checked,
+                updated_at: new Date().toISOString()
+            };
+
+            try {
+                if (bId) {
+                    try {
+                        const { error } = await sb.from('banners').update(payload).eq('id', bId);
+                        if (error) console.warn('Supabase banner update warning:', error);
+                    } catch(err) {
+                        console.warn('Supabase direct error:', err);
+                    }
+
+                    const idx = allBanners.findIndex(x => String(x.id) === String(bId));
+                    if (idx !== -1) {
+                        allBanners[idx] = { ...allBanners[idx], ...payload };
+                    }
+                } else {
+                    let newBannerId = 'banner-' + Date.now();
+                    try {
+                        const { data, error } = await sb.from('banners').insert([payload]).select();
+                        if (error) console.warn('Supabase banner insert warning:', error);
+                        if (data && data[0]) newBannerId = data[0].id;
+                    } catch(err) {
+                        console.warn('Supabase direct error:', err);
+                    }
+
+                    allBanners.push({ id: newBannerId, ...payload });
+                }
+
+                allBanners.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+                localStorage.setItem('imbera_banners', JSON.stringify(allBanners));
+
+                renderBannersTable(allBanners);
+                bannerModal.classList.remove('active');
+                alert('¡Banner guardado exitosamente!');
+            } catch(err) {
+                alert('Ocurrió un error al guardar: ' + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        });
     }
 
     // CHECK INITIAL SESSION
