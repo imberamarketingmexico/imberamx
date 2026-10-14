@@ -855,61 +855,101 @@ body.admin-body {
 }
 
 .dim-form-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     background: #f8fafc;
-    padding: 16px;
+    padding: 18px;
     border-radius: 12px;
     border: 1px solid #e2e8f0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .dim-box {
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 10px;
-    padding: 14px;
+    padding: 16px 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .dim-box-title {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-family: 'Montserrat', sans-serif;
     font-size: 13px;
     font-weight: 700;
     color: var(--admin-primary);
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .dim-box-title i {
     color: #00a651;
-    margin-right: 4px;
+    font-size: 14px;
 }
 
 .dim-inputs-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.dim-field {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 .dim-field label {
     display: block;
-    font-size: 11px !important;
+    font-size: 12px !important;
     font-weight: 600 !important;
     color: #64748b !important;
-    margin-bottom: 4px !important;
+    margin-bottom: 6px !important;
     text-transform: none !important;
+    text-align: center;
 }
 
 .dim-field input {
     width: 100%;
-    padding: 10px 12px !important;
-    font-size: 14px !important;
+    padding: 11px 14px !important;
+    font-size: 15px !important;
     font-weight: 600 !important;
     text-align: center;
     border-radius: 8px !important;
     background: #ffffff !important;
+    border: 1.5px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    box-sizing: border-box !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dim-field input:focus {
+    border-color: var(--admin-primary) !important;
+    box-shadow: 0 0 0 3px rgba(0, 43, 91, 0.12) !important;
+    outline: none;
+}
+
+/* Specs 2-Column layout: Rango de temperatura above Refrigerante */
+.specs-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.specs-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 /* Hide Spin Buttons */
@@ -1080,6 +1120,10 @@ input[type=number] {
     }
 
     .dim-form-container {
+        grid-template-columns: 1fr;
+    }
+
+    .specs-details-grid {
         grid-template-columns: 1fr;
     }
 }
