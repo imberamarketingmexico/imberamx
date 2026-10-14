@@ -216,13 +216,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderFallbackGrid();
     }
 
+    // Sorting functionality
+    const sortSelectEl = document.getElementById('sortSelect');
+    if (sortSelectEl) {
+        sortSelectEl.addEventListener('change', () => {
+            const val = sortSelectEl.value;
+            let sorted = [...dbProducts];
+            if (val === 'name_asc') {
+                sorted.sort((a, b) => a.commercial_name.localeCompare(b.commercial_name));
+            } else if (val === 'name_desc') {
+                sorted.sort((a, b) => b.commercial_name.localeCompare(a.commercial_name));
+            }
+            renderProductsGrid(sorted);
+        });
+    }
+
     function renderProductsGrid(products) {
         if (resultsCountEl) resultsCountEl.innerText = `Mostrando ${products.length} productos`;
 
-        catalogGridEl.innerHTML = products.map(p => {
-            const specs = p.specifications || {};
-            const capacityDisplay = specs.capacity ? `<span class="grid-capacity-badge"><i class="fa-solid fa-cube"></i> ${specs.capacity}</span>` : '';
+        if (!products || products.length === 0) {
+            catalogGridEl.innerHTML = `
+                <div style="grid-column: span 3; text-align: center; padding: 60px 20px;">
+                    <i class="fa-solid fa-box-open fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i>
+                    <h3 style="font-size: 18px; color: #475569; margin-bottom: 8px;">No hay equipos registrados en esta categoría</h3>
+                    <p style="color: #94a3b8; font-size: 14px;">Pronto agregaremos más modelos a esta sección.</p>
+                </div>
+            `;
+            return;
+        }
 
+        catalogGridEl.innerHTML = products.map(p => {
             return `
                 <div class="catalog-item">
                     <div class="item-img">
@@ -231,7 +254,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="item-info">
                         <h3>${p.commercial_name}</h3>
                         <p>Código: <strong>${p.sku}</strong></p>
-                        ${capacityDisplay}
                         <a href="producto.html?sku=${encodeURIComponent(p.sku)}" class="btn-view">Ver equipo</a>
                     </div>
                 </div>
@@ -241,10 +263,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function renderFallbackGrid() {
         const sampleProducts = [
-            { name: 'ENFRIADOR G3D42 ESPECIAL', code: '1030002', cap: '1,189 Lts / 42 ft³', img: 'images/Enfriador_G3D42_Especial.jpg' },
-            { name: 'ENFRIADOR VR17', code: '1024175', cap: '480 Lts / 17 ft³', img: 'images/Enfriador_VR17.jpg' },
-            { name: 'ENFRIADOR VR17 ESPECIAL', code: '1023825', cap: '480 Lts / 17 ft³', img: 'images/Enfriador_VR17_especial.jpg' },
-            { name: 'ENFRIADOR VMC19B', code: '1025843', cap: '540 Lts / 19 ft³', img: 'images/Enfriador_VMC19B.jpg' }
+            { name: 'ENFRIADOR G3D42 ESPECIAL', code: '1030002', img: 'images/Enfriador_G3D42_Especial.jpg' },
+            { name: 'ENFRIADOR VR17', code: '1024175', img: 'images/Enfriador_VR17.jpg' },
+            { name: 'ENFRIADOR VR17 ESPECIAL', code: '1023825', img: 'images/Enfriador_VR17_especial.jpg' },
+            { name: 'ENFRIADOR VMC19B', code: '1025843', img: 'images/Enfriador_VMC19B.jpg' }
         ];
 
         if (resultsCountEl) resultsCountEl.innerText = `Mostrando ${sampleProducts.length} productos`;
@@ -255,7 +277,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="item-info">
                     <h3>${p.name}</h3>
                     <p>Código: <strong>${p.code}</strong></p>
-                    <span class="grid-capacity-badge"><i class="fa-solid fa-cube"></i> ${p.cap}</span>
                     <a href="producto.html?sku=${p.code}" class="btn-view">Ver equipo</a>
                 </div>
             </div>

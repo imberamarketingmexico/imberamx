@@ -414,20 +414,38 @@
 
                 <div class="dim-form-container full-col">
                     <div class="dim-box">
-                        <strong>Dimensiones Externas (mm)</strong>
-                        <div class="dim-inputs">
-                            <input type="number" id="specExtHeight" placeholder="Alto (mm)">
-                            <input type="number" id="specExtWidth" placeholder="Ancho (mm)">
-                            <input type="number" id="specExtDepth" placeholder="Profundo (mm)">
+                        <span class="dim-box-title"><i class="fa-solid fa-arrows-up-down-left-right"></i> Dimensiones Externas (mm)</span>
+                        <div class="dim-inputs-grid">
+                            <div class="dim-field">
+                                <label for="specExtHeight">Alto (mm)</label>
+                                <input type="text" inputmode="numeric" id="specExtHeight" placeholder="2040">
+                            </div>
+                            <div class="dim-field">
+                                <label for="specExtWidth">Ancho (mm)</label>
+                                <input type="text" inputmode="numeric" id="specExtWidth" placeholder="1375">
+                            </div>
+                            <div class="dim-field">
+                                <label for="specExtDepth">Profundo (mm)</label>
+                                <input type="text" inputmode="numeric" id="specExtDepth" placeholder="860">
+                            </div>
                         </div>
                     </div>
 
                     <div class="dim-box">
-                        <strong>Dimensiones Internas (mm)</strong>
-                        <div class="dim-inputs">
-                            <input type="number" id="specIntHeight" placeholder="Alto (mm)">
-                            <input type="number" id="specIntWidth" placeholder="Ancho (mm)">
-                            <input type="number" id="specIntDepth" placeholder="Profundo (mm)">
+                        <span class="dim-box-title"><i class="fa-solid fa-box-open"></i> Dimensiones Internas (mm)</span>
+                        <div class="dim-inputs-grid">
+                            <div class="dim-field">
+                                <label for="specIntHeight">Alto (mm)</label>
+                                <input type="text" inputmode="numeric" id="specIntHeight" placeholder="1540">
+                            </div>
+                            <div class="dim-field">
+                                <label for="specIntWidth">Ancho (mm)</label>
+                                <input type="text" inputmode="numeric" id="specIntWidth" placeholder="1270">
+                            </div>
+                            <div class="dim-field">
+                                <label for="specIntDepth">Profundo (mm)</label>
+                                <input type="text" inputmode="numeric" id="specIntDepth" placeholder="710">
+                            </div>
                         </div>
                     </div>
                 </div>

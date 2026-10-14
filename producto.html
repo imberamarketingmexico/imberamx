@@ -143,22 +143,11 @@
             <div class="container">
                 <div class="product-layout-grid">
                     
-                    <!-- Left Column: Gallery / Images -->
+                    <!-- Left Column: Single Main Photograph -->
                     <div class="product-gallery-col">
                         <div class="main-image-wrapper">
                             <img src="images/Enfriador_G3D42_Especial.jpg" alt="Enfriador G3D42 Especial" id="mainProductImage">
                             <span class="badge-tag">Garantía 2 años</span>
-                        </div>
-                        <div class="thumbnail-strip">
-                            <button class="thumb-btn active" data-src="images/Enfriador_G3D42_Especial.jpg">
-                                <img src="images/Enfriador_G3D42_Especial.jpg" alt="Vista Frontal">
-                            </button>
-                            <button class="thumb-btn" data-src="images/Enfriador_VR17.jpg">
-                                <img src="images/Enfriador_VR17.jpg" alt="Vista Lateral">
-                            </button>
-                            <button class="thumb-btn" data-src="images/Enfriador_VR17_especial.jpg">
-                                <img src="images/Enfriador_VR17_especial.jpg" alt="Vista Interior">
-                            </button>
                         </div>
                     </div>
 
@@ -170,7 +159,6 @@
                             <h1 class="product-commercial-name" id="pCommercialName">Enfriador G3D42 Especial</h1>
                             <div class="product-meta-row">
                                 <span class="product-code-tag">Código: <strong id="pSkuCode">1030002</strong></span>
-                                <span class="product-capacity-tag" id="pCapacityTag"><i class="fa-solid fa-cube"></i> Capacidad: <strong id="pCapacityValue">1,189 Lts / 42 ft³</strong></span>
                             </div>
                             <p class="product-technical-name" id="pTechName">Enfriador vertical de 2 puertas de cristal de alta eficiencia con tecnología HC R290</p>
                         </header>
@@ -193,25 +181,47 @@
 
                             <div class="dimensions-strip">
                                 <div class="dim-block">
-                                    <span class="dim-title"><i class="fa-solid fa-arrows-up-down-left-right"></i> Dimensiones Externas (mm)</span>
+                                    <span class="dim-title"><i class="fa-solid fa-arrows-up-down-left-right"></i> Dimensiones Externas</span>
                                     <div class="dim-row">
-                                        <span>Alto: <strong id="ext-height">2,040</strong></span>
-                                        <span>Ancho: <strong id="ext-width">1,375</strong></span>
-                                        <span>Profundo: <strong id="ext-depth">860</strong></span>
+                                        <div class="dim-col">
+                                            <span class="dim-lbl">Alto:</span>
+                                            <strong class="dim-val" id="ext-height">2,040 mm</strong>
+                                        </div>
+                                        <div class="dim-col">
+                                            <span class="dim-lbl">Ancho:</span>
+                                            <strong class="dim-val" id="ext-width">1,375 mm</strong>
+                                        </div>
+                                        <div class="dim-col">
+                                            <span class="dim-lbl">Profundo:</span>
+                                            <strong class="dim-val" id="ext-depth">860 mm</strong>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="dim-block">
-                                    <span class="dim-title"><i class="fa-solid fa-box-open"></i> Dimensiones Internas (mm)</span>
+                                    <span class="dim-title"><i class="fa-solid fa-box-open"></i> Dimensiones Internas</span>
                                     <div class="dim-row">
-                                        <span>Alto: <strong id="int-height">1,540</strong></span>
-                                        <span>Ancho: <strong id="int-width">1,270</strong></span>
-                                        <span>Profundo: <strong id="int-depth">710</strong></span>
+                                        <div class="dim-col">
+                                            <span class="dim-lbl">Alto:</span>
+                                            <strong class="dim-val" id="int-height">1,540 mm</strong>
+                                        </div>
+                                        <div class="dim-col">
+                                            <span class="dim-lbl">Ancho:</span>
+                                            <strong class="dim-val" id="int-width">1,270 mm</strong>
+                                        </div>
+                                        <div class="dim-col">
+                                            <span class="dim-lbl">Profundo:</span>
+                                            <strong class="dim-val" id="int-depth">710 mm</strong>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Specs Attributes List (Minimal Clean Table) -->
                             <ul class="specs-minimal-list">
+                                <li id="spec-capacity-row">
+                                    <span><i class="fa-solid fa-cube text-primary"></i> Capacidad</span>
+                                    <strong id="spec-capacity">1,189 Lts / 42 ft³</strong>
+                                </li>
                                 <li>
                                     <span><i class="fa-solid fa-temperature-half text-primary"></i> Rango de Temperatura</span>
                                     <strong id="spec-temp">0°C a 4°C</strong>
