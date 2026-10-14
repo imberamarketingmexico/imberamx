@@ -628,6 +628,10 @@ body.admin-body {
     transition: var(--transition);
 }
 
+.btn-table-action * {
+    pointer-events: none;
+}
+
 .btn-table-action:hover {
     background: var(--admin-primary);
     color: #ffffff;
@@ -639,29 +643,34 @@ body.admin-body {
 }
 
 /* Visibility Eye Action Button */
-.btn-toggle-visibility {
+.btn-toggle-visibility,
+.btn-toggle-banner-vis {
     border: 1px solid #e2e8f0;
 }
 
-.btn-toggle-visibility.visible {
+.btn-toggle-visibility.visible,
+.btn-toggle-banner-vis.visible {
     background: #ecfdf5;
     color: #059669;
     border-color: #a7f3d0;
 }
 
-.btn-toggle-visibility.visible:hover {
+.btn-toggle-visibility.visible:hover,
+.btn-toggle-banner-vis.visible:hover {
     background: #059669;
     color: #ffffff;
     border-color: #059669;
 }
 
-.btn-toggle-visibility.hidden {
+.btn-toggle-visibility.hidden,
+.btn-toggle-banner-vis.hidden {
     background: #fef2f2;
     color: #dc2626;
     border-color: #fecaca;
 }
 
-.btn-toggle-visibility.hidden:hover {
+.btn-toggle-visibility.hidden:hover,
+.btn-toggle-banner-vis.hidden:hover {
     background: #dc2626;
     color: #ffffff;
     border-color: #dc2626;

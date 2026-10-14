@@ -1205,86 +1205,103 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
         }).join('');
 
-        // Attach listeners for banner table actions
-        document.querySelectorAll('.btn-toggle-banner-vis').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const bId = btn.getAttribute('data-id');
-                const banner = allBanners.find(x => String(x.id) === String(bId));
-                if (!banner) return;
+        // Note: Global delegated click handler on bannersTableBody handles clicks reliably
+    }
 
-                const newActive = !banner.is_active;
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-
-                try {
-                    await sb.from('banners').update({ is_active: newActive }).eq('id', bId);
-                } catch(e) {
-                    console.warn('Supabase banner toggle fallback to local:', e);
-                }
-
-                banner.is_active = newActive;
-                localStorage.setItem('imbera_banners', JSON.stringify(allBanners));
-                renderBannersTable(allBanners);
-            });
-        });
-
-        document.querySelectorAll('.btn-edit-banner').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const bId = btn.getAttribute('data-id');
+    if (bannersTableBody) {
+        bannersTableBody.addEventListener('click', async (e) => {
+            const editBtn = e.target.closest('.btn-edit-banner');
+            if (editBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const bId = editBtn.getAttribute('data-id');
                 openEditBannerModal(bId);
-            });
-        });
+                return;
+            }
 
-        document.querySelectorAll('.btn-delete-banner').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const bId = btn.getAttribute('data-id');
+            const delBtn = e.target.closest('.btn-delete-banner');
+            if (delBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const bId = delBtn.getAttribute('data-id');
                 const banner = allBanners.find(x => String(x.id) === String(bId));
                 if (!banner) return;
-
                 if (!confirm(`¿Estás seguro de eliminar el banner "${banner.title || 'seleccionado'}"?`)) return;
 
                 try {
                     await sb.from('banners').delete().eq('id', bId);
-                } catch(e) {
-                    console.warn('Supabase banner delete fallback to local:', e);
+                } catch(err) {
+                    console.warn('Supabase banner delete fallback to local:', err);
                 }
 
                 allBanners = allBanners.filter(x => String(x.id) !== String(bId));
                 localStorage.setItem('imbera_banners', JSON.stringify(allBanners));
                 renderBannersTable(allBanners);
-            });
+                return;
+            }
+
+            const visBtn = e.target.closest('.btn-toggle-banner-vis');
+            if (visBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const bId = visBtn.getAttribute('data-id');
+                const banner = allBanners.find(x => String(x.id) === String(bId));
+                if (!banner) return;
+
+                const newActive = !banner.is_active;
+                visBtn.disabled = true;
+                visBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+                try {
+                    await sb.from('banners').update({ is_active: newActive }).eq('id', bId);
+                } catch(err) {
+                    console.warn('Supabase banner toggle fallback to local:', err);
+                }
+
+                banner.is_active = newActive;
+                localStorage.setItem('imbera_banners', JSON.stringify(allBanners));
+                renderBannersTable(allBanners);
+                return;
+            }
         });
     }
 
     function openEditBannerModal(bannerId) {
+        const modal = document.getElementById('bannerModal');
+        if (!modal) return;
         const b = allBanners.find(x => String(x.id) === String(bannerId));
-        if (!b) return;
+        if (!b) {
+            console.warn('Banner no encontrado para editar:', bannerId, allBanners);
+            return;
+        }
 
-        bannerModalTitle.innerText = 'Editar Banner';
-        editBannerId.value = b.id;
-        bInputTitle.value = b.title || '';
-        bInputIsActive.checked = b.is_active !== false;
-        bInputDesktopImage.value = b.desktop_image || '';
-        bInputMobileImage.value = b.mobile_image || '';
-        bInputLinkUrl.value = b.link_url || '';
-        bInputOrder.value = b.display_order || 1;
-        bInputTargetBlank.checked = !!b.target_blank;
+        if (bannerModalTitle) bannerModalTitle.innerText = 'Editar Banner';
+        if (editBannerId) editBannerId.value = b.id;
+        if (bInputTitle) bInputTitle.value = b.title || '';
+        if (bInputIsActive) bInputIsActive.checked = b.is_active !== false;
+        if (bInputDesktopImage) bInputDesktopImage.value = b.desktop_image || '';
+        if (bInputMobileImage) bInputMobileImage.value = b.mobile_image || '';
+        if (bInputLinkUrl) bInputLinkUrl.value = b.link_url || '';
+        if (bInputOrder) bInputOrder.value = b.display_order || 1;
+        if (bInputTargetBlank) bInputTargetBlank.checked = !!b.target_blank;
 
         updateDesktopPreview(b.desktop_image);
         updateMobilePreview(b.mobile_image);
 
-        bannerModal.classList.add('active');
+        modal.classList.add('active');
     }
 
     function openAddBannerModal() {
-        bannerModalTitle.innerText = 'Agregar Nuevo Banner';
-        bannerForm.reset();
-        editBannerId.value = '';
-        bInputIsActive.checked = true;
-        bInputOrder.value = allBanners.length + 1;
+        const modal = document.getElementById('bannerModal');
+        if (!modal) return;
+        if (bannerModalTitle) bannerModalTitle.innerText = 'Agregar Nuevo Banner';
+        if (bannerForm) bannerForm.reset();
+        if (editBannerId) editBannerId.value = '';
+        if (bInputIsActive) bInputIsActive.checked = true;
+        if (bInputOrder) bInputOrder.value = allBanners.length + 1;
         updateDesktopPreview('');
         updateMobilePreview('');
-        bannerModal.classList.add('active');
+        modal.classList.add('active');
     }
 
     function updateDesktopPreview(url) {
@@ -1318,10 +1335,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnOpenAddBannerModal.addEventListener('click', openAddBannerModal);
     }
     if (btnCloseBannerModal) {
-        btnCloseBannerModal.addEventListener('click', () => bannerModal.classList.remove('active'));
+        btnCloseBannerModal.addEventListener('click', () => {
+            const modal = document.getElementById('bannerModal');
+            if (modal) modal.classList.remove('active');
+        });
     }
     if (btnCancelBannerModal) {
-        btnCancelBannerModal.addEventListener('click', () => bannerModal.classList.remove('active'));
+        btnCancelBannerModal.addEventListener('click', () => {
+            const modal = document.getElementById('bannerModal');
+            if (modal) modal.classList.remove('active');
+        });
+    }
+    const modalEl = document.getElementById('bannerModal');
+    if (modalEl) {
+        modalEl.addEventListener('click', (e) => {
+            if (e.target === modalEl) modalEl.classList.remove('active');
+        });
     }
     if (btnRefreshBanners) {
         btnRefreshBanners.addEventListener('click', () => fetchBanners());
