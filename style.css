@@ -3294,10 +3294,10 @@ ul {
 
 .aeritek-logos-container {
     max-width: 1100px;
-    margin: 0 auto 50px;
+    margin: 0 auto 35px;
     text-align: center;
     background: #ffffff;
-    padding: 20px;
+    padding: 10px 20px;
 }
 
 .aeritek-logos-img {
@@ -3309,93 +3309,90 @@ ul {
     margin: 0 auto;
 }
 
-.aeritek-map-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 8px 30px rgba(0, 45, 98, 0.15);
-}
-
-.aeritek-map-img {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
-}
-
 /* Imbera Stats & Highlights Section */
 .imbera-highlights-section {
-    padding: 80px 0;
+    padding: 80px 0 90px;
     background-color: #f8fafc;
     border-top: 1px solid #e2e8f0;
 }
 
-.imbera-banner-container {
-    max-width: 1200px;
-    margin: 0 auto 50px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
-}
-
-.imbera-banner-img {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-.imbera-strengths-grid {
+/* Tarjetas Limpias Nosotros (Ícono arriba, texto abajo, sin divs anidados) */
+.nosotros-cards-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    gap: 28px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
-.strength-item-card {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 24px 22px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    transition: all 0.25s ease;
+.aeritek-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 25px;
 }
 
-.strength-item-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 45, 98, 0.08);
+.nosotros-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 38px 26px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.nosotros-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 30px rgba(0, 45, 98, 0.09);
     border-color: #cbd5e1;
 }
 
-.strength-icon {
-    width: 44px;
-    height: 44px;
+.nosotros-card > i {
+    font-size: 32px;
+    color: #107c41;
+    background-color: #eaf8f0;
+    width: 76px;
+    height: 76px;
     border-radius: 50%;
-    background-color: #eaf3f9;
-    color: #002D62;
-    display: grid;
-    place-items: center;
-    font-size: 18px;
-    flex-shrink: 0;
-    margin-top: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 22px;
+    transition: transform 0.25s ease;
 }
 
-.strength-text h4 {
-    font-size: 15.5px;
+.nosotros-card:hover > i {
+    transform: scale(1.08);
+}
+
+.aeritek-card > i {
+    color: #002D62;
+    background-color: #eaf3f9;
+}
+
+.nosotros-card h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px;
     font-weight: 700;
     color: #002D62;
-    margin: 0 0 5px;
+    margin: 0 0 12px;
+    line-height: 1.35;
 }
 
-.strength-text p {
-    font-size: 13.5px;
+.nosotros-card p {
+    font-size: 15px;
     color: #64748b;
-    line-height: 1.5;
+    line-height: 1.6;
     margin: 0;
+}
+
+@media (max-width: 1024px) {
+    .aeritek-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 992px) {
@@ -3403,14 +3400,19 @@ ul {
         grid-template-columns: 1fr;
         gap: 30px;
     }
-    .imbera-strengths-grid {
+    .nosotros-cards-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
     }
 }
 
-@media (max-width: 600px) {
-    .imbera-strengths-grid {
+@media (max-width: 640px) {
+    .nosotros-cards-grid,
+    .aeritek-grid {
         grid-template-columns: 1fr;
+    }
+    .nosotros-card {
+        padding: 30px 20px;
     }
 }
 
