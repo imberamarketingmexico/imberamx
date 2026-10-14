@@ -73,20 +73,38 @@
                 </form>
             </div>
             
-            <div class="region-selector">
-                <button class="region-btn" id="region-btn">
-                    <i class="fa-solid fa-globe"></i>
-                    <span>México</span>
+            <div class="header-right-actions">
+                <div class="region-selector">
+                    <button class="region-btn" id="region-btn">
+                        <i class="fa-solid fa-globe"></i>
+                        <span>México</span>
+                    </button>
+                </div>
+                <button type="button" class="mobile-hamburger-btn" id="mobileHamburgerBtn" aria-label="Abrir menú">
+                    <i class="fa-solid fa-bars"></i>
                 </button>
             </div>
         </div>
         
-        <!-- Navigation Menu -->
+        <!-- Navigation Menu (Desktop & Fullscreen Mobile Drawer) -->
         <nav id="navbar">
             <div class="container">
+                <!-- Mobile Drawer Header -->
+                <div class="mobile-drawer-header">
+                    <a href="/" class="mobile-drawer-logo">
+                        <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera Logo" style="filter: brightness(0) invert(1); height: 34px;">
+                    </a>
+                    <button type="button" class="mobile-drawer-close" id="mobileDrawerClose" aria-label="Cerrar menú">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
                 <ul class="nav-links">
                     <li class="has-megamenu">
-                        <a href="categoria.html?cat=enfriadores" id="link-productos">Productos <i class="fa-solid fa-chevron-down"></i></a>
+                        <div class="mobile-nav-link-row">
+                            <a href="categoria.html?cat=enfriadores" id="link-productos">Productos <i class="fa-solid fa-chevron-down desktop-arrow"></i></a>
+                            <button type="button" class="mobile-accordion-toggle" aria-label="Expandir categorías"><i class="fa-solid fa-chevron-down"></i></button>
+                        </div>
                         <div class="megamenu-panel">
                             <div class="container">
                                 <div class="megamenu-grid">
@@ -199,6 +217,20 @@
                     <li><a href="sostenibilidad.html">Sostenibilidad</a></li>
                     <li><a href="contacto.html">Contacto</a></li>
                 </ul>
+
+                <!-- Mobile Drawer Footer -->
+                <div class="mobile-drawer-footer">
+                    <div class="mobile-drawer-region">
+                        <i class="fa-solid fa-globe"></i>
+                        <span>México</span>
+                    </div>
+                    <div class="mobile-drawer-social">
+                        <a href="https://www.facebook.com/ImberaMx/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/imberamx/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/company/imbera-cooling/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="https://www.youtube.com/@imberamexico" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
             </div>
         </nav>
     </header>

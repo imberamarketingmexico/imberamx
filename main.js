@@ -453,38 +453,85 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 5. Mobile Navigation Mega Menu & Accordion Support
-    const hasMegamenu = document.querySelector('.has-megamenu');
-    if (hasMegamenu) {
-        const prodLink = hasMegamenu.querySelector(':scope > a');
-        if (prodLink) {
-            prodLink.addEventListener('click', (e) => {
-                if (window.innerWidth <= 992) {
-                    e.preventDefault();
-                    hasMegamenu.classList.toggle('mobile-open');
-                }
-            });
-        }
+    // 5. Mobile Fullscreen Navigation Drawer & Accordions
+    const mobileHamburgerBtn = document.getElementById('mobileHamburgerBtn');
+    const mobileDrawerClose = document.getElementById('mobileDrawerClose');
+    const navbar = document.getElementById('navbar');
 
-        // Accordion toggle on mobile
-        document.querySelectorAll('.mega-col-header').forEach(header => {
-            header.addEventListener('click', (e) => {
-                if (window.innerWidth <= 992) {
-                    const col = header.closest('.mega-col');
-                    const hasList = col && col.querySelector('.mega-list');
-                    if (hasList) {
-                        e.preventDefault();
-                        col.classList.toggle('open');
-                    }
-                }
-            });
+    function openMobileDrawer() {
+        if (!navbar) return;
+        navbar.classList.add('mobile-active');
+        document.body.classList.add('mobile-menu-active');
+    }
+
+    function closeMobileDrawer() {
+        if (!navbar) return;
+        navbar.classList.remove('mobile-active');
+        document.body.classList.remove('mobile-menu-active');
+    }
+
+    if (mobileHamburgerBtn) {
+        mobileHamburgerBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openMobileDrawer();
         });
+    }
 
-        // Close mega menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!hasMegamenu.contains(e.target)) {
-                hasMegamenu.classList.remove('mobile-open');
+    if (mobileDrawerClose) {
+        mobileDrawerClose.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeMobileDrawer();
+        });
+    }
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navbar && navbar.classList.contains('mobile-active')) {
+            closeMobileDrawer();
+        }
+    });
+
+    // Mobile Mega Menu Accordion
+    const hasMegamenu = document.querySelector('.has-megamenu');
+    const mobileAccordionToggle = document.querySelector('.mobile-accordion-toggle');
+    const prodLink = document.getElementById('link-productos');
+
+    if (mobileAccordionToggle && hasMegamenu) {
+        mobileAccordionToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            hasMegamenu.classList.toggle('mobile-open');
+        });
+    }
+
+    if (prodLink) {
+        prodLink.addEventListener('click', (e) => {
+            if (window.innerWidth <= 992) {
+                e.preventDefault();
+                if (hasMegamenu) hasMegamenu.classList.toggle('mobile-open');
             }
         });
     }
+
+    // Accordion toggle for subcategories on mobile
+    document.querySelectorAll('.mega-col-header').forEach(header => {
+        header.addEventListener('click', (e) => {
+            if (window.innerWidth <= 992) {
+                const col = header.closest('.mega-col');
+                if (col) {
+                    e.preventDefault();
+                    col.classList.toggle('open');
+                }
+            }
+        });
+    });
+
+    // Close mobile drawer when clicking any page link
+    document.querySelectorAll('#navbar a:not(#link-productos)').forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 992 && !link.classList.contains('mega-title')) {
+                closeMobileDrawer();
+            }
+        });
+    });
 });
