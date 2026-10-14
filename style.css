@@ -1431,48 +1431,78 @@ ul {
     margin-bottom: 25px;
 }
 
+/* Product Hierarchy: Commercial Name, Code & Capacity Meta */
 .product-commercial-name {
     font-family: 'Montserrat', sans-serif;
-    font-size: 34px;
+    font-size: 32px;
     font-weight: 700;
     color: var(--primary-color);
     line-height: 1.2;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
-.product-sku-code {
-    font-size: 15px;
+.product-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.product-code-tag {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
     font-weight: 600;
-    color: #64748b;
-    margin-bottom: 10px;
+    color: #475569;
+    background: #f1f5f9;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.product-code-tag strong {
+    color: var(--primary-color);
     letter-spacing: 0.5px;
 }
 
-.product-sku-code span {
-    color: #0b4372;
-    background: #f1f5f9;
-    padding: 3px 10px;
-    border-radius: 6px;
+.product-capacity-tag {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0369a1;
+    background: #e0f2fe;
+    padding: 6px 14px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.product-capacity-tag strong {
+    color: #0284c7;
 }
 
 .product-technical-name {
+    font-family: 'Montserrat', sans-serif;
     font-size: 14px;
-    color: #475569;
-    font-style: italic;
+    color: #64748b;
     line-height: 1.5;
+    margin: 0;
 }
 
 /* Description Block */
 .block-title {
     font-family: 'Montserrat', sans-serif;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 14px;
+    color: #0f172a;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .product-desc-block {
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
 .product-bullets {
@@ -1482,12 +1512,13 @@ ul {
 }
 
 .product-bullets li {
+    font-family: 'Montserrat', sans-serif;
     position: relative;
-    padding-left: 24px;
-    font-size: 15px;
+    padding-left: 22px;
+    font-size: 14px;
     line-height: 1.6;
     color: #334155;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .product-bullets li::before {
@@ -1496,109 +1527,96 @@ ul {
     left: 0;
     color: #00a651;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
 }
 
-/* Specs Master Block & Dimension Cards */
-.specs-master-block {
-    margin-bottom: 35px;
+/* Minimalist Technical Specs Grid */
+.specs-minimal-container {
+    margin-bottom: 30px;
 }
 
-.dim-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 16px 20px;
+.dimensions-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
     margin-bottom: 15px;
 }
 
-.dim-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--primary-color);
-    font-size: 14px;
-    margin-bottom: 12px;
-}
-
-.dim-header i {
-    font-size: 16px;
-    color: #00a651;
-}
-
-.dim-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-}
-
-.dim-item {
-    background: #ffffff;
+.dim-block {
+    background: #f8fafc;
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
+    border-radius: 10px;
+    padding: 14px 16px;
 }
 
-.dim-label {
+.dim-title {
     display: block;
-    font-size: 11px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 8px;
     text-transform: uppercase;
-    font-weight: 600;
-    color: #64748b;
-    margin-bottom: 4px;
     letter-spacing: 0.5px;
 }
 
-.dim-value {
-    display: block;
-    font-size: 16px;
-    font-weight: 700;
-    color: #0f172a;
+.dim-title i {
+    color: #00a651;
+    margin-right: 4px;
+}
+
+.dim-row {
+    display: flex;
+    justify-content: space-between;
     font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    color: #64748b;
 }
 
-/* Specs Table */
-.specs-table-wrapper {
-    background: #ffffff;
+.dim-row strong {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.specs-minimal-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
-    margin-top: 15px;
+    background: #ffffff;
 }
 
-.specs-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-}
-
-.specs-table td {
+.specs-minimal-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 12px 18px;
     border-bottom: 1px solid #f1f5f9;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
 }
 
-.specs-table tr:last-child td {
+.specs-minimal-list li:last-child {
     border-bottom: none;
 }
 
-.specs-table tr:nth-child(even) {
+.specs-minimal-list li:nth-child(even) {
     background: #f8fafc;
 }
 
-.specs-table td:first-child {
+.specs-minimal-list li span {
     color: #475569;
-    width: 50%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
 }
 
-.specs-table td:first-child i {
-    width: 20px;
-    color: #0b4372;
-    margin-right: 6px;
-}
-
-.specs-table td:last-child {
+.specs-minimal-list li strong {
     color: #0f172a;
+    font-weight: 700;
 }
 
 /* Action Box */

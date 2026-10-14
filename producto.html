@@ -107,17 +107,20 @@
                         </div>
                     </div>
 
-                    <!-- Right Column: Specs & Info -->
+                    <!-- Right Column: Minimalist Specs & Hierarchy -->
                     <div class="product-info-col">
                         
                         <!-- Hierarchy: Name, Code, Tech Name -->
-                        <div class="product-header-block">
+                        <header class="product-header-block">
                             <h1 class="product-commercial-name" id="pCommercialName">Enfriador G3D42 Especial</h1>
-                            <div class="product-sku-code" id="pSkuCode">Código / SKU: <span>G3D42 - 1030002</span></div>
-                            <div class="product-technical-name" id="pTechName">Enfriador vertical de 2 puertas de cristal de alta eficiencia con tecnología HC R290</div>
-                        </div>
+                            <div class="product-meta-row">
+                                <span class="product-code-tag">Código: <strong id="pSkuCode">1030002</strong></span>
+                                <span class="product-capacity-tag" id="pCapacityTag"><i class="fa-solid fa-cube"></i> Capacidad: <strong id="pCapacityValue">1,189 Lts / 42 ft³</strong></span>
+                            </div>
+                            <p class="product-technical-name" id="pTechName">Enfriador vertical de 2 puertas de cristal de alta eficiencia con tecnología HC R290</p>
+                        </header>
 
-                        <!-- Description -->
+                        <!-- Description List -->
                         <div class="product-desc-block">
                             <h3 class="block-title">Descripción y Características</h3>
                             <ul class="product-bullets">
@@ -129,81 +132,48 @@
                             </ul>
                         </div>
 
-                        <!-- Technical Specs Blocks -->
-                        <div class="specs-master-block">
+                        <!-- Minimalist Technical Specs Grid (Flat & Clean) -->
+                        <div class="specs-minimal-container">
                             <h3 class="block-title">Datos Técnicos</h3>
 
-                            <!-- Dimensiones Externas -->
-                            <div class="dim-card">
-                                <div class="dim-header">
-                                    <i class="fa-solid fa-arrows-up-down-left-right"></i>
-                                    <strong>Dimensiones Externas</strong>
+                            <div class="dimensions-strip">
+                                <div class="dim-block">
+                                    <span class="dim-title"><i class="fa-solid fa-arrows-up-down-left-right"></i> Dimensiones Externas (mm)</span>
+                                    <div class="dim-row">
+                                        <span>Alto: <strong id="ext-height">2,040</strong></span>
+                                        <span>Ancho: <strong id="ext-width">1,375</strong></span>
+                                        <span>Profundo: <strong id="ext-depth">860</strong></span>
+                                    </div>
                                 </div>
-                                <div class="dim-grid">
-                                    <div class="dim-item">
-                                        <span class="dim-label">Alto</span>
-                                        <span class="dim-value" id="ext-height">2,040 mm</span>
-                                    </div>
-                                    <div class="dim-item">
-                                        <span class="dim-label">Ancho</span>
-                                        <span class="dim-value" id="ext-width">1,375 mm</span>
-                                    </div>
-                                    <div class="dim-item">
-                                        <span class="dim-label">Profundo</span>
-                                        <span class="dim-value" id="ext-depth">860 mm</span>
+                                <div class="dim-block">
+                                    <span class="dim-title"><i class="fa-solid fa-box-open"></i> Dimensiones Internas (mm)</span>
+                                    <div class="dim-row">
+                                        <span>Alto: <strong id="int-height">1,540</strong></span>
+                                        <span>Ancho: <strong id="int-width">1,270</strong></span>
+                                        <span>Profundo: <strong id="int-depth">710</strong></span>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Dimensiones Internas -->
-                            <div class="dim-card">
-                                <div class="dim-header">
-                                    <i class="fa-solid fa-box-open"></i>
-                                    <strong>Dimensiones Internas</strong>
-                                </div>
-                                <div class="dim-grid">
-                                    <div class="dim-item">
-                                        <span class="dim-label">Alto</span>
-                                        <span class="dim-value" id="int-height">1,540 mm</span>
-                                    </div>
-                                    <div class="dim-item">
-                                        <span class="dim-label">Ancho</span>
-                                        <span class="dim-value" id="int-width">1,270 mm</span>
-                                    </div>
-                                    <div class="dim-item">
-                                        <span class="dim-label">Profundo</span>
-                                        <span class="dim-value" id="int-depth">710 mm</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Otros Datos Técnicos clave -->
-                            <div class="specs-table-wrapper">
-                                <table class="specs-table">
-                                    <tbody>
-                                        <tr>
-                                            <td><i class="fa-solid fa-temperature-half"></i> Rango de Temperatura</td>
-                                            <td><strong>0°C a 4°C</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="fa-solid fa-leaf"></i> Refrigerante</td>
-                                            <td><strong>R290 (Ecológico)</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="fa-solid fa-bolt"></i> Voltaje / Frecuencia</td>
-                                            <td><strong>115 V / 60 Hz</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="fa-solid fa-layer-group"></i> Parrillas</td>
-                                            <td><strong>8 parrillas ajustables</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="fa-solid fa-weight-scale"></i> Peso Neto</td>
-                                            <td><strong>220 kg</strong></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <!-- Specs Attributes List (Minimal Clean Table) -->
+                            <ul class="specs-minimal-list">
+                                <li>
+                                    <span><i class="fa-solid fa-temperature-half text-primary"></i> Rango de Temperatura</span>
+                                    <strong id="spec-temp">0°C a 4°C</strong>
+                                </li>
+                                <li>
+                                    <span><i class="fa-solid fa-leaf text-green"></i> Refrigerante</span>
+                                    <strong id="spec-refrig">R290 Ecológico</strong>
+                                </li>
+                                <li>
+                                    <span><i class="fa-solid fa-bolt text-primary"></i> Voltaje / Frecuencia</span>
+                                    <strong id="spec-volt">115 V / 60 Hz</strong>
+                                </li>
+                                <li>
+                                    <span><i class="fa-solid fa-layer-group text-primary"></i> Parrillas</span>
+                                    <strong id="spec-shelv">8 ajustables</strong>
+                                </li>
+                            </ul>
                         </div>
 
                         <!-- Action Buttons: 3 PDFs Download & Quote -->

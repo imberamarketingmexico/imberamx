@@ -267,8 +267,9 @@
                                 <tr>
                                     <th>Foto</th>
                                     <th>Modelo Comercial</th>
-                                    <th>SKU / Código</th>
+                                    <th>Código</th>
                                     <th>Categoría</th>
+                                    <th>Capacidad</th>
                                     <th>Documentos Adjuntos</th>
                                     <th>Dimensiones Ext.</th>
                                     <th>Estado</th>
@@ -377,13 +378,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="pInputSku">Código / SKU *</label>
-                    <input type="text" id="pInputSku" placeholder="Ej: G3D42-1030002" required>
+                    <label for="pInputSku">Código (7 dígitos numéricos) *</label>
+                    <input type="text" id="pInputSku" placeholder="Ej: 1030002" pattern="[0-9]{7}" maxlength="7" title="Ingresa un código de exactamente 7 dígitos numéricos" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="pInputModelCode">Código Técnico Interno</label>
-                    <input type="text" id="pInputModelCode" placeholder="Ej: G342-2P-HC">
+                    <label for="pInputModelCode">Modelo Comercial / Código Técnico</label>
+                    <input type="text" id="pInputModelCode" placeholder="Ej: G3D42-2P-HC">
                 </div>
 
                 <div class="form-group">
@@ -391,6 +392,11 @@
                     <select id="pInputCategory" required>
                         <option value="">Selecciona categoría</option>
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="specCapacity">Capacidad (Lts / ft³)</label>
+                    <input type="text" id="specCapacity" placeholder="Ej: 1,189 Lts / 42 ft³">
                 </div>
 
                 <div class="form-group full-col">

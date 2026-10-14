@@ -447,6 +447,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const catName = p.categories ? p.categories.name : 'General';
             const specs = p.specifications || {};
             const extDim = (specs.ext_height && specs.ext_width) ? `${specs.ext_height}x${specs.ext_width}x${specs.ext_depth || 0}mm` : 'N/D';
+            const capacityStr = specs.capacity || 'N/D';
 
             return `
                 <tr>
@@ -459,6 +460,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </td>
                     <td><code>${p.sku}</code></td>
                     <td><span class="badge-role">${catName}</span></td>
+                    <td><small><strong>${capacityStr}</strong></small></td>
                     <td>
                         ${p.datasheet_url ? `<a href="${p.datasheet_url}" target="_blank" class="badge-pdf-check"><i class="fa-solid fa-file-pdf"></i> Ficha</a>` : '<span class="badge-pdf-check missing">Sin Ficha</span>'}
                         ${p.manual_url ? `<a href="${p.manual_url}" target="_blank" class="badge-pdf-check"><i class="fa-solid fa-book"></i> Manual</a>` : '<span class="badge-pdf-check missing">Sin Manual</span>'}
@@ -563,6 +565,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('pInputPartsList').value = p.parts_list_url || '';
 
         const specs = p.specifications || {};
+        document.getElementById('specCapacity').value = specs.capacity || '';
         document.getElementById('specExtHeight').value = specs.ext_height || '';
         document.getElementById('specExtWidth').value = specs.ext_width || '';
         document.getElementById('specExtDepth').value = specs.ext_depth || '';
@@ -589,9 +592,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
 
             const pId = editProductId.value;
+            const codeVal = document.getElementById('pInputSku').value.trim();
+
+            // Enforce 7 numeric digits
+            if (!/^\d{7}$/.test(codeVal)) {
+                alert('El Código del producto debe contener exactamente 7 dígitos numéricos (ejemplo: 1030002).');
+                btnSave.disabled = false;
+                btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Equipo';
+                return;
+            }
+
             const payload = {
                 commercial_name: document.getElementById('pInputCommercialName').value.trim(),
-                sku: document.getElementById('pInputSku').value.trim(),
+                sku: codeVal,
                 model_code: document.getElementById('pInputModelCode').value.trim() || null,
                 category_id: document.getElementById('pInputCategory').value || null,
                 subtitle: document.getElementById('pInputSubtitle').value.trim() || null,
@@ -601,6 +614,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 manual_url: document.getElementById('pInputManual').value.trim() || null,
                 parts_list_url: document.getElementById('pInputPartsList').value.trim() || null,
                 specifications: {
+                    capacity: document.getElementById('specCapacity').value.trim() || null,
                     ext_height: document.getElementById('specExtHeight').value || null,
                     ext_width: document.getElementById('specExtWidth').value || null,
                     ext_depth: document.getElementById('specExtDepth').value || null,
@@ -701,9 +715,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --------------------------------------------------------------------------
     if (btnDownloadCsvTemplate) {
         btnDownloadCsvTemplate.addEventListener('click', () => {
-            const csvContent = "sku,commercial_name,category_slug,subtitle,description,main_image,datasheet_url,manual_url,parts_list_url,ext_height,ext_width,ext_depth,int_height,int_width,int_depth,temp_range,refrigerant,voltage,shelves\n" +
-                               "G3D42-1030002,Enfriador G3D42 Especial,refrigeradores,Enfriador vertical de 2 puertas,Control inteligente LED,https://...,https://...,https://...,https://...,2040,1375,860,1540,1270,710,0°C a 4°C,R290,115V/60Hz,8\n" +
-                               "VR17-1024175,ENFRIADOR VR17,refrigeradores,Enfriador vertical 1 puerta,Ahorro de energía,https://...,https://...,,,1900,750,700,1400,650,600,0°C a 4°C,R290,115V/60Hz,4";
+            const csvContent = "codigo,commercial_name,category_slug,model_code,subtitle,description,main_image,datasheet_url,manual_url,parts_list_url,capacity,ext_height,ext_width,ext_depth,int_height,int_width,int_depth,temp_range,refrigerant,voltage,shelves\n" +
+                               "1030002,Enfriador G3D42 Especial,refrigeradores,G3D42-2P,Enfriador vertical de 2 puertas,Control inteligente LED perimetral,https://...,https://...,https://...,https://...,1189 Lts / 42 ft³,2040,1375,860,1540,1270,710,0°C a 4°C,R290,115V/60Hz,8\n" +
+                               "1024175,ENFRIADOR VR17,refrigeradores,VR17-1P,Enfriador vertical 1 puerta,Ahorro de energía ecológico,https://...,https://...,,,480 Lts / 17 ft³,1900,750,700,1400,650,600,0°C a 4°C,R290,115V/60Hz,4";
             
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
@@ -786,9 +800,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const payloadRows = parsedCsvData.map(r => {
                 const catSlug = (r.category_slug || '').toLowerCase().trim();
+                const codeRaw = (r.codigo || r.sku || '').toString().trim();
                 return {
-                    sku: (r.sku || `SKU-${Date.now()}-${Math.floor(Math.random()*1000)}`).trim(),
+                    sku: codeRaw,
                     commercial_name: (r.commercial_name || 'Equipo Imbera').trim(),
+                    model_code: r.model_code || null,
                     subtitle: r.subtitle || null,
                     description: r.description || null,
                     category_id: categoryMap[catSlug] || null,
@@ -797,6 +813,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     manual_url: r.manual_url || null,
                     parts_list_url: r.parts_list_url || null,
                     specifications: {
+                        capacity: r.capacity || null,
                         ext_height: r.ext_height || null,
                         ext_width: r.ext_width || null,
                         ext_depth: r.ext_depth || null,

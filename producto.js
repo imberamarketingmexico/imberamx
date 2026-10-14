@@ -48,13 +48,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 if (breadcrumbName) breadcrumbName.innerText = data.commercial_name;
                 if (commName) commName.innerText = data.commercial_name;
-                if (skuCode) skuCode.innerHTML = `Código / SKU: <span>${data.sku}</span>`;
+                if (skuCode) skuCode.innerText = data.sku;
                 if (techName) techName.innerText = data.subtitle || data.model_code || '';
-                if (quoteModelField) quoteModelField.value = `${data.commercial_name} (SKU: ${data.sku})`;
+                if (quoteModelField) quoteModelField.value = `${data.commercial_name} (Código: ${data.sku})`;
                 if (quoteProductTitle) quoteProductTitle.innerText = data.commercial_name;
 
                 if (data.main_image && mainImg) {
                     mainImg.src = data.main_image;
+                }
+
+                // Handle Capacity
+                const capTag = document.getElementById('pCapacityTag');
+                const capVal = document.getElementById('pCapacityValue');
+                if (data.specifications && data.specifications.capacity) {
+                    if (capVal) capVal.innerText = data.specifications.capacity;
+                    if (capTag) capTag.style.display = 'inline-flex';
+                } else if (capTag) {
+                    capTag.style.display = 'none';
                 }
 
                 // Handle 3 PDF buttons: only show if URL exists
@@ -97,13 +107,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Update specs if available
                 if (data.specifications) {
                     const specs = data.specifications;
-                    if (specs.ext_height) document.getElementById('ext-height').innerText = `${specs.ext_height} mm`;
-                    if (specs.ext_width) document.getElementById('ext-width').innerText = `${specs.ext_width} mm`;
-                    if (specs.ext_depth) document.getElementById('ext-depth').innerText = `${specs.ext_depth} mm`;
+                    if (specs.ext_height) document.getElementById('ext-height').innerText = specs.ext_height;
+                    if (specs.ext_width) document.getElementById('ext-width').innerText = specs.ext_width;
+                    if (specs.ext_depth) document.getElementById('ext-depth').innerText = specs.ext_depth;
 
-                    if (specs.int_height) document.getElementById('int-height').innerText = `${specs.int_height} mm`;
-                    if (specs.int_width) document.getElementById('int-width').innerText = `${specs.int_width} mm`;
-                    if (specs.int_depth) document.getElementById('int-depth').innerText = `${specs.int_depth} mm`;
+                    if (specs.int_height) document.getElementById('int-height').innerText = specs.int_height;
+                    if (specs.int_width) document.getElementById('int-width').innerText = specs.int_width;
+                    if (specs.int_depth) document.getElementById('int-depth').innerText = specs.int_depth;
+
+                    if (specs.temp_range && document.getElementById('spec-temp')) document.getElementById('spec-temp').innerText = specs.temp_range;
+                    if (specs.refrigerant && document.getElementById('spec-refrig')) document.getElementById('spec-refrig').innerText = specs.refrigerant;
+                    if (specs.voltage && document.getElementById('spec-volt')) document.getElementById('spec-volt').innerText = specs.voltage;
+                    if (specs.shelves && document.getElementById('spec-shelv')) document.getElementById('spec-shelv').innerText = specs.shelves;
                 }
 
                 // Register page view metric
