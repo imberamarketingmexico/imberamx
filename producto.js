@@ -19,17 +19,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
-    // 2. Load Product Dynamically from Supabase if SKU or ID is in URL (?sku=... or ?id=...)
+    // 2. Load Product Dynamically from Supabase using Query Params or Clean URL Path
     const urlParams = new URLSearchParams(window.location.search);
-    const skuParam = urlParams.get('sku');
-    const idParam = urlParams.get('id');
+    let skuParam = urlParams.get('sku');
+    let idParam = urlParams.get('id');
+
+    // If no query param, extract model or sku from permalink path: /cat/sub/model or /producto/cat/sub/model
+    if (!skuParam && !idParam) {
+        const pathSegments = window.location.pathname.split('/').filter(p => p && !p.endsWith('.html') && p !== 'producto');
+        if (pathSegments.length > 0) {
+            skuParam = pathSegments[pathSegments.length - 1];
+        }
+    }
 
     if ((skuParam || idParam) && window.imberaSupabase) {
         try {
             const sb = window.imberaSupabase.client();
-            let query = sb.from('products').select('*');
+            let query = sb.from('products').select('*, categories(*)');
             if (skuParam) {
-                query = query.eq('sku', skuParam);
+                // Support exact 7-digit SKU or case-insensitive model code search
+                query = query.or(`sku.eq.${skuParam},model_code.ilike.${skuParam}`);
             } else if (idParam) {
                 query = query.eq('id', idParam);
             }
@@ -39,9 +48,51 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Short model version preferred as requested by user
                 const displayName = data.model_code || data.commercial_name;
 
+                // Resolve Parent Category for clean 3-level Hierarchy & Permalinks
+                let parentCategory = null;
+                const subCategory = data.categories;
+
+                if (subCategory && subCategory.parent_id) {
+                    try {
+                        const { data: pCat } = await sb.from('categories').select('*').eq('id', subCategory.parent_id).single();
+                        if (pCat) parentCategory = pCat;
+                    } catch(err) {}
+                }
+
+                const parentSlug = parentCategory ? parentCategory.slug : (subCategory ? subCategory.slug : 'enfriadores');
+                const subSlug = (parentCategory && subCategory) ? subCategory.slug : (parentCategory ? '' : 'equipos');
+                const modelSlug = (data.model_code || data.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+
+                // Clean Hierarchical Permalink: /parent/sub/model (e.g. /refrigeradores/refrigeradores-verticales/bvc01)
+                const permalinkPath = subSlug ? `/${parentSlug}/${subSlug}/${modelSlug}` : `/${parentSlug}/${modelSlug}`;
+                if (window.history && window.history.replaceState && !window.location.pathname.includes('/admin')) {
+                    window.history.replaceState(null, '', permalinkPath);
+                }
+
+                // Update Breadcrumb Trail
+                const breadcrumbCat = document.getElementById('breadcrumb-cat');
+                const breadcrumbSub = document.getElementById('breadcrumb-sub');
+                const breadcrumbSubItem = document.getElementById('breadcrumb-sub-item');
+                const breadcrumbSubSep = document.getElementById('breadcrumb-sub-sep');
+                const breadcrumbName = document.getElementById('breadcrumb-product-name');
+
+                if (parentCategory && breadcrumbCat) {
+                    breadcrumbCat.innerText = parentCategory.name;
+                    breadcrumbCat.href = `/categoria/${parentCategory.slug}`;
+                } else if (subCategory && breadcrumbCat) {
+                    breadcrumbCat.innerText = subCategory.name;
+                    breadcrumbCat.href = `/categoria/${subCategory.slug}`;
+                }
+
+                if (parentCategory && subCategory && breadcrumbSub && breadcrumbSubItem && breadcrumbSubSep) {
+                    breadcrumbSub.innerText = subCategory.name;
+                    breadcrumbSub.href = `/categoria/${parentCategory.slug}/${subCategory.slug}`;
+                    breadcrumbSubItem.style.display = 'inline';
+                    breadcrumbSubSep.style.display = 'inline';
+                }
+
                 // Update DOM elements dynamically
                 document.title = `${displayName} (Código: ${data.sku}) | Imbera México`;
-                const breadcrumbName = document.getElementById('breadcrumb-product-name');
                 const commName = document.getElementById('pCommercialName');
                 const skuCode = document.getElementById('pSkuCode');
                 const quoteModelField = document.getElementById('quoteModelField');

@@ -117,6 +117,50 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Dynamic feed of latest uploaded products from Supabase for the carousel
+    async function loadLatestProductsIntoSlider() {
+        if (!prodSlider || !window.imberaSupabase) return;
+        try {
+            const sb = window.imberaSupabase.client();
+            const { data, error } = await sb.from('products')
+                .select('*, categories(*)')
+                .eq('is_active', true)
+                .order('created_at', { ascending: false })
+                .limit(8);
+
+            if (data && data.length > 0) {
+                prodSlider.innerHTML = data.map(p => {
+                    const displayName = p.model_code || p.commercial_name;
+                    const catSlug = p.categories?.slug || 'enfriadores';
+                    const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+                    const targetUrl = `/${catSlug}/equipos/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
+                    return `
+                        <div class="product-card" onclick="window.location.href='${targetUrl}'" role="link" tabindex="0" aria-label="Ver equipo ${displayName}">
+                            <div class="product-image">
+                                <img src="${p.main_image || 'images/Enfriador_G3D42_Especial.jpg'}" alt="${displayName} - Imbera México" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h3>${displayName}</h3>
+                                <p>Código: <strong>${p.sku}</strong></p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Reattach keyboard listener
+                prodSlider.querySelectorAll('.product-card').forEach(card => {
+                    card.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            card.click();
+                        }
+                    });
+                });
+            }
+        } catch(e) {}
+    }
+    loadLatestProductsIntoSlider();
+
     // Keyboard accessibility for product cards
     document.querySelectorAll('.product-card').forEach(card => {
         card.addEventListener('keydown', (e) => {

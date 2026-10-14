@@ -1,0 +1,37 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/producto/:cat/:sub/:item",
+      "destination": "/producto.html"
+    },
+    {
+      "source": "/producto/:cat/:item",
+      "destination": "/producto.html"
+    },
+    {
+      "source": "/producto/:item",
+      "destination": "/producto.html"
+    },
+    {
+      "source": "/categoria/:cat/:sub",
+      "destination": "/categoria.html"
+    },
+    {
+      "source": "/categoria/:cat",
+      "destination": "/categoria.html"
+    },
+    {
+      "source": "/:cat/:sub/:item",
+      "destination": "/producto.html"
+    },
+    {
+      "source": "/:cat/:sub",
+      "destination": "/categoria.html"
+    },
+    {
+      "source": "/:cat",
+      "destination": "/categoria.html"
+    }
+  ]
+}

@@ -68,10 +68,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         { name: 'Accesorios', slug: 'accesorios', subcategories: [] }
     ];
 
-    // Read URL query params (?cat=... or ?sub=...)
+    // Read URL query params (?cat=... or ?sub=...) or path segments (/categoria/enfriadores/verticales or /enfriadores/verticales)
     const urlParams = new URLSearchParams(window.location.search);
-    let selectedCatSlug = urlParams.get('cat') || 'enfriadores';
+    let selectedCatSlug = urlParams.get('cat') || '';
     let selectedSubSlug = urlParams.get('sub') || '';
+
+    if (!selectedCatSlug) {
+        const segments = window.location.pathname.split('/').filter(p => p && !p.endsWith('.html') && p !== 'categoria');
+        if (segments.length >= 1) selectedCatSlug = segments[0];
+        if (segments.length >= 2) selectedSubSlug = segments[1];
+    }
+    if (!selectedCatSlug) selectedCatSlug = 'enfriadores';
 
     let dbCategories = [];
     let dbProducts = [];
@@ -311,7 +318,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         catalogGridEl.innerHTML = products.map(p => {
             // Short model name preferred, fallback to commercial name
             const displayName = p.model_code || p.commercial_name;
-            const targetUrl = `producto.html?sku=${encodeURIComponent(p.sku)}`;
+            const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+            const catSlug = selectedCatSlug || 'enfriadores';
+            const subSlug = selectedSubSlug || (p.categories?.slug || 'equipos');
+            const targetUrl = `/${catSlug}/${subSlug}/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
 
             return `
                 <div class="catalog-item" onclick="window.location.href='${targetUrl}'" role="link" tabindex="0" aria-label="Ver detalles de ${displayName}">
@@ -339,7 +349,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (resultsCountEl) resultsCountEl.innerText = `Mostrando ${sampleProducts.length} productos`;
 
         catalogGridEl.innerHTML = sampleProducts.map(p => {
-            const targetUrl = `producto.html?sku=${encodeURIComponent(p.code)}`;
+            const modelSlug = p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            const targetUrl = `/enfriadores/enfriadores-verticales/${modelSlug}?sku=${encodeURIComponent(p.code)}`;
             return `
                 <div class="catalog-item" onclick="window.location.href='${targetUrl}'" role="link" tabindex="0" aria-label="Ver detalles de ${p.name}">
                     <div class="item-img"><img src="${p.img}" alt="${p.name} - Código ${p.code}" loading="lazy"></div>

@@ -209,12 +209,14 @@
         <!-- Breadcrumb Bar -->
         <section class="product-breadcrumb-bar">
             <div class="container">
-                <ul class="breadcrumb-trail">
+                <ul class="breadcrumb-trail" id="breadcrumbTrail">
                     <li><a href="index.html">Inicio</a></li>
                     <li><i class="fa-solid fa-chevron-right"></i></li>
-                    <li><a href="categoria.html">Refrigeradores</a></li>
+                    <li id="breadcrumb-cat-item"><a href="categoria.html?cat=enfriadores" id="breadcrumb-cat">Enfriadores</a></li>
+                    <li id="breadcrumb-sub-sep" style="display: none;"><i class="fa-solid fa-chevron-right"></i></li>
+                    <li id="breadcrumb-sub-item" style="display: none;"><a href="#" id="breadcrumb-sub">Subcategoría</a></li>
                     <li><i class="fa-solid fa-chevron-right"></i></li>
-                    <li class="current" id="breadcrumb-product-name">Enfriador G3D42 Especial</li>
+                    <li class="current" id="breadcrumb-product-name">G3D42 Especial</li>
                 </ul>
             </div>
         </section>
@@ -224,11 +226,21 @@
             <div class="container">
                 <div class="product-layout-grid">
                     
-                    <!-- Left Column: Single Main Photograph -->
+                    <!-- Left Column: Single Main Photograph & Evident Warranty Banner -->
                     <div class="product-gallery-col">
                         <div class="main-image-wrapper">
                             <img src="images/Enfriador_G3D42_Especial.jpg" alt="Enfriador G3D42 Especial" id="mainProductImage">
-                            <span class="badge-tag">Garantía 2 años</span>
+                        </div>
+
+                        <!-- Evident Trust Banner Below Photograph -->
+                        <div class="product-warranty-banner">
+                            <div class="warranty-icon">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <div class="warranty-info">
+                                <strong>Garantía de 2 Años</strong>
+                                <span>Respaldo y servicio directo en todo México con Imbera</span>
+                            </div>
                         </div>
                     </div>
 
@@ -317,6 +329,10 @@
                                 <li>
                                     <span><i class="fa-solid fa-layer-group text-primary"></i> Parrillas</span>
                                     <strong id="spec-shelv">8 ajustables</strong>
+                                </li>
+                                <li>
+                                    <span><i class="fa-solid fa-shield-halved text-green"></i> Garantía de Fábrica</span>
+                                    <strong id="spec-warranty">2 Años de garantía</strong>
                                 </li>
                             </ul>
                         </div>
