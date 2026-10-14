@@ -15,6 +15,10 @@
       "destination": "/contacto.html"
     },
     {
+      "source": "/sostenibilidad",
+      "destination": "/sostenibilidad.html"
+    },
+    {
       "source": "/producto/:path*",
       "destination": "/producto"
     },
@@ -31,7 +35,7 @@
       "destination": "/categoria"
     },
     {
-      "source": "/:cat((?!admin|api|_next|static|images|distribuidores|contacto|.*\\..*).*)",
+      "source": "/:cat((?!admin|api|_next|static|images|distribuidores|contacto|sostenibilidad|.*\\..*).*)",
       "destination": "/categoria"
     }
   ]
