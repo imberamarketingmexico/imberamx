@@ -37,13 +37,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             const sb = window.imberaSupabase.client();
             let query = sb.from('products').select('*, categories(*)');
             if (skuParam) {
-                // Support exact 7-digit SKU or case-insensitive model code search
-                query = query.or(`sku.eq.${skuParam},model_code.ilike.${skuParam}`);
+                // Support exact 7-digit SKU or model code search
+                query = query.or(`sku.eq.${skuParam},model_code.ilike.%${skuParam}%`);
             } else if (idParam) {
                 query = query.eq('id', idParam);
             }
 
-            const { data, error } = await query.single();
+            const { data: rows, error } = await query.limit(1);
+            const data = (rows && rows.length > 0) ? rows[0] : null;
+
             if (data && !error) {
                 // Short model version preferred as requested by user
                 const displayName = data.model_code || data.commercial_name;
@@ -63,8 +65,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const subSlug = (parentCategory && subCategory) ? subCategory.slug : (parentCategory ? '' : 'equipos');
                 const modelSlug = (data.model_code || data.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
 
-                // Clean Hierarchical Permalink: /parent/sub/model (e.g. /refrigeradores/refrigeradores-verticales/bvc01)
-                const permalinkPath = subSlug ? `/${parentSlug}/${subSlug}/${modelSlug}` : `/${parentSlug}/${modelSlug}`;
+                // Clean Hierarchical Permalink: /parent/sub/model?sku=...
+                const permalinkPath = (subSlug ? `/${parentSlug}/${subSlug}/${modelSlug}` : `/${parentSlug}/${modelSlug}`) + `?sku=${encodeURIComponent(data.sku)}`;
                 if (window.history && window.history.replaceState && !window.location.pathname.includes('/admin')) {
                     window.history.replaceState(null, '', permalinkPath);
                 }

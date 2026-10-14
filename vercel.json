@@ -1,37 +1,30 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/producto/:cat/:sub/:item",
-      "destination": "/producto.html"
+      "source": "/admin",
+      "destination": "/admin"
     },
     {
-      "source": "/producto/:cat/:item",
-      "destination": "/producto.html"
+      "source": "/producto/:path*",
+      "destination": "/producto"
     },
     {
-      "source": "/producto/:item",
-      "destination": "/producto.html"
-    },
-    {
-      "source": "/categoria/:cat/:sub",
-      "destination": "/categoria.html"
-    },
-    {
-      "source": "/categoria/:cat",
-      "destination": "/categoria.html"
+      "source": "/categoria/:path*",
+      "destination": "/categoria"
     },
     {
       "source": "/:cat/:sub/:item",
-      "destination": "/producto.html"
+      "destination": "/producto"
     },
     {
       "source": "/:cat/:sub",
-      "destination": "/categoria.html"
+      "destination": "/categoria"
     },
     {
-      "source": "/:cat",
-      "destination": "/categoria.html"
+      "source": "/:cat((?!admin|api|_next|static|images|.*\\..*).*)",
+      "destination": "/categoria"
     }
   ]
 }
