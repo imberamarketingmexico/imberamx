@@ -388,7 +388,10 @@ document.addEventListener('DOMContentLoaded', () => {
         hasAnimatedStats = true;
 
         counters.forEach(counter => {
-            const target = parseInt(counter.getAttribute('data-target'), 10) || 0;
+            const targetAttr = counter.getAttribute('data-target') || '0';
+            const isFloat = targetAttr.includes('.');
+            const target = isFloat ? parseFloat(targetAttr) : (parseInt(targetAttr, 10) || 0);
+            const decimals = isFloat ? (counter.getAttribute('data-decimals') ? parseInt(counter.getAttribute('data-decimals'), 10) : 1) : 0;
             const duration = 1600;
             const startTime = performance.now();
 
@@ -397,14 +400,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 const progress = Math.min(elapsed / duration, 1);
                 // Ease out cubic
                 const ease = 1 - Math.pow(1 - progress, 3);
-                const current = Math.round(ease * target);
 
-                counter.textContent = current.toLocaleString('es-MX');
+                if (isFloat) {
+                    const current = (ease * target).toFixed(decimals);
+                    counter.textContent = current;
+                } else {
+                    const current = Math.round(ease * target);
+                    counter.textContent = current.toLocaleString('es-MX');
+                }
 
                 if (progress < 1) {
                     requestAnimationFrame(updateCount);
                 } else {
-                    counter.textContent = target.toLocaleString('es-MX');
+                    counter.textContent = isFloat ? target.toFixed(decimals) : target.toLocaleString('es-MX');
                 }
             };
 
