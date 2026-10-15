@@ -54,6 +54,34 @@
       "destination": "/nosotros.html"
     },
     {
+      "source": "/avisos-de-privacidad",
+      "destination": "/avisos-de-privacidad.html"
+    },
+    {
+      "source": "/aviso-privacidad-candidatos",
+      "destination": "/aviso-privacidad-candidatos.html"
+    },
+    {
+      "source": "/aviso-privacidad-clientes",
+      "destination": "/aviso-privacidad-clientes.html"
+    },
+    {
+      "source": "/aviso-privacidad-proveedores",
+      "destination": "/aviso-privacidad-proveedores.html"
+    },
+    {
+      "source": "/aviso-privacidad-visitantes",
+      "destination": "/aviso-privacidad-visitantes.html"
+    },
+    {
+      "source": "/aviso-privacidad-ptu",
+      "destination": "/aviso-privacidad-ptu.html"
+    },
+    {
+      "source": "/aviso-privacidad-datos-personales",
+      "destination": "/aviso-privacidad-datos-personales.html"
+    },
+    {
       "source": "/producto/:path*",
       "destination": "/producto"
     },
@@ -70,7 +98,7 @@
       "destination": "/categoria"
     },
     {
-      "source": "/:cat((?!admin|api|_next|static|images|distribuidores|contacto|sostenibilidad|nosotros|.*\\..*).*)",
+      "source": "/:cat((?!admin|api|_next|static|images|distribuidores|contacto|sostenibilidad|nosotros|avisos-de-privacidad|aviso-privacidad-.*|.*\\..*).*)",
       "destination": "/categoria"
     }
   ]

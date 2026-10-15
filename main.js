@@ -799,16 +799,17 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => pModal.classList.add('active'), 10);
         };
 
-        // Attach to all footer links referencing "Avisos de privacidad" or "Cookies"
+        // Attach to all footer links referencing "Avisos de privacidad" or "Cookies" (only modal if href is '#')
         document.querySelectorAll('a').forEach(a => {
             const text = a.textContent.toLowerCase().trim();
-            if (text.includes('aviso de privacidad') || text.includes('avisos de privacidad')) {
+            const href = (a.getAttribute('href') || '').trim();
+            if ((text.includes('aviso de privacidad') || text.includes('avisos de privacidad')) && (href === '#' || href === '' || href.startsWith('javascript:'))) {
                 a.addEventListener('click', (e) => {
                     e.preventDefault();
                     window.openPrivacyModal();
                 });
             }
-            if (text.includes('cookies') || text.includes('preferencias de cookies')) {
+            if ((text.includes('cookies') || text.includes('preferencias de cookies')) && (href === '#' || href === '' || href.startsWith('javascript:'))) {
                 a.addEventListener('click', (e) => {
                     e.preventDefault();
                     window.openCookieSettings();
