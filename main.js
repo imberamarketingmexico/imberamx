@@ -609,4 +609,213 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    /* ==========================================================================
+       6. ENTERPRISE COOKIE CONSENT & PRIVACY POLICY MANAGER (LFPDPPP & OWASP COMPLIANT)
+       ========================================================================== */
+    function initCookieConsent() {
+        const STORAGE_KEY = 'imbera_cookie_consent';
+        const hasConsent = localStorage.getItem(STORAGE_KEY);
+
+        function setSecureCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = `${name}=${encodeURIComponent(value)}${expires}; path=/; SameSite=Lax; Secure`;
+        }
+
+        function saveConsent(type) {
+            const consentData = {
+                status: 'accepted',
+                type: type, // 'all' or 'essential'
+                analytics: type === 'all',
+                functional: type === 'all',
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(consentData));
+            setSecureCookie('imbera_cookie_consent', type, 365);
+            setSecureCookie('imbera_session_secure', '1', 30);
+
+            const banner = document.getElementById('imberaCookieBanner');
+            if (banner) {
+                banner.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                banner.style.opacity = '0';
+                banner.style.transform = 'translateY(40px)';
+                setTimeout(() => banner.remove(), 350);
+            }
+
+            const modal = document.getElementById('cookieSettingsModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        // Show banner if not previously configured
+        if (!hasConsent) {
+            setTimeout(() => {
+                if (document.getElementById('imberaCookieBanner')) return;
+
+                const banner = document.createElement('div');
+                banner.id = 'imberaCookieBanner';
+                banner.className = 'imbera-cookie-banner';
+                banner.setAttribute('role', 'dialog');
+                banner.setAttribute('aria-label', 'Aviso de Cookies y Privacidad');
+                banner.innerHTML = `
+                    <div class="cookie-content">
+                        <div class="cookie-title"><i class="fa-solid fa-cookie-bite"></i> Privacidad y Uso de Cookies</div>
+                        <p class="cookie-text">
+                            En Imbera utilizamos cookies esenciales para asegurar el correcto funcionamiento del portal, así como cookies analíticas para mejorar tu experiencia y optimizar nuestro catálogo de refrigeración comercial B2B. Consulta nuestro <a href="#" id="linkOpenPrivacyNotice">Aviso de Privacidad</a>.
+                        </p>
+                    </div>
+                    <div class="cookie-actions">
+                        <button type="button" class="btn-cookie-accept" id="btnAcceptAllCookies">Aceptar Todas</button>
+                        <button type="button" class="btn-cookie-essential" id="btnEssentialOnlyCookies">Solo Necesarias</button>
+                        <button type="button" class="btn-cookie-settings" id="btnOpenCookieSettings">Configurar</button>
+                    </div>
+                `;
+                document.body.appendChild(banner);
+
+                document.getElementById('btnAcceptAllCookies')?.addEventListener('click', () => saveConsent('all'));
+                document.getElementById('btnEssentialOnlyCookies')?.addEventListener('click', () => saveConsent('essential'));
+                document.getElementById('btnOpenCookieSettings')?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.openCookieSettings();
+                });
+                document.getElementById('linkOpenPrivacyNotice')?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.openPrivacyModal();
+                });
+            }, 750);
+        }
+
+        window.openCookieSettings = () => {
+            let modal = document.getElementById('cookieSettingsModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'cookieSettingsModal';
+                modal.className = 'cookie-modal-backdrop';
+                modal.innerHTML = `
+                    <div class="cookie-modal-card">
+                        <div class="cookie-modal-header">
+                            <h3><i class="fa-solid fa-sliders text-green"></i> Preferencias de Cookies</h3>
+                            <button type="button" class="btn-cookie-modal-close" id="btnCloseCookieSettings" aria-label="Cerrar">&times;</button>
+                        </div>
+                        <div class="cookie-modal-body">
+                            <p style="font-size: 13px; color: #64748b; margin-bottom: 18px;">
+                                Puedes elegir qué tipo de cookies autorizas en este dispositivo. Las cookies técnicas son indispensables para el funcionamiento y seguridad de la plataforma.
+                            </p>
+
+                            <div class="cookie-pref-group">
+                                <div class="cookie-pref-header">
+                                    <span class="cookie-pref-title">1. Cookies Técnicas y de Seguridad</span>
+                                    <span class="cookie-badge-required">Siempre Activas</span>
+                                </div>
+                                <p class="cookie-pref-desc">Permiten la navegación segura con cifrado TLS, autenticación de sesión de administradores, cotización de equipos y prevención de vulnerabilidades XSS/CSRF.</p>
+                            </div>
+
+                            <div class="cookie-pref-group">
+                                <div class="cookie-pref-header">
+                                    <span class="cookie-pref-title">2. Cookies de Análisis y Rendimiento</span>
+                                    <label class="switch-toggle" style="margin: 0;">
+                                        <input type="checkbox" id="prefAnalyticsCookies" checked>
+                                        <span class="slider-toggle"></span>
+                                    </label>
+                                </div>
+                                <p class="cookie-pref-desc">Nos ayudan a recopilar información anónima sobre las visitas a fichas técnicas y modelos para mejorar el catálogo.</p>
+                            </div>
+
+                            <div class="cookie-pref-group">
+                                <div class="cookie-pref-header">
+                                    <span class="cookie-pref-title">3. Cookies de Personalización</span>
+                                    <label class="switch-toggle" style="margin: 0;">
+                                        <input type="checkbox" id="prefFunctionalCookies" checked>
+                                        <span class="slider-toggle"></span>
+                                    </label>
+                                </div>
+                                <p class="cookie-pref-desc">Guardan tu selección de país/región y filtros de categorías para una navegación fluida.</p>
+                            </div>
+
+                            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; flex-wrap: wrap;">
+                                <button type="button" class="btn-cookie-essential" id="btnSaveCustomCookies" style="color: #002D62; border-color: #cbd5e1; background: #f1f5f9;">Guardar Preferencias</button>
+                                <button type="button" class="btn-cookie-accept" id="btnAcceptAllFromModal">Aceptar Todas</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                document.getElementById('btnCloseCookieSettings').onclick = () => modal.classList.remove('active');
+                modal.onclick = (e) => { if (e.target === modal) modal.classList.remove('active'); };
+                document.getElementById('btnAcceptAllFromModal').onclick = () => saveConsent('all');
+                document.getElementById('btnSaveCustomCookies').onclick = () => {
+                    const analyticsOn = document.getElementById('prefAnalyticsCookies').checked;
+                    saveConsent(analyticsOn ? 'all' : 'essential');
+                };
+            }
+            setTimeout(() => modal.classList.add('active'), 10);
+        };
+
+        window.openPrivacyModal = () => {
+            let pModal = document.getElementById('imberaPrivacyModal');
+            if (!pModal) {
+                pModal = document.createElement('div');
+                pModal.id = 'imberaPrivacyModal';
+                pModal.className = 'cookie-modal-backdrop';
+                pModal.innerHTML = `
+                    <div class="cookie-modal-card" style="max-width: 780px;">
+                        <div class="cookie-modal-header">
+                            <h3><i class="fa-solid fa-shield-halved text-primary"></i> Aviso de Privacidad Integral</h3>
+                            <button type="button" class="btn-cookie-modal-close" id="btnClosePrivacyModal" aria-label="Cerrar">&times;</button>
+                        </div>
+                        <div class="cookie-modal-body" style="font-size: 13.5px; color: #475569; line-height: 1.65; max-height: 65vh; overflow-y: auto; padding-right: 10px;">
+                            <p><strong>IMBERA S.A. DE C.V.</strong>, con domicilio en México, en estricto cumplimiento con la <strong>Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP)</strong> y los más rigurosos estándares de seguridad informática corporativa, es responsable del tratamiento legítimo, controlado y transparente de sus datos personales.</p>
+                            
+                            <h4 style="color: #002D62; margin: 18px 0 6px; font-size: 14.5px;">1. Finalidades del Tratamiento de Datos</h4>
+                            <p>Los datos recabados mediante formularios de cotización, contacto y canales oficiales (nombre completo, correo corporativo, teléfono, estado y volumen de unidades) se emplearán con las siguientes finalidades primarias:</p>
+                            <ul style="padding-left: 20px; margin-bottom: 12px;">
+                                <li>Atención y cotización especializada de equipos de refrigeración comercial B2B.</li>
+                                <li>Envío de fichas técnicas, manuales de usuario y asesoría de ingeniería de frío.</li>
+                                <li>Canalización con la red de distribuidores autorizados en la República Mexicana.</li>
+                            </ul>
+
+                            <h4 style="color: #002D62; margin: 18px 0 6px; font-size: 14.5px;">2. Derechos ARCO (Acceso, Rectificación, Cancelación y Oposición)</h4>
+                            <p>Usted o su representante legal debidamente acreditado podrán ejercer en todo momento sus derechos ARCO enviando una solicitud formal a nuestro departamento de cumplimiento en: <strong>contacto@imberacooling.com</strong>.</p>
+
+                            <h4 style="color: #002D62; margin: 18px 0 6px; font-size: 14.5px;">3. Seguridad de la Información, Cifrado y Cookies</h4>
+                            <p>Imbera cuenta con medidas de seguridad electrónicas de grado empresarial: transporte cifrado obligatorio HTTPS con TLS 1.3, encabezados HSTS, políticas de restricción de orígenes (CSP), cookies con atributos <code>Secure</code> y <code>SameSite=Lax</code>, protegiendo en todo momento la confidencialidad de las comunicaciones y previniendo accesos no autorizados.</p>
+                        </div>
+                        <div style="text-align: right; margin-top: 18px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                            <button type="button" class="btn-cookie-accept" id="btnAcceptPrivacyModal" style="padding: 9px 24px;">Entendido</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(pModal);
+
+                document.getElementById('btnClosePrivacyModal').onclick = () => pModal.classList.remove('active');
+                document.getElementById('btnAcceptPrivacyModal').onclick = () => pModal.classList.remove('active');
+                pModal.onclick = (e) => { if (e.target === pModal) pModal.classList.remove('active'); };
+            }
+            setTimeout(() => pModal.classList.add('active'), 10);
+        };
+
+        // Attach to all footer links referencing "Avisos de privacidad" or "Cookies"
+        document.querySelectorAll('a').forEach(a => {
+            const text = a.textContent.toLowerCase().trim();
+            if (text.includes('aviso de privacidad') || text.includes('avisos de privacidad')) {
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.openPrivacyModal();
+                });
+            }
+            if (text.includes('cookies') || text.includes('preferencias de cookies')) {
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.openCookieSettings();
+                });
+            }
+        });
+    }
+
+    initCookieConsent();
 });
