@@ -3401,20 +3401,6 @@ ul {
     color: #0a4f29 !important;
 }
 
-.report-card.featured::before {
-    content: 'MÁS RECIENTE';
-    position: absolute;
-    top: 10px;
-    right: -30px;
-    background: #002D62;
-    color: #ffffff;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    padding: 4px 30px;
-    transform: rotate(45deg);
-}
-
 .report-icon-box {
     width: 60px;
     height: 60px;
@@ -3486,7 +3472,7 @@ ul {
 /* 3 Ejes Section */
 .ejes-section {
     padding: 80px 0;
-    background: #ffffff;
+    background-color: #ffffff !important;
 }
 
 .ejes-grid {
@@ -3501,6 +3487,7 @@ ul {
     justify-content: center;
     align-items: center;
     text-align: center;
+    background-color: #ffffff;
 }
 
 .ejes-wheel-img {
@@ -3508,7 +3495,11 @@ ul {
     width: 440px;
     height: auto;
     object-fit: contain;
-    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.08));
+    filter: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+    background-color: #ffffff;
     transition: transform 0.3s ease;
 }
 
