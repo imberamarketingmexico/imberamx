@@ -89,6 +89,10 @@
       "destination": "/aviso-privacidad-datos-personales.html"
     },
     {
+      "source": "/404",
+      "destination": "/404.html"
+    },
+    {
       "source": "/producto/:path*",
       "destination": "/producto"
     },
@@ -105,7 +109,7 @@
       "destination": "/categoria"
     },
     {
-      "source": "/:cat((?!admin|api|_next|static|images|distribuidores|contacto|sostenibilidad|nosotros|avisos-de-privacidad|aviso-privacidad-.*|.*\\..*).*)",
+      "source": "/:cat((?!admin|api|_next|static|images|distribuidores|contacto|sostenibilidad|nosotros|avisos-de-privacidad|aviso-privacidad-.*|404|.*\\..*).*)",
       "destination": "/categoria"
     }
   ]
