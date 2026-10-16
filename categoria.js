@@ -74,6 +74,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     let selectedCatSlug = urlParams.get('cat') || '';
     let selectedSubSlug = urlParams.get('sub') || '';
 
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     if (!selectedCatSlug && !searchQuery) {
         const segments = window.location.pathname.split('/').filter(p => p && !p.endsWith('.html') && p !== 'categoria');
         if (segments.length >= 1) selectedCatSlug = segments[0];
@@ -194,7 +204,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (breadcrumbsSubEl) {
-                breadcrumbsSubEl.innerHTML = `<a href="categoria.html">Catálogo</a> | <span>Búsqueda: <strong>"${searchQuery}"</strong></span>`;
+                breadcrumbsSubEl.innerHTML = `<a href="categoria.html">Catálogo</a> | <span>Búsqueda: <strong>"${escapeHtml(searchQuery)}"</strong></span>`;
             }
 
             const searchInput = document.querySelector('.search-form input');
@@ -276,7 +286,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let query = sb.from('products').select('*, categories(*)').eq('is_active', true);
                 
                 if (searchQuery) {
-                    query = query.or(`commercial_name.ilike.%${searchQuery}%,model_code.ilike.%${searchQuery}%,sku.ilike.%${searchQuery}%,subtitle.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+                    const cleanQ = searchQuery.replace(/[,()]/g, ' ').trim();
+                    query = query.or(`commercial_name.ilike.%${cleanQ}%,model_code.ilike.%${cleanQ}%,sku.ilike.%${cleanQ}%,subtitle.ilike.%${cleanQ}%,description.ilike.%${cleanQ}%`);
                 } else if (dbCategories.length > 0) {
                     if (selectedSubSlug) {
                         const targetSub = dbCategories.find(c => c.slug === selectedSubSlug);
@@ -345,7 +356,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 catalogGridEl.innerHTML = `
                     <div style="grid-column: span 3; text-align: center; padding: 60px 20px;">
                         <i class="fa-solid fa-magnifying-glass fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i>
-                        <h3 style="font-size: 20px; color: #475569; margin-bottom: 8px;">No se encontraron productos para "${searchQuery}"</h3>
+                        <h3 style="font-size: 20px; color: #475569; margin-bottom: 8px;">No se encontraron productos para "${escapeHtml(searchQuery)}"</h3>
                         <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Intenta con otro modelo, código numérico o categoría.</p>
                         <a href="categoria.html" class="btn-view" style="display: inline-block; padding: 10px 24px; text-decoration: none;">Ver todo el catálogo</a>
                     </div>

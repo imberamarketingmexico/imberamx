@@ -202,6 +202,16 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
         });
 
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         searchInput.addEventListener('input', () => {
             clearTimeout(debounceTimer);
             const val = searchInput.value.trim();
@@ -216,16 +226,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!window.imberaSupabase) return;
                 try {
                     const sb = window.imberaSupabase.client();
+                    const cleanVal = val.replace(/[,()]/g, ' ').trim();
                     const { data, error } = await sb.from('products')
                         .select('*, categories(*)')
                         .eq('is_active', true)
-                        .or(`commercial_name.ilike.%${val}%,model_code.ilike.%${val}%,sku.ilike.%${val}%,subtitle.ilike.%${val}%`)
+                        .or(`commercial_name.ilike.%${cleanVal}%,model_code.ilike.%${cleanVal}%,sku.ilike.%${cleanVal}%,subtitle.ilike.%${cleanVal}%`)
                         .limit(5);
 
                     if (error || !data || data.length === 0) {
                         dropdown.innerHTML = `
                             <div style="padding: 15px; text-align: center; color: #94a3b8; font-size: 13px;">
-                                No se encontraron resultados para "<strong>${val}</strong>"
+                                No se encontraron resultados para "<strong>${escapeHtml(val)}</strong>"
                             </div>
                         `;
                         dropdown.classList.add('active');

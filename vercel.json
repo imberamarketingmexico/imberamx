@@ -32,6 +32,13 @@
       ]
     }
   ],
+  "redirects": [
+    {
+      "source": "/(.*)\\.(sql|env|bak|conf|log)",
+      "destination": "/",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/admin",
