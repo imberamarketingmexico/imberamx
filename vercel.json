@@ -101,15 +101,15 @@
       "destination": "/categoria"
     },
     {
-      "source": "/:cat/:sub/:item",
+      "source": "/:cat(enfriadores|congeladores|healthcare|vitrinas|procesamiento-y-pesaje|fabricas-de-hielo|conservadores-de-hielo|cortinas-de-aire|camaras-de-conservacion|home-cooler|linea-profesional|coccion|procesamiento|accesorios|linea-cobalt)/:sub/:item",
       "destination": "/producto"
     },
     {
-      "source": "/:cat/:sub",
+      "source": "/:cat(enfriadores|congeladores|healthcare|vitrinas|procesamiento-y-pesaje|fabricas-de-hielo|conservadores-de-hielo|cortinas-de-aire|camaras-de-conservacion|home-cooler|linea-profesional|coccion|procesamiento|accesorios|linea-cobalt)/:sub",
       "destination": "/categoria"
     },
     {
-      "source": "/:cat((?!admin|api|_next|static|images|distribuidores|contacto|sostenibilidad|nosotros|avisos-de-privacidad|aviso-privacidad-.*|404|.*\\..*).*)",
+      "source": "/:cat(enfriadores|congeladores|healthcare|vitrinas|procesamiento-y-pesaje|fabricas-de-hielo|conservadores-de-hielo|cortinas-de-aire|camaras-de-conservacion|home-cooler|linea-profesional|coccion|procesamiento|accesorios|linea-cobalt)",
       "destination": "/categoria"
     }
   ]
