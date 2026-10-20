@@ -386,14 +386,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             const targetUrl = `/${catSlug}/${subSlug}/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
 
             return `
-                <div class="catalog-item" onclick="window.location.href='${targetUrl}'" role="link" tabindex="0" aria-label="Ver detalles de ${displayName}">
+                <div class="catalog-item" data-href="${targetUrl}" role="link" tabindex="0" aria-label="Ver detalles de ${displayName}">
                     <div class="item-img">
                         <img src="${p.main_image || 'images/Enfriador_G3D42_Especial.jpg'}" alt="${displayName} - Código ${p.sku}" loading="lazy">
                     </div>
                     <div class="item-info">
                         <h3>${displayName}</h3>
                         <p>Código: <strong>${p.sku}</strong></p>
-                        <a href="${targetUrl}" class="btn-view" onclick="event.stopPropagation();">Ver equipo</a>
+                        <a href="${targetUrl}" class="btn-view">Ver equipo</a>
                     </div>
                 </div>
             `;
@@ -414,25 +414,36 @@ document.addEventListener('DOMContentLoaded', async () => {
             const modelSlug = p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
             const targetUrl = `/enfriadores/enfriadores-verticales/${modelSlug}?sku=${encodeURIComponent(p.code)}`;
             return `
-                <div class="catalog-item" onclick="window.location.href='${targetUrl}'" role="link" tabindex="0" aria-label="Ver detalles de ${p.name}">
+                <div class="catalog-item" data-href="${targetUrl}" role="link" tabindex="0" aria-label="Ver detalles de ${p.name}">
                     <div class="item-img"><img src="${p.img}" alt="${p.name} - Código ${p.code}" loading="lazy"></div>
                     <div class="item-info">
                         <h3>${p.name}</h3>
                         <p>Código: <strong>${p.code}</strong></p>
-                        <a href="${targetUrl}" class="btn-view" onclick="event.stopPropagation();">Ver equipo</a>
+                        <a href="${targetUrl}" class="btn-view">Ver equipo</a>
                     </div>
                 </div>
             `;
         }).join('');
     }
 
-    // Keyboard accessibility: Enter or Space activates card link
+    // Click and keyboard accessibility for catalog items
     if (catalogGridEl) {
+        catalogGridEl.addEventListener('click', (e) => {
+            const btn = e.target.closest('.btn-view');
+            if (btn) return; // let natural link handle it
+            const item = e.target.closest('.catalog-item');
+            if (item && item.dataset.href) {
+                window.location.href = item.dataset.href;
+            }
+        });
+
         catalogGridEl.addEventListener('keydown', (e) => {
             const item = e.target.closest('.catalog-item');
             if (item && (e.key === 'Enter' || e.key === ' ')) {
                 e.preventDefault();
-                item.click();
+                if (item.dataset.href) {
+                    window.location.href = item.dataset.href;
+                }
             }
         });
     }

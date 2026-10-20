@@ -936,6 +936,8 @@ ul {
     display: flex;
     flex-direction: column;
     cursor: pointer;
+    text-decoration: none !important;
+    color: inherit !important;
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 

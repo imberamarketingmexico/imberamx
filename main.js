@@ -281,9 +281,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     dropdown.innerHTML = data.map(p => {
                         const displayName = p.model_code || p.commercial_name;
-                        const catSlug = p.categories?.slug || 'enfriadores';
                         const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-                        const targetUrl = `/${catSlug}/equipos/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
+                        const targetUrl = `/producto/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
                         const img = p.main_image || 'images/Enfriador_G3D42_Especial.jpg';
 
                         return `
@@ -368,13 +367,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 prodSlider.innerHTML = shuffled.map(p => {
                     const displayName = p.model_code || p.commercial_name;
-                    const catSlug = p.categories?.slug || 'enfriadores';
                     const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-                    const targetUrl = `/${catSlug}/equipos/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
+                    const targetUrl = `/producto/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
                     const imgUrl = p.main_image || 'images/Enfriador_G3D42_Especial.jpg';
                     const subtitle = p.subtitle ? `<p class="product-subtitle">${p.subtitle}</p>` : '';
                     return `
-                        <div class="product-card" onclick="window.location.href='${targetUrl}'" role="link" tabindex="0" aria-label="Ver equipo ${displayName}">
+                        <a href="${targetUrl}" class="product-card" aria-label="Ver equipo ${displayName}">
                             <div class="product-image">
                                 <img src="${imgUrl}" alt="${displayName} - Imbera México" loading="lazy">
                             </div>
@@ -383,16 +381,24 @@ document.addEventListener('DOMContentLoaded', () => {
                                 ${subtitle}
                                 <p class="product-sku">Código: <strong>${p.sku}</strong></p>
                             </div>
-                        </div>
+                        </a>
                     `;
                 }).join('');
 
-                // Reattach keyboard listener
+                // Attach robust click & keyboard navigation
                 prodSlider.querySelectorAll('.product-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const href = card.getAttribute('href');
+                        if (href && !e.ctrlKey && !e.metaKey && e.button === 0) {
+                            e.preventDefault();
+                            window.location.href = href;
+                        }
+                    });
                     card.addEventListener('keydown', (e) => {
                         if (e.key === 'Enter' || e.key === ' ') {
                             e.preventDefault();
-                            card.click();
+                            const href = card.getAttribute('href');
+                            if (href) window.location.href = href;
                         }
                     });
                 });
