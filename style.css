@@ -4617,3 +4617,203 @@ ul {
 
 
 
+
+/* ==============================================================================
+   404 ERROR PAGE STYLES (Externalized for CSP Compliance)
+   ============================================================================== */
+.error-404-container {
+    min-height: calc(100vh - 420px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 70px 20px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.error-404-card {
+    max-width: 680px;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 50px 36px;
+    text-align: center;
+    box-shadow: 0 20px 45px -10px rgba(11, 67, 114, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e2e8f0;
+    position: relative;
+    overflow: hidden;
+}
+
+.error-404-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #0b4372 0%, #00a651 100%);
+}
+
+.error-badge-icon {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(11, 67, 114, 0.08) 0%, rgba(0, 166, 81, 0.12) 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.error-badge-icon i.snowflake-icon {
+    font-size: 42px;
+    color: #0b4372;
+    animation: pulse-slow 3s infinite ease-in-out;
+}
+
+@keyframes pulse-slow {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: 0.85; }
+}
+
+.error-404-number {
+    font-size: clamp(80px, 14vw, 130px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -3px;
+    background: linear-gradient(135deg, #0b4372 10%, #00a651 90%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0 0 10px 0;
+    user-select: none;
+}
+
+.error-404-title {
+    font-size: clamp(22px, 3.5vw, 28px);
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 14px;
+    line-height: 1.25;
+}
+
+.error-404-desc {
+    font-size: 16px;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0 auto 32px auto;
+    max-width: 520px;
+}
+
+.error-404-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 35px;
+}
+
+.btn-404-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #0b4372;
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 14px 28px;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 18px rgba(11, 67, 114, 0.25);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-404-primary:hover {
+    background: #083053;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(11, 67, 114, 0.35);
+}
+
+.btn-404-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    color: #0b4372 !important;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 13px 26px;
+    border-radius: 30px;
+    border: 2px solid #0b4372;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-404-secondary:hover {
+    background: #f0f7ff;
+    transform: translateY(-2px);
+}
+
+.error-suggestions-box {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 20px 24px;
+    border: 1px dashed #cbd5e1;
+    text-align: left;
+}
+
+.error-suggestions-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #475569;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.error-suggestions-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.suggestion-chip {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #334155 !important;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.suggestion-chip:hover {
+    border-color: #00a651;
+    color: #00a651 !important;
+    background: #f0fdf4;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+    .error-404-card {
+        padding: 40px 20px;
+    }
+    .error-404-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    .btn-404-primary, .btn-404-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+}

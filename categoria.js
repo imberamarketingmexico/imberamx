@@ -1,11 +1,6 @@
-// ==============================================================================
-// CATEGORIA.JS - Catálogo Dinámico con Categorías Padre y Subcategorías
-// ==============================================================================
-
 document.addEventListener('DOMContentLoaded', async () => {
     const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
     
-    // Fallback static structure matching user list if offline or loading
     const officialTree = [
         {
             name: 'Enfriadores',
@@ -68,7 +63,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         { name: 'Accesorios', slug: 'accesorios', subcategories: [] }
     ];
 
-    // Read URL query params (?cat=... or ?sub=... or ?q=...) or path segments (/categoria/enfriadores/verticales or /enfriadores/verticales)
     const urlParams = new URLSearchParams(window.location.search);
     const searchQuery = (urlParams.get('q') || '').trim();
     let selectedCatSlug = urlParams.get('cat') || '';
@@ -101,7 +95,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const catalogGridEl = document.getElementById('catalogGrid');
     const resultsCountEl = document.getElementById('resultsCount');
 
-    // 1. Fetch Categories from Supabase or Fallback
     try {
         if (sb) {
             const { data, error } = await sb.from('categories').select('*').order('display_order');

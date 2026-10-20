@@ -254,7 +254,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // 2. Identify Product from Query Params or Clean URL Path
     const urlParams = new URLSearchParams(window.location.search);
     let skuParam = urlParams.get('sku');
     let idParam = urlParams.get('id');

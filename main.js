@@ -87,7 +87,32 @@ document.addEventListener('DOMContentLoaded', () => {
         startAutoPlay();
     }
 
-    // Dynamic Loader for Hero Banners from Supabase or Cache
+    // Automatic Anti-CSRF Token Generation & Injection
+    try {
+        let csrfVal = sessionStorage.getItem('imb_csrf_token');
+        if (!csrfVal) {
+            csrfVal = (window.crypto && window.crypto.randomUUID) 
+                ? window.crypto.randomUUID() 
+                : ('imb_' + Math.random().toString(36).substring(2) + Date.now().toString(36));
+            sessionStorage.setItem('imb_csrf_token', csrfVal);
+        }
+        document.querySelectorAll('input[name="csrf_token"]').forEach(inp => {
+            inp.value = csrfVal;
+        });
+        document.querySelectorAll('form').forEach(f => {
+            if (!f.querySelector('input[name="csrf_token"]')) {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'csrf_token';
+                hiddenInput.value = csrfVal;
+                f.prepend(hiddenInput);
+            }
+            if (f.getAttribute('action') === '#') {
+                f.setAttribute('action', 'javascript:void(0);');
+            }
+        });
+    } catch(e) {}
+
     async function loadHeroBanners() {
         if (!carouselTrack) return;
         try {
@@ -315,7 +340,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Dynamic feed of latest uploaded products from Supabase for the carousel (Last 6, randomly shuffled)
     async function loadLatestProductsIntoSlider() {
         if (!prodSlider || !window.imberaSupabase) return;
         try {

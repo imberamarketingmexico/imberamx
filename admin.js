@@ -1,7 +1,3 @@
-// ==============================================================================
-// ADMIN PANEL CONTROLLER (admin.js)
-// ==============================================================================
-
 document.addEventListener('DOMContentLoaded', async () => {
     const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
     if (!sb) {

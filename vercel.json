@@ -26,8 +26,30 @@
           "value": "camera=(), microphone=(), geolocation=(), payment=()"
         },
         {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://imberamx-u5gh.vercel.app"
+        },
+        {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: blob: https://qezrauybkpzcenqilwcw.supabase.co https://images.unsplash.com https://mx.imberacooling.com; connect-src 'self' https://qezrauybkpzcenqilwcw.supabase.co wss://qezrauybkpzcenqilwcw.supabase.co; frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self';"
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' https://cdnjs.cloudflare.com; style-src-attr 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: blob: https://qezrauybkpzcenqilwcw.supabase.co https://images.unsplash.com https://mx.imberacooling.com; connect-src 'self' https://qezrauybkpzcenqilwcw.supabase.co wss://qezrauybkpzcenqilwcw.supabase.co; frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com; frame-ancestors 'self'; form-action 'self'; object-src 'none'; base-uri 'self';"
+        }
+      ]
+    },
+    {
+      "source": "/(images|fonts)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(js|css)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, must-revalidate"
         }
       ]
     }
