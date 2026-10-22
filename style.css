@@ -3620,37 +3620,127 @@ ul {
     background-color: #ffffff;
 }
 
-.nosotros-intro-grid {
-    display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: 50px;
-    align-items: center;
+.nosotros-intro-header {
+    text-align: center;
+    max-width: 860px;
+    margin: 0 auto 35px;
 }
 
-.nosotros-intro-text h2 {
+.nosotros-intro-header h2 {
     font-size: clamp(28px, 3.5vw, 38px);
     font-weight: 800;
     color: #002D62;
-    margin: 0 0 20px;
+    margin: 12px 0 16px;
     line-height: 1.25;
 }
 
-.nosotros-intro-text p {
-    font-size: 16.5px;
-    color: #475569;
-    line-height: 1.7;
-    margin-bottom: 18px;
+.nosotros-intro-lead {
+    font-size: 18px !important;
+    color: #1e293b !important;
+    line-height: 1.7 !important;
+    margin-bottom: 14px !important;
+    font-weight: 500;
 }
 
-.nosotros-intro-quote {
-    border-left: 4px solid var(--accent-green, #1ebb55);
-    padding-left: 20px;
-    margin-top: 25px;
-    font-size: 17px;
-    font-weight: 600;
-    color: #002D62;
-    line-height: 1.55;
-    font-style: italic;
+.nosotros-intro-header p {
+    font-size: 16px;
+    color: #475569;
+    line-height: 1.65;
+    margin: 0 auto 10px;
+}
+
+/* Video Corporativo Nosotros */
+.nosotros-video-wrapper {
+    max-width: 960px;
+    margin: 0 auto 45px;
+    padding: 0 10px;
+}
+
+.nosotros-video-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+    overflow: hidden;
+    border-radius: 18px;
+    box-shadow: 0 16px 45px rgba(0, 45, 98, 0.16);
+    background-color: #001A38;
+    border: 1px solid rgba(0, 45, 98, 0.08);
+}
+
+.nosotros-video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 18px;
+}
+
+/* Cifras Destacadas en Tira bajo el Video */
+.nosotros-stats-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 1060px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #002D62 0%, #001A38 100%);
+    border-radius: 16px;
+    padding: 28px 30px;
+    color: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 45, 98, 0.15);
+}
+
+.nosotros-stats-strip .stat-pill {
+    text-align: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 0 15px;
+}
+
+.nosotros-stats-strip .stat-pill:last-child {
+    border-right: none;
+}
+
+.nosotros-stats-strip .stat-num {
+    font-size: 34px;
+    font-weight: 800;
+    color: #1ebb55;
+    line-height: 1.1;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.nosotros-stats-strip .stat-label {
+    font-size: 13.5px;
+    color: #cbd5e1;
+    margin-top: 6px;
+    line-height: 1.35;
+}
+
+@media (max-width: 860px) {
+    .nosotros-stats-strip {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 22px;
+        padding: 24px 20px;
+    }
+    .nosotros-stats-strip .stat-pill:nth-child(2) {
+        border-right: none;
+    }
+}
+
+@media (max-width: 520px) {
+    .nosotros-stats-strip {
+        grid-template-columns: 1fr;
+    }
+    .nosotros-stats-strip .stat-pill {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+        padding-bottom: 16px;
+    }
+    .nosotros-stats-strip .stat-pill:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
 }
 
 /* Grupo AERITEK Section */
