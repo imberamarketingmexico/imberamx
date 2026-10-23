@@ -57,8 +57,8 @@
             </div>
             
             <div class="search-box">
-                <form action="categoria.html" method="GET" class="search-form">
-                    <input type="text" name="q" placeholder="¿Qué estás buscando?" aria-label="Buscar productos">
+                <form action="/categoria" method="GET" class="search-form" autocomplete="off">
+                    <input type="text" name="q" placeholder="¿Qué estás buscando?" aria-label="Buscar productos" autocomplete="off" autocapitalize="off" spellcheck="false" data-lpignore="true">
                     <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </form>
             </div>
@@ -273,7 +273,7 @@
                         
                         <!-- Hierarchy: Short Title & Code Only -->
                         <header class="product-header-block">
-                            <h1 class="product-commercial-name skeleton-shimmer" id="pCommercialName" style="min-width: 260px; min-height: 48px;">&nbsp;</h1>
+                            <h1 class="product-commercial-name skeleton-shimmer" id="pCommercialName" style="max-width: 100%; min-height: 48px;">&nbsp;</h1>
                             <div class="product-meta-row">
                                 <span class="product-code-tag">Código: <strong id="pSkuCode" class="skeleton-shimmer" style="min-width: 70px; display: inline-block;">&nbsp;</strong></span>
                             </div>

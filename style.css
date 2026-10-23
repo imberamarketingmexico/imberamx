@@ -13,17 +13,27 @@
     --max-width: 90%;
 }
 
-* {
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+html, body {
+    max-width: 100vw;
+    width: 100%;
+    overflow-x: hidden;
+    position: relative;
 }
 
 body {
     font-family: 'Outfit', sans-serif;
     color: var(--text-color);
     background-color: var(--bg-light);
-    overflow-x: hidden;
+}
+
+img, video, iframe {
+    max-width: 100%;
 }
 
 a {
@@ -2405,40 +2415,178 @@ ul {
 
 /* Responsive adjustments for product detail */
 @media (max-width: 992px) {
+    .product-detail-section {
+        padding: 25px 0 60px;
+    }
+
     .product-layout-grid {
         grid-template-columns: 1fr;
-        gap: 35px;
+        gap: 30px;
+        width: 100%;
+        max-width: 100%;
     }
 
     .product-gallery-col {
         position: static;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .product-info-col {
+        width: 100%;
+        max-width: 100%;
     }
 
     .main-image-wrapper {
-        height: 380px;
+        height: 340px;
+        padding: 25px;
     }
 
     .product-commercial-name {
-        font-size: 28px;
+        font-size: clamp(26px, 5vw, 36px);
+        word-break: break-word;
+        overflow-wrap: break-word;
     }
 
     .product-action-box {
         flex-direction: column;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .btn-download-pdf,
+    .btn-quote-now {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
     }
 }
 
-@media (max-width: 600px) {
-    .dim-grid {
-        grid-template-columns: 1fr;
+@media (max-width: 768px) {
+    .dimensions-strip {
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+        width: 100%;
     }
-    
+
+    .dim-block {
+        width: 100%;
+        padding: 14px 16px;
+    }
+
+    .dim-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
     .main-image-wrapper {
         height: 300px;
         padding: 20px;
     }
 
     .product-quote-form {
-        padding: 25px 20px;
+        padding: 24px 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-detail-section {
+        padding: 15px 0 45px;
+    }
+
+    .product-commercial-name {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .product-code-tag {
+        font-size: 12px;
+        padding: 4px 10px;
+    }
+
+    .main-image-wrapper {
+        height: 250px;
+        padding: 15px;
+        border-radius: 12px;
+    }
+
+    .product-warranty-banner {
+        padding: 12px 14px;
+        gap: 12px;
+    }
+
+    .product-warranty-banner .warranty-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
+    }
+
+    .product-warranty-banner .warranty-info strong {
+        font-size: 13.5px;
+    }
+
+    .product-warranty-banner .warranty-info span {
+        font-size: 11.5px;
+    }
+
+    .dim-block {
+        padding: 12px;
+    }
+
+    .dim-title {
+        font-size: 11px;
+        margin-bottom: 8px;
+    }
+
+    .dim-lbl {
+        font-size: 10.5px;
+    }
+
+    .dim-val {
+        font-size: 12.5px;
+    }
+
+    .specs-minimal-list li {
+        padding: 10px 14px;
+        font-size: 12px;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .specs-minimal-list li span {
+        font-size: 12px;
+    }
+
+    .specs-minimal-list li strong {
+        font-size: 12px;
+        margin-left: auto;
+    }
+
+    .product-bullets li {
+        font-size: 13.5px;
+        line-height: 1.5;
+        padding-left: 20px;
+    }
+
+    .btn-download-pdf,
+    .btn-quote-now {
+        padding: 12px 16px;
+        font-size: 13px;
+        border-radius: 25px;
+    }
+
+    .product-quote-form {
+        padding: 20px 14px;
+        border-radius: 12px;
+    }
+
+    .quote-section-title {
+        font-size: 22px;
+    }
+
+    .quote-section-desc {
+        font-size: 13px;
     }
 }
 

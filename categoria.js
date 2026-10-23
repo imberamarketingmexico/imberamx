@@ -182,7 +182,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function updateHeaderAndBreadcrumbs(tree) {
         if (searchQuery) {
-            const titleText = `Búsqueda: "${searchQuery}"`;
+            const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(searchQuery);
+            const titleText = isUuid ? 'Búsqueda de Equipos' : `Búsqueda: "${searchQuery}"`;
             document.title = `${titleText} | Catálogo Oficial Imbera México`;
             let metaDesc = document.querySelector('meta[name="description"]');
             if (!metaDesc) {
@@ -190,19 +191,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 metaDesc.name = 'description';
                 document.head.appendChild(metaDesc);
             }
-            metaDesc.content = `Resultados de búsqueda para "${searchQuery}" en el catálogo oficial de refrigeración comercial Imbera México.`;
+            metaDesc.content = isUuid
+                ? 'Resultados de búsqueda en el catálogo oficial de refrigeración comercial Imbera México.'
+                : `Resultados de búsqueda para "${searchQuery}" en el catálogo oficial de refrigeración comercial Imbera México.`;
 
             if (heroTitleEl) {
                 heroTitleEl.innerText = titleText;
             }
 
             if (breadcrumbsSubEl) {
-                breadcrumbsSubEl.innerHTML = `<a href="categoria.html">Catálogo</a> | <span>Búsqueda: <strong>"${escapeHtml(searchQuery)}"</strong></span>`;
+                breadcrumbsSubEl.innerHTML = isUuid
+                    ? `<a href="/categoria">Catálogo</a> | <span>Búsqueda de Equipos</span>`
+                    : `<a href="/categoria">Catálogo</a> | <span>Búsqueda: <strong>"${escapeHtml(searchQuery)}"</strong></span>`;
             }
 
             const searchInput = document.querySelector('.search-form input');
             if (searchInput) {
-                searchInput.value = searchQuery;
+                searchInput.value = isUuid ? '' : searchQuery;
             }
             return;
         }
@@ -280,7 +285,42 @@ document.addEventListener('DOMContentLoaded', async () => {
                 
                 if (searchQuery) {
                     const cleanQ = searchQuery.replace(/[,()]/g, ' ').trim();
-                    query = query.or(`commercial_name.ilike.%${cleanQ}%,model_code.ilike.%${cleanQ}%,sku.ilike.%${cleanQ}%,subtitle.ilike.%${cleanQ}%,description.ilike.%${cleanQ}%`);
+                    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanQ);
+
+                    let orConditions = [];
+                    if (isUuid) {
+                        orConditions.push(`id.eq.${cleanQ}`);
+                    }
+                    orConditions.push(`commercial_name.ilike.%${cleanQ}%`);
+                    orConditions.push(`model_code.ilike.%${cleanQ}%`);
+                    orConditions.push(`sku.ilike.%${cleanQ}%`);
+                    orConditions.push(`subtitle.ilike.%${cleanQ}%`);
+                    orConditions.push(`description.ilike.%${cleanQ}%`);
+
+                    // Check for multi-word queries
+                    const terms = cleanQ.split(/\s+/).filter(t => t.length > 2);
+                    if (terms.length > 1) {
+                        terms.forEach(t => {
+                            orConditions.push(`commercial_name.ilike.%${t}%`);
+                            orConditions.push(`model_code.ilike.%${t}%`);
+                            orConditions.push(`sku.ilike.%${t}%`);
+                        });
+                    }
+
+                    // Check matching categories
+                    if (dbCategories.length > 0) {
+                        const matchedCats = dbCategories.filter(c => 
+                            c.name.toLowerCase().includes(cleanQ.toLowerCase()) || 
+                            c.slug.toLowerCase().includes(cleanQ.toLowerCase()) ||
+                            (terms.length > 0 && terms.some(t => c.name.toLowerCase().includes(t.toLowerCase())))
+                        );
+                        if (matchedCats.length > 0) {
+                            const catIds = matchedCats.map(c => c.id);
+                            orConditions.push(`category_id.in.(${catIds.join(',')})`);
+                        }
+                    }
+
+                    query = query.or(orConditions.join(','));
                 } else if (dbCategories.length > 0) {
                     if (selectedSubSlug) {
                         const targetSub = dbCategories.find(c => c.slug === selectedSubSlug);
@@ -300,6 +340,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const { data, error } = await query;
                 if (!error) {
                     dbProducts = data || [];
+
+                    // If a direct UUID was searched and exactly one product was found, redirect to product detail
+                    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(searchQuery.trim());
+                    if (isUuid && dbProducts.length === 1) {
+                        const p = dbProducts[0];
+                        const catSlug = p.categories?.slug || 'equipos';
+                        const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+                        window.location.replace(`/${catSlug}/${modelSlug}?sku=${encodeURIComponent(p.sku)}`);
+                        return;
+                    }
+
                     renderProductsGrid(dbProducts);
                     return;
                 }
@@ -338,10 +389,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function renderProductsGrid(products) {
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(searchQuery);
+
         if (resultsCountEl) {
-            resultsCountEl.innerText = searchQuery 
-                ? `${products.length} resultado${products.length === 1 ? '' : 's'} para "${searchQuery}"`
-                : `Mostrando ${products.length} productos`;
+            if (searchQuery) {
+                resultsCountEl.innerText = isUuid
+                    ? `${products.length} resultado${products.length === 1 ? '' : 's'}`
+                    : `${products.length} resultado${products.length === 1 ? '' : 's'} para "${searchQuery}"`;
+            } else {
+                resultsCountEl.innerText = `Mostrando ${products.length} productos`;
+            }
         }
 
         if (!products || products.length === 0) {
@@ -349,9 +406,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 catalogGridEl.innerHTML = `
                     <div style="grid-column: span 3; text-align: center; padding: 60px 20px;">
                         <i class="fa-solid fa-magnifying-glass fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i>
-                        <h3 style="font-size: 20px; color: #475569; margin-bottom: 8px;">No se encontraron productos para "${escapeHtml(searchQuery)}"</h3>
-                        <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Intenta con otro modelo, código numérico o categoría.</p>
-                        <a href="categoria.html" class="btn-view" style="display: inline-block; padding: 10px 24px; text-decoration: none;">Ver todo el catálogo</a>
+                        <h3 style="font-size: 20px; color: #475569; margin-bottom: 8px;">${isUuid ? 'No se encontraron equipos para esta búsqueda' : `No se encontraron productos para "${escapeHtml(searchQuery)}"`}</h3>
+                        <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Intenta buscando por modelo (ej. VR17, G3D42), tipo de equipo o código numérico.</p>
+                        <a href="/categoria" class="btn-view" style="display: inline-block; padding: 10px 24px; text-decoration: none;">Ver todo el catálogo</a>
                     </div>
                 `;
             } else {

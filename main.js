@@ -202,10 +202,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchInput = form ? form.querySelector('input') : null;
         if (!form || !searchInput) return;
 
-        // Ensure form submission targets categoria.html?q=...
-        form.setAttribute('action', 'categoria.html');
+        // Ensure form submission targets /categoria?q=... and avoid browser autofill collisions
+        form.setAttribute('action', '/categoria');
         form.setAttribute('method', 'GET');
+        form.setAttribute('autocomplete', 'off');
         searchInput.setAttribute('name', 'q');
+        searchInput.setAttribute('autocomplete', 'off');
+        searchInput.setAttribute('autocapitalize', 'off');
+        searchInput.setAttribute('spellcheck', 'false');
+        searchInput.setAttribute('data-lpignore', 'true');
+        searchInput.setAttribute('data-form-type', 'other');
 
         // Create or locate autocomplete container
         let dropdown = box.querySelector('.search-autocomplete-dropdown');
@@ -223,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 return;
             }
-            window.location.href = `categoria.html?q=${encodeURIComponent(query)}`;
+            window.location.href = `/categoria?q=${encodeURIComponent(query)}`;
             e.preventDefault();
         });
 
@@ -252,10 +258,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     const sb = window.imberaSupabase.client();
                     const cleanVal = val.replace(/[,()]/g, ' ').trim();
+                    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanVal);
+
+                    let orConditions = [];
+                    if (isUuid) orConditions.push(`id.eq.${cleanVal}`);
+                    orConditions.push(`commercial_name.ilike.%${cleanVal}%`);
+                    orConditions.push(`model_code.ilike.%${cleanVal}%`);
+                    orConditions.push(`sku.ilike.%${cleanVal}%`);
+                    orConditions.push(`subtitle.ilike.%${cleanVal}%`);
+
                     const { data, error } = await sb.from('products')
                         .select('*, categories(*)')
                         .eq('is_active', true)
-                        .or(`commercial_name.ilike.%${cleanVal}%,model_code.ilike.%${cleanVal}%,sku.ilike.%${cleanVal}%,subtitle.ilike.%${cleanVal}%`)
+                        .or(orConditions.join(','))
                         .limit(5);
 
                     if (error || !data || data.length === 0) {
@@ -282,7 +297,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     dropdown.innerHTML = data.map(p => {
                         const displayName = p.model_code || p.commercial_name;
                         const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-                        const targetUrl = `/producto/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
+                        const catSlug = p.categories?.slug || 'equipos';
+                        const targetUrl = `/${catSlug}/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
                         const img = p.main_image || 'images/Enfriador_G3D42_Especial.jpg';
 
                         return `
@@ -295,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </a>
                         `;
                     }).join('') + `
-                        <a href="categoria.html?q=${encodeURIComponent(val)}" class="search-view-all" style="display: block; padding: 10px; text-align: center; background: #f8fafc; font-size: 12px; font-weight: 700; color: var(--primary-color); border-top: 1px solid #e2e8f0; text-decoration: none;">
+                        <a href="/categoria?q=${encodeURIComponent(val)}" class="search-view-all" style="display: block; padding: 10px; text-align: center; background: #f8fafc; font-size: 12px; font-weight: 700; color: var(--primary-color); border-top: 1px solid #e2e8f0; text-decoration: none;">
                             Ver todos los resultados para "${val}" <i class="fa-solid fa-arrow-right" style="font-size: 10px; margin-left: 4px;"></i>
                         </a>
                     `;
