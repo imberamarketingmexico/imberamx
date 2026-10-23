@@ -884,4 +884,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initCookieConsent();
+
+    /* ==========================================================================
+       Dynamic Footer Year: Automatically updates to current year (2026, 2027...)
+       ========================================================================== */
+    const updateFooterYear = () => {
+        const year = new Date().getFullYear();
+        document.querySelectorAll('.current-year').forEach(el => {
+            el.textContent = year;
+        });
+        document.querySelectorAll('.footer-bottom p, .site-footer p').forEach(p => {
+            if (p.textContent.includes('IMBERA. Todos los derechos reservados') || p.textContent.includes('Todos los derechos reservados')) {
+                if (!p.querySelector('.current-year')) {
+                    p.innerHTML = p.innerHTML.replace(/©\s*\d{4}/, `© <span class="current-year">${year}</span>`);
+                }
+            }
+        });
+    };
+    updateFooterYear();
 });
