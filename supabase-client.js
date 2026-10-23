@@ -11,7 +11,14 @@ if (typeof supabase !== 'undefined' && supabase.createClient) {
     supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
+// Helper universal para enmascarar URLs de Supabase Storage bajo el dominio principal
+window.toProxiedStorageUrl = function(url) {
+    if (!url || typeof url !== 'string') return url || '';
+    return url.replace(/^https:\/\/qezrauybkpzcenqilwcw\.supabase\.co\/storage\/v1\/object\/public\//, '/storage/v1/object/public/');
+};
+
 window.imberaSupabase = {
     client: () => supabaseClient || (typeof supabase !== 'undefined' ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null),
-    url: SUPABASE_URL
+    url: SUPABASE_URL,
+    proxiedUrl: window.toProxiedStorageUrl
 };

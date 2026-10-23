@@ -122,7 +122,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Main Image with smooth fade-in
         const imgLoader = document.getElementById('imageLoaderPlaceholder');
         if (mainImg) {
-            const targetImageSrc = data.main_image || 'images/Enfriador_G3D42_Especial.jpg';
+            const rawImg = data.main_image || 'images/Enfriador_G3D42_Especial.jpg';
+            const targetImageSrc = typeof window.toProxiedStorageUrl === 'function' ? window.toProxiedStorageUrl(rawImg) : rawImg;
             mainImg.onload = () => {
                 mainImg.style.opacity = '1';
                 if (imgLoader) imgLoader.classList.add('hidden');
@@ -163,9 +164,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         const pdf2Btn = document.getElementById('downloadManualBtn');
         const pdf3Btn = document.getElementById('downloadPartsBtn');
 
+        const cleanPdfUrl = (url) => {
+            if (!url) return '';
+            return typeof window.toProxiedStorageUrl === 'function' ? window.toProxiedStorageUrl(url) : url;
+        };
+
         if (pdf1Btn) {
             if (data.datasheet_url) {
-                pdf1Btn.href = data.datasheet_url;
+                pdf1Btn.href = cleanPdfUrl(data.datasheet_url);
                 pdf1Btn.style.display = 'inline-flex';
             } else {
                 pdf1Btn.style.display = 'none';
@@ -174,7 +180,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (pdf2Btn) {
             if (data.manual_url) {
-                pdf2Btn.href = data.manual_url;
+                pdf2Btn.href = cleanPdfUrl(data.manual_url);
                 pdf2Btn.style.display = 'inline-flex';
             } else {
                 pdf2Btn.style.display = 'none';
@@ -183,7 +189,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (pdf3Btn) {
             if (data.parts_list_url) {
-                pdf3Btn.href = data.parts_list_url;
+                pdf3Btn.href = cleanPdfUrl(data.parts_list_url);
                 pdf3Btn.style.display = 'inline-flex';
             } else {
                 pdf3Btn.style.display = 'none';

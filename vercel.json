@@ -63,6 +63,14 @@
   ],
   "rewrites": [
     {
+      "source": "/storage/v1/object/public/:path*",
+      "destination": "https://qezrauybkpzcenqilwcw.supabase.co/storage/v1/object/public/:path*"
+    },
+    {
+      "source": "/storage/:path*",
+      "destination": "https://qezrauybkpzcenqilwcw.supabase.co/storage/v1/object/public/:path*"
+    },
+    {
       "source": "/admin",
       "destination": "/admin"
     },

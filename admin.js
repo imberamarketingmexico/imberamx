@@ -500,9 +500,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <td><span class="badge-role">${catName}</span></td>
                     <td><small><strong>${capacityStr}</strong></small></td>
                     <td>
-                        ${p.datasheet_url ? `<a href="${p.datasheet_url}" target="_blank" class="badge-pdf-check"><i class="fa-solid fa-file-pdf"></i> Ficha</a>` : '<span class="badge-pdf-check missing">Sin Ficha</span>'}
-                        ${p.manual_url ? `<a href="${p.manual_url}" target="_blank" class="badge-pdf-check"><i class="fa-solid fa-book"></i> Manual</a>` : '<span class="badge-pdf-check missing">Sin Manual</span>'}
-                        ${p.parts_list_url ? `<a href="${p.parts_list_url}" target="_blank" class="badge-pdf-check"><i class="fa-solid fa-gear"></i> Partes</a>` : '<span class="badge-pdf-check missing">Sin Partes</span>'}
+                        ${p.datasheet_url ? `<a href="${(window.toProxiedStorageUrl ? window.toProxiedStorageUrl(p.datasheet_url) : p.datasheet_url)}" target="_blank" class="badge-pdf-check"><i class="fa-solid fa-file-pdf"></i> Ficha</a>` : '<span class="badge-pdf-check missing">Sin Ficha</span>'}
+                        ${p.manual_url ? `<a href="${(window.toProxiedStorageUrl ? window.toProxiedStorageUrl(p.manual_url) : p.manual_url)}" target="_blank" class="badge-pdf-check"><i class="fa-solid fa-book"></i> Manual</a>` : '<span class="badge-pdf-check missing">Sin Manual</span>'}
+                        ${p.parts_list_url ? `<a href="${(window.toProxiedStorageUrl ? window.toProxiedStorageUrl(p.parts_list_url) : p.parts_list_url)}" target="_blank" class="badge-pdf-check"><i class="fa-solid fa-gear"></i> Partes</a>` : '<span class="badge-pdf-check missing">Sin Partes</span>'}
                     </td>
                     <td><small>${extDim}</small></td>
                     <td>
