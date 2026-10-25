@@ -536,7 +536,36 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => modalBackdrop.classList.add('active'), 10);
     };
 
-    /* Supabase Form Submission (Leads) */
+    /* ==========================================================================
+       Power Automate Webhook: Automated Lead Notification to marketing@imberacooling.com
+       ========================================================================== */
+    window.sendLeadNotification = function(lead) {
+        const webhookUrl = 'https://default8059ac4314d440839d010804d7a579.80.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/f9f2be7048b2446b9fa90c0cf8864a97/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WeBE8A3U7gpiXqEYiKhPB9V3UzWhXqCUzVXkdrDxUvg';
+        
+        try {
+            const body = {
+                nombre: lead.nombre || lead.full_name || 'Prospecto Web',
+                email: lead.email || '',
+                telefono: lead.telefono || lead.phone || '',
+                estado: lead.estado || lead.state || 'No especificado',
+                modelo: lead.modelo || lead.product_interest || 'Consulta General',
+                sku: lead.sku || '',
+                mensaje: lead.mensaje || lead.message || (lead.units_count ? `Solicita cotización para ${lead.units_count} equipo(s).` : 'Sin comentarios adicionales.'),
+                fecha: new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' })
+            };
+
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            }).catch(e => console.warn('Power Automate webhook notice:', e));
+        } catch(e) {
+            console.warn('Lead notification dispatch error:', e);
+        }
+    };
+
     /* Supabase Form Submission (Leads) */
     const contactForms = document.querySelectorAll('.main-form, #mainContactForm, #contactoPageForm');
     contactForms.forEach(contactForm => {
@@ -574,6 +603,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (error) {
                     throw error;
+                }
+
+                // Trigger Power Automate notification in background to marketing@imberacooling.com
+                if (typeof window.sendLeadNotification === 'function') {
+                    window.sendLeadNotification({
+                        nombre: formData.full_name,
+                        email: formData.email,
+                        telefono: formData.phone,
+                        estado: formData.state,
+                        modelo: formData.product_interest || (isContactoPage ? 'Formulario de Contacto' : 'Formulario de Inicio'),
+                        sku: '',
+                        mensaje: formData.message || (formData.units_count ? `Solicita ${formData.units_count} unidad(es)` : ''),
+                        units_count: formData.units_count
+                    });
                 }
 
                 window.showSuccessModal(

@@ -359,6 +359,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const { data, error } = await sb.from('leads').insert([payload]);
                 if (error) throw error;
 
+                // Send automated notification via Power Automate to marketing@imberacooling.com
+                if (typeof window.sendLeadNotification === 'function') {
+                    window.sendLeadNotification({
+                        nombre: payload.full_name,
+                        email: payload.email,
+                        telefono: payload.phone,
+                        estado: payload.state,
+                        modelo: payload.product_interest,
+                        sku: document.getElementById('pSkuCode')?.innerText?.trim() || '',
+                        mensaje: payload.message || `Cotización solicitada para ${payload.units_count} unidad(es).`,
+                        units_count: payload.units_count
+                    });
+                }
+
                 if (window.showSuccessModal) {
                     window.showSuccessModal(
                         '¡Cotización Solicitada!',
