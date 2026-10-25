@@ -543,6 +543,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const webhookUrl = 'https://default8059ac4314d440839d010804d7a579.80.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/f9f2be7048b2446b9fa90c0cf8864a97/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WeBE8A3U7gpiXqEYiKhPB9V3UzWhXqCUzVXkdrDxUvg';
         
         try {
+            const rawUnits = lead.units_count || lead.cantidad || 1;
+            const unitsText = `${rawUnits} equipo(s)`;
+            const notesText = lead.mensaje || lead.message || '';
+
+            // Format message to clearly show requested quantity in the email body
+            let composedMessage = `Cantidad solicitada: ${unitsText}`;
+            if (notesText && notesText.trim()) {
+                composedMessage += `\nNotas adicionales: ${notesText.trim()}`;
+            }
+
             const body = {
                 nombre: lead.nombre || lead.full_name || 'Prospecto Web',
                 email: lead.email || '',
@@ -550,7 +560,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 estado: lead.estado || lead.state || 'No especificado',
                 modelo: lead.modelo || lead.product_interest || 'Consulta General',
                 sku: lead.sku || '',
-                mensaje: lead.mensaje || lead.message || (lead.units_count ? `Solicita cotización para ${lead.units_count} equipo(s).` : 'Sin comentarios adicionales.'),
+                cantidad: unitsText,
+                mensaje: composedMessage,
                 fecha: new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' })
             };
 

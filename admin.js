@@ -373,9 +373,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <button type="button" class="btn-table-action btn-view-lead" data-id="${l.id}" title="Ver detalles y notas">
                                 <i class="fa-solid fa-eye"></i>
                             </button>
-                            <a href="https://wa.me/52${l.phone.replace(/[^0-9]/g, '')}?text=Hola%20${encodeURIComponent(l.full_name)},%20te%20contacto%20de%20Imbera%20respecto%20a%20tu%20cotización." target="_blank" class="btn-table-action" title="Abrir WhatsApp">
-                                <i class="fa-brands fa-whatsapp text-green"></i>
-                            </a>
                         </div>
                     </td>
                 </tr>

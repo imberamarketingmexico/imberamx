@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         estado: payload.state,
                         modelo: payload.product_interest,
                         sku: document.getElementById('pSkuCode')?.innerText?.trim() || '',
-                        mensaje: payload.message || `Cotización solicitada para ${payload.units_count} unidad(es).`,
+                        mensaje: payload.message || '',
                         units_count: payload.units_count
                     });
                 }
