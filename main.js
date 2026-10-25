@@ -565,13 +565,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 fecha: new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' })
             };
 
-            fetch(webhookUrl, {
+            fetch('/api/notify-lead', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(body)
-            }).catch(e => console.warn('Power Automate webhook notice:', e));
+            }).then(r => r.json()).catch(() => {
+                // Fallback to direct webhook
+                return fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+            }).catch(e => console.warn('Lead notification dispatch notice:', e));
         } catch(e) {
             console.warn('Lead notification dispatch error:', e);
         }
