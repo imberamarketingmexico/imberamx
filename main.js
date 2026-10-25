@@ -543,15 +543,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const webhookUrl = 'https://default8059ac4314d440839d010804d7a579.80.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/f9f2be7048b2446b9fa90c0cf8864a97/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WeBE8A3U7gpiXqEYiKhPB9V3UzWhXqCUzVXkdrDxUvg';
         
         try {
-            const rawUnits = lead.units_count || lead.cantidad || 1;
-            const unitsText = `${rawUnits} equipo(s)`;
-            const notesText = lead.mensaje || lead.message || '';
-
-            // Format message to clearly show requested quantity in the email body
-            let composedMessage = `Cantidad solicitada: ${unitsText}`;
-            if (notesText && notesText.trim()) {
-                composedMessage += `\nNotas adicionales: ${notesText.trim()}`;
+            let unitsText = '1 equipo(s)';
+            const rawUnits = lead.units_count || lead.cantidad;
+            if (rawUnits) {
+                if (typeof rawUnits === 'string' && (rawUnits.includes('equipo') || rawUnits.includes('unidad'))) {
+                    unitsText = rawUnits;
+                } else {
+                    unitsText = `${rawUnits} equipo(s)`;
+                }
             }
+            const notesText = (lead.mensaje || lead.message || '').trim();
 
             const body = {
                 nombre: lead.nombre || lead.full_name || 'Prospecto Web',
@@ -559,9 +560,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 telefono: lead.telefono || lead.phone || '',
                 estado: lead.estado || lead.state || 'No especificado',
                 modelo: lead.modelo || lead.product_interest || 'Consulta General',
-                sku: lead.sku || '',
+                sku: lead.sku || 'N/A',
                 cantidad: unitsText,
-                mensaje: composedMessage,
+                mensaje: notesText || 'Sin comentarios adicionales',
                 fecha: new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' })
             };
 
@@ -631,9 +632,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         telefono: formData.phone,
                         estado: formData.state,
                         modelo: formData.product_interest || (isContactoPage ? 'Formulario de Contacto' : 'Formulario de Inicio'),
-                        sku: '',
-                        mensaje: formData.message || (formData.units_count ? `Solicita ${formData.units_count} unidad(es)` : ''),
-                        units_count: formData.units_count
+                        sku: 'N/A',
+                        mensaje: formData.message || '',
+                        units_count: contactForm.querySelector('[name="cantidad"]')?.value || formData.units_count || 1
                     });
                 }
 
