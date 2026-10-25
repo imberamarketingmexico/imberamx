@@ -7,21 +7,21 @@
     <meta name="description" content="Imbera es el líder mundial en refrigeración comercial. Enfriadores verticales, vitrinas, congeladores y soluciones para la industria de bebidas y alimentos en México.">
     <meta name="keywords" content="refrigeradores comerciales, enfriadores verticales, vitrinas comerciales, congeladores comerciales, Imbera México, refrigeración ecológica">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://imberamx-u5gh.vercel.app/">
+    <link rel="canonical" href="https://mx.imberacooling.com/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Imbera Cooling México">
     <meta property="og:title" content="Imbera México | Líder Mundial en Refrigeración Comercial">
     <meta property="og:description" content="Enfriadores, vitrinas, congeladores y cámaras de refrigeración comercial de alta eficiencia energética y máxima durabilidad.">
-    <meta property="og:image" content="https://imberamx-u5gh.vercel.app/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
-    <meta property="og:url" content="https://imberamx-u5gh.vercel.app/">
+    <meta property="og:image" content="https://mx.imberacooling.com/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
+    <meta property="og:url" content="https://mx.imberacooling.com/">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Imbera México | Refrigeración Comercial">
     <meta name="twitter:description" content="Líder mundial en refrigeración comercial. Calidad, innovación y tecnología ecológica.">
-    <meta name="twitter:image" content="https://imberamx-u5gh.vercel.app/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
+    <meta name="twitter:image" content="https://mx.imberacooling.com/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
 
     <!-- Schema.org Organization & WebSite JSON-LD -->
     <script type="application/ld+json">
@@ -29,8 +29,8 @@
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "Imbera Cooling México",
-      "url": "https://imberamx-u5gh.vercel.app/",
-      "logo": "https://imberamx-u5gh.vercel.app/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png",
+      "url": "https://mx.imberacooling.com/",
+      "logo": "https://mx.imberacooling.com/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png",
       "contactPoint": {
         "@type": "ContactPoint",
         "telephone": "+52-427-271-8000",
@@ -45,11 +45,19 @@
     }
     </script>
 
+    <!-- Resource Hints & Critical Asset Preload -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preload" as="image" href="images/banner_pc_5.webp" type="image/webp" fetchpriority="high">
+
     <!-- Local Typography Fonts -->
     <link rel="stylesheet" href="fonts.css">
     
-    <!-- Font Awesome for Icons (SRI Verified) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <!-- Font Awesome for Icons (Asynchronous Non-blocking) -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    </noscript>
     
     <link rel="stylesheet" href="/style.css?v=2.2">
 </head>
@@ -60,14 +68,14 @@
         <div class="container header-top">
             <div class="logo">
                 <a href="/">
-                    <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera Logo" id="site-logo">
+                    <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera Logo" id="site-logo" width="137" height="50" decoding="async">
                 </a>
             </div>
             
             <div class="search-box">
                 <form action="/categoria" method="GET" class="search-form" autocomplete="off">
                     <input type="text" name="q" placeholder="¿Qué estás buscando?" aria-label="Buscar productos" autocomplete="off" autocapitalize="off" spellcheck="false" data-lpignore="true">
-                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <button type="submit" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
                 </form>
             </div>
             
@@ -243,8 +251,8 @@
                         <div class="carousel-slide active">
                             <a href="categoria.html?cat=enfriadores" class="carousel-slide-link" aria-label="Soluciones Imbera Refrigeración Comercial">
                                 <picture>
-                                    <source media="(max-width: 768px)" srcset="images/banner_pc_5.webp">
-                                    <img src="images/banner_pc_5.webp" alt="Soluciones Imbera Refrigeración Comercial">
+                                    <source media="(max-width: 768px)" srcset="images/banner_pc_5.webp" width="1920" height="651">
+                                    <img src="images/banner_pc_5.webp" alt="Soluciones Imbera Refrigeración Comercial" width="1920" height="651" fetchpriority="high" decoding="async">
                                 </picture>
                             </a>
                         </div>
@@ -252,16 +260,16 @@
                         <div class="carousel-slide">
                             <a href="categoria.html?cat=salud-y-laboratorio" class="carousel-slide-link" aria-label="Línea Health & Laboratorio">
                                 <picture>
-                                    <source media="(max-width: 768px)" srcset="images/bannerHealth.webp">
-                                    <img src="images/bannerHealth.webp" alt="Línea Health Imbera" loading="lazy">
+                                    <source media="(max-width: 768px)" srcset="images/bannerHealth.webp" width="1920" height="651">
+                                    <img src="images/bannerHealth.webp" alt="Línea Health Imbera" width="1920" height="651" loading="lazy" decoding="async">
                                 </picture>
                             </a>
                         </div>
                     </div>
                     
                     <!-- Carousel Controls -->
-                    <button class="carousel-btn prev" id="prevBtn"><i class="fa-solid fa-chevron-left"></i></button>
-                    <button class="carousel-btn next" id="nextBtn"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button class="carousel-btn prev" id="prevBtn" aria-label="Banner anterior"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+                    <button class="carousel-btn next" id="nextBtn" aria-label="Siguiente banner"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
                     
                     <!-- Carousel Indicators -->
                     <div class="carousel-indicators">
@@ -282,7 +290,7 @@
                     <a href="#" class="btn-outline-small">Conócenos</a>
                 </div>
                 <div class="about-image">
-                    <img src="images/indeximg.png" alt="Excelencia en Refrigeración Imbera">
+                    <img src="images/indeximg.jpg" alt="Excelencia en Refrigeración Imbera" width="944" height="925" loading="lazy" decoding="async">
                 </div>
             </div>
         </section>
@@ -381,7 +389,7 @@
                         <!-- Product 1 -->
                         <a href="/producto/g3d42-especial?sku=1030002" class="product-card" aria-label="Ver equipo G3D42 Especial">
                             <div class="product-image">
-                                <img src="images/Enfriador_G3D42_Especial.jpg" alt="Enfriador G3D42 Especial - Imbera" loading="lazy">
+                                <img src="images/Enfriador_G3D42_Especial.jpg" alt="Enfriador G3D42 Especial - Imbera" width="375" height="375" loading="lazy" decoding="async">
                             </div>
                             <div class="product-info">
                                 <h3>G3D42 Especial</h3>
@@ -392,7 +400,7 @@
                         <!-- Product 2 -->
                         <a href="/producto/vr17?sku=1024175" class="product-card" aria-label="Ver equipo VR17">
                             <div class="product-image">
-                                <img src="images/Enfriador_VR17.jpg" alt="Enfriador VR17 - Imbera" loading="lazy">
+                                <img src="images/Enfriador_VR17.jpg" alt="Enfriador VR17 - Imbera" width="375" height="375" loading="lazy" decoding="async">
                             </div>
                             <div class="product-info">
                                 <h3>VR17</h3>
@@ -403,7 +411,7 @@
                         <!-- Product 3 -->
                         <a href="/producto/vr17-especial?sku=1029961" class="product-card" aria-label="Ver equipo VR17 Especial">
                             <div class="product-image">
-                                <img src="images/Enfriador_VR17_especial.jpg" alt="Enfriador VR17 Especial - Imbera" loading="lazy">
+                                <img src="images/Enfriador_VR17_especial.jpg" alt="Enfriador VR17 Especial - Imbera" width="375" height="375" loading="lazy" decoding="async">
                             </div>
                             <div class="product-info">
                                 <h3>VR17 Especial</h3>
@@ -414,7 +422,7 @@
                         <!-- Product 4 -->
                         <a href="/producto/vmc19b?sku=1025843" class="product-card" aria-label="Ver equipo VMC19B">
                             <div class="product-image">
-                                <img src="images/Enfriador_VMC19B.jpg" alt="Enfriador VMC19B - Imbera" loading="lazy">
+                                <img src="images/Enfriador_VMC19B.jpg" alt="Enfriador VMC19B - Imbera" width="375" height="375" loading="lazy" decoding="async">
                             </div>
                             <div class="product-info">
                                 <h3>VMC19B</h3>
@@ -473,7 +481,7 @@
                 <p class="cert-subtitle">Diseñamos y fabricamos cada uno de nuestros equipos bajo los más estrictos estándares y normativas internacionales de calidad, seguridad y eficiencia energética.</p>
                 <div class="certificaciones-container">
                     <a href="https://recognition.ecovadis.com/OOnZDjfuGEePf2IW-fLZNg" target="_blank" rel="noopener noreferrer" class="certificaciones-link" title="Ver reconocimiento y medalla EcoVadis Imbera">
-                        <img src="images/certificaciones.jpg" alt="Certificaciones y Normativas Internacionales Imbera" class="certificaciones-img-large">
+                        <img src="images/certificaciones.jpg" alt="Certificaciones y Normativas Internacionales Imbera" class="certificaciones-img-large" width="1746" height="796" loading="lazy" decoding="async">
                     </a>
                 </div>
             </div>
@@ -574,7 +582,7 @@
             <div class="footer-grid">
                 <!-- Col 1 -->
                 <div class="footer-col col-info">
-                    <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera" class="footer-logo">
+                    <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera" class="footer-logo" width="137" height="50" loading="lazy" decoding="async">
                     <div class="contact-details">
                         <p><i class="fa-solid fa-envelope"></i> <a href="mailto:marketing@imberacooling.com">marketing@imberacooling.com</a></p>
                         <p>Horario de Atención: Lunes a Viernes 9:00 a.m. a 6:00 p.m.</p>
@@ -625,9 +633,9 @@
     </footer>
 
     <!-- Supabase JS Client (Local First-Party) -->
-    <script src="supabase.js"></script>
-    <script src="supabase-client.js"></script>
-    <script src="/main.js?v=2.2"></script>
+    <script src="supabase.js" defer></script>
+    <script src="supabase-client.js" defer></script>
+    <script src="/main.js?v=2.2" defer></script>
 </body>
 </html>
 

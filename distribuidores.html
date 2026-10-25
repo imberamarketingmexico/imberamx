@@ -7,21 +7,21 @@
     <meta name="description" content="Encuentra distribuidores autorizados de Imbera en toda la República Mexicana. Consulta ubicaciones, teléfonos y atención especializada por estado.">
     <meta name="keywords" content="distribuidores imbera, refrigeradores comerciales distribuidores, venta imbera mexico, puntos de venta refrigeracion">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://imberamx-u5gh.vercel.app/distribuidores">
+    <link rel="canonical" href="https://mx.imberacooling.com/distribuidores">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Imbera Cooling México">
     <meta property="og:title" content="Imbera México | Líder Mundial en Refrigeración Comercial">
     <meta property="og:description" content="Enfriadores, vitrinas, congeladores y cámaras de refrigeración comercial de alta eficiencia energética y máxima durabilidad.">
-    <meta property="og:image" content="https://imberamx-u5gh.vercel.app/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
-    <meta property="og:url" content="https://imberamx-u5gh.vercel.app/">
+    <meta property="og:image" content="https://mx.imberacooling.com/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
+    <meta property="og:url" content="https://mx.imberacooling.com/">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Imbera México | Refrigeración Comercial">
     <meta name="twitter:description" content="Líder mundial en refrigeración comercial. Calidad, innovación y tecnología ecológica.">
-    <meta name="twitter:image" content="https://imberamx-u5gh.vercel.app/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
+    <meta name="twitter:image" content="https://mx.imberacooling.com/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
 
     <!-- Schema.org Organization & WebSite JSON-LD -->
     <script type="application/ld+json">
@@ -29,8 +29,8 @@
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "Imbera Cooling México",
-      "url": "https://imberamx-u5gh.vercel.app/",
-      "logo": "https://imberamx-u5gh.vercel.app/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png",
+      "url": "https://mx.imberacooling.com/",
+      "logo": "https://mx.imberacooling.com/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png",
       "contactPoint": {
         "@type": "ContactPoint",
         "telephone": "+52-427-271-8000",
@@ -49,7 +49,14 @@
     <link rel="stylesheet" href="fonts.css">
     
     <!-- Font Awesome for Icons (SRI Verified) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <!-- Font Awesome for Icons (Asynchronous Non-blocking) -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    </noscript>
     
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="distribuidores/estilos.css">
@@ -68,7 +75,7 @@
             <div class="search-box">
                 <form action="categoria.html" method="GET" class="search-form">
                     <input type="text" name="q" placeholder="¿Qué estás buscando?" aria-label="Buscar productos">
-                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <button type="submit" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
                 </form>
             </div>
             

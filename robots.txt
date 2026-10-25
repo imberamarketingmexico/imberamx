@@ -4,4 +4,17 @@ Disallow: /admin.html
 Disallow: /admin.css
 Disallow: /admin.js
 
-Sitemap: https://imberamx-u5gh.vercel.app/sitemap.xml
+# AI & LLM Agents
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://mx.imberacooling.com/sitemap.xml

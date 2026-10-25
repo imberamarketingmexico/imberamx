@@ -7,21 +7,21 @@
     <meta name="description" content="Contáctanos para cotizaciones, asesoría comercial, refacciones y soporte técnico de equipos de refrigeración comercial Imbera en México.">
     <meta name="keywords" content="contacto imbera, ventas imbera, refrigeradores comerciales soporte, san juan del rio">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://imberamx-u5gh.vercel.app/contacto">
+    <link rel="canonical" href="https://mx.imberacooling.com/contacto">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Imbera Cooling México">
     <meta property="og:title" content="Contacto y Asesoría Comercial | Imbera México">
     <meta property="og:description" content="Contáctanos para cotizaciones, asesoría comercial y soporte técnico de refrigeración comercial Imbera en México.">
-    <meta property="og:image" content="https://imberamx-u5gh.vercel.app/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
-    <meta property="og:url" content="https://imberamx-u5gh.vercel.app/contacto">
+    <meta property="og:image" content="https://mx.imberacooling.com/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
+    <meta property="og:url" content="https://mx.imberacooling.com/contacto">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Contacto | Imbera México">
     <meta name="twitter:description" content="Atención comercial y asesoría en refrigeración comercial Imbera en México.">
-    <meta name="twitter:image" content="https://imberamx-u5gh.vercel.app/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
+    <meta name="twitter:image" content="https://mx.imberacooling.com/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
 
     <!-- Schema.org Organization & WebSite JSON-LD -->
     <script type="application/ld+json">
@@ -29,8 +29,8 @@
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "Imbera Cooling México",
-      "url": "https://imberamx-u5gh.vercel.app/",
-      "logo": "https://imberamx-u5gh.vercel.app/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png",
+      "url": "https://mx.imberacooling.com/",
+      "logo": "https://mx.imberacooling.com/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png",
       "contactPoint": {
         "@type": "ContactPoint",
         "email": "marketing@imberacooling.com",
@@ -51,7 +51,14 @@
     <link rel="stylesheet" href="fonts.css">
     
     <!-- Font Awesome for Icons (SRI Verified) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <!-- Font Awesome for Icons (Asynchronous Non-blocking) -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    </noscript>
     
     <link rel="stylesheet" href="style.css">
 </head>
@@ -69,7 +76,7 @@
             <div class="search-box">
                 <form action="categoria.html" method="GET" class="search-form">
                     <input type="text" name="q" placeholder="¿Qué estás buscando?" aria-label="Buscar productos">
-                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <button type="submit" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
                 </form>
             </div>
             

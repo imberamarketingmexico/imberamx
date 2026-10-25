@@ -7,21 +7,21 @@
     <title>Equipo de Refrigeración Comercial | Imbera México</title>
     <meta name="description" content="Ficha técnica oficial, especificaciones, dimensiones y cotización en línea de equipos de refrigeración comercial Imbera México.">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://imberamx-u5gh.vercel.app/producto.html">
+    <link rel="canonical" href="https://mx.imberacooling.com/producto.html">
 
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="product">
     <meta property="og:site_name" content="Imbera Cooling México">
     <meta property="og:title" content="Catálogo Oficial Imbera México">
     <meta property="og:description" content="Ficha técnica, dimensiones y cotización directa de refrigeración comercial Imbera.">
-    <meta property="og:image" content="https://imberamx-u5gh.vercel.app/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
-    <meta property="og:url" content="https://imberamx-u5gh.vercel.app/producto.html">
+    <meta property="og:image" content="https://mx.imberacooling.com/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
+    <meta property="og:url" content="https://mx.imberacooling.com/producto.html">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Catálogo Oficial Imbera México">
     <meta name="twitter:description" content="Especificaciones técnicas y cotización de equipos de refrigeración comercial Imbera.">
-    <meta name="twitter:image" content="https://imberamx-u5gh.vercel.app/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
+    <meta name="twitter:image" content="https://mx.imberacooling.com/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png">
 
     <!-- JSON-LD Structured Data for Product SEO (dynamically updated by producto.js) -->
     <script type="application/ld+json" id="schema-product">
@@ -36,11 +36,18 @@
     }
     </script>
 
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
     <!-- Local Typography Fonts -->
     <link rel="stylesheet" href="/fonts.css">
     
-    <!-- Font Awesome for Icons (SRI Verified) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <!-- Font Awesome for Icons (Asynchronous Non-blocking) -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    </noscript>
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/style.css?v=2.2">
@@ -52,14 +59,14 @@
         <div class="container header-top">
             <div class="logo">
                 <a href="index.html">
-                    <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera Logo" id="site-logo">
+                    <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera Logo" id="site-logo" width="137" height="50" decoding="async">
                 </a>
             </div>
             
             <div class="search-box">
                 <form action="/categoria" method="GET" class="search-form" autocomplete="off">
                     <input type="text" name="q" placeholder="¿Qué estás buscando?" aria-label="Buscar productos" autocomplete="off" autocapitalize="off" spellcheck="false" data-lpignore="true">
-                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <button type="submit" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
                 </form>
             </div>
             
@@ -484,7 +491,7 @@
             <div class="footer-grid">
                 <!-- Col 1 -->
                 <div class="footer-col col-info">
-                    <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera" class="footer-logo">
+                    <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera" class="footer-logo" width="137" height="50" loading="lazy" decoding="async">
                     <div class="contact-details">
                         <p><i class="fa-solid fa-envelope"></i> <a href="mailto:marketing@imberacooling.com">marketing@imberacooling.com</a></p>
                         <p>Horario de Atención: Lunes a Viernes 9:00 a.m. a 6:00 p.m.</p>
@@ -534,10 +541,10 @@
     </footer>
 
     <!-- Supabase JS Client & Logic (Local First-Party) -->
-    <script src="/supabase.js"></script>
-    <script src="/supabase-client.js"></script>
-    <script src="/main.js?v=2.2"></script>
-    <script src="/producto.js?v=2.2"></script>
+    <script src="/supabase.js" defer></script>
+    <script src="/supabase-client.js" defer></script>
+    <script src="/main.js?v=2.2" defer></script>
+    <script src="/producto.js?v=2.2" defer></script>
 </body>
 </html>
 
