@@ -218,47 +218,45 @@ document.addEventListener('DOMContentLoaded', () => {
         btnNext.disabled = true;
         btnNext.innerHTML = 'Enviando...';
 
-        const durationSeconds = Math.round((Date.now() - startTime) / 1000);
-
-        const payload = {
-            p1_rating: surveyData.p1,
-            p1_factors: surveyData.p1_factors,
-            p1_other: surveyData.p1_other || null,
-            
-            p2_rating: surveyData.p2,
-            p2_factors: surveyData.p2_factors,
-            p2_other: surveyData.p2_other || null,
-            
-            p3_rating: surveyData.p3,
-            p3_factors: surveyData.p3_factors,
-            p3_other: surveyData.p3_other || null,
-            
-            p4_rating: surveyData.p4,
-            p4_factors: surveyData.p4_factors,
-            p4_other: surveyData.p4_other || null,
-            
-            p5_rating: surveyData.p5,
-            
-            p6_answer: surveyData.p6,
-            
-            p7_smart: surveyData.p7_smart,
-            p7_conectividad: surveyData.p7_conectividad,
-            p7_iot: surveyData.p7_iot,
-            
-            p8_answer: surveyData.p8,
-            
-            p9_rating: surveyData.p9,
-            p9_factors: surveyData.p9_factors,
-            p9_other: surveyData.p9_other || null,
-            
-            p10_rating: surveyData.p10,
-            p10_factors: surveyData.p10_factors,
-            p10_other: surveyData.p10_other || null,
-            
-            respuestas_json: surveyData
-        };
-
         try {
+            const payload = {
+                p1_rating: surveyData.p1,
+                p1_factors: surveyData.p1_factors || [],
+                p1_other: surveyData.p1_other || null,
+                
+                p2_rating: surveyData.p2,
+                p2_factors: surveyData.p2_factors || [],
+                p2_other: surveyData.p2_other || null,
+                
+                p3_rating: surveyData.p3,
+                p3_factors: surveyData.p3_factors || [],
+                p3_other: surveyData.p3_other || null,
+                
+                p4_rating: surveyData.p4,
+                p4_factors: surveyData.p4_factors || [],
+                p4_other: surveyData.p4_other || null,
+                
+                p5_rating: surveyData.p5,
+                
+                p6_answer: surveyData.p6,
+                
+                p7_smart: surveyData.p7_smart || [],
+                p7_conectividad: surveyData.p7_conectividad || [],
+                p7_iot: surveyData.p7_iot || [],
+                
+                p8_answer: surveyData.p8,
+                
+                p9_rating: surveyData.p9,
+                p9_factors: surveyData.p9_factors || [],
+                p9_other: surveyData.p9_other || null,
+                
+                p10_rating: surveyData.p10,
+                p10_factors: surveyData.p10_factors || [],
+                p10_other: surveyData.p10_other || null,
+                
+                respuestas_json: surveyData
+            };
+
             const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
             if (sb) {
                 const { error: insertError } = await sb.from('encuesta_respuestas').insert([payload]);
@@ -276,21 +274,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnNext.innerText = 'Finalizar';
                 return;
             }
+
+            // Ocultar vistas de pasos y controles
+            stepViews.forEach(v => v.classList.remove('active'));
+            surveyActions.style.display = 'none';
+
+            // Mostrar pantalla de éxito
+            successView.classList.add('active');
+            progressBar.style.width = '100%';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (err) {
             console.error('Excepción al guardar encuesta:', err);
             alert('Ocurrió un error al enviar la encuesta. Por favor inténtalo de nuevo.');
             btnNext.disabled = false;
             btnNext.innerText = 'Finalizar';
-            return;
         }
-
-        // Ocultar vistas de pasos y controles
-        stepViews.forEach(v => v.classList.remove('active'));
-        surveyActions.style.display = 'none';
-
-        // Mostrar pantalla de éxito
-        successView.classList.add('active');
-        progressBar.style.width = '100%';
     }
 
     // Inicializar primer paso
