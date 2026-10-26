@@ -52,17 +52,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Registrar o recuperar visita en Supabase para trazabilidad de aperturas
     let visitId = sessionStorage.getItem('imb_survey_visit_id');
-    const startTime = Date.now();
 
     async function recordVisitStart() {
         if (!visitId && window.imberaSupabase) {
             try {
                 const sb = window.imberaSupabase.client();
                 if (sb) {
-                    const isMobile = window.innerWidth < 768;
                     const { data, error } = await sb.from('encuesta_visitas').insert([{
-                        completada: false,
-                        dispositivo: isMobile ? 'mobile' : 'desktop'
+                        user_agent: navigator.userAgent || 'unknown',
+                        path: window.location.pathname || '/encuesta'
                     }]).select('id').single();
 
                     if (data && data.id) {
@@ -71,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             } catch (err) {
-                console.warn('Visita registrada localmente.');
+                console.warn('Visita registrada localmente:', err);
             }
         }
     }
@@ -263,19 +261,27 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
             if (sb) {
-                // 1. Insertar respuestas
-                await sb.from('encuesta_respuestas').insert([payload]);
-
-                // 2. Marcar visita como completada
-                if (visitId) {
-                    await sb.from('encuesta_visitas').update({
-                        completada: true,
-                        duracion_segundos: durationSeconds
-                    }).eq('id', visitId);
+                const { error: insertError } = await sb.from('encuesta_respuestas').insert([payload]);
+                if (insertError) {
+                    console.error('Error insertando respuestas:', insertError);
+                    alert('No se pudo guardar la encuesta: ' + (insertError.message || 'Error de conexión'));
+                    btnNext.disabled = false;
+                    btnNext.innerText = 'Finalizar';
+                    return;
                 }
+            } else {
+                console.error('Cliente Supabase no disponible.');
+                alert('No se pudo establecer conexión con el servidor. Inténtalo de nuevo.');
+                btnNext.disabled = false;
+                btnNext.innerText = 'Finalizar';
+                return;
             }
         } catch (err) {
-            console.warn('Error al guardar en base de datos:', err);
+            console.error('Excepción al guardar encuesta:', err);
+            alert('Ocurrió un error al enviar la encuesta. Por favor inténtalo de nuevo.');
+            btnNext.disabled = false;
+            btnNext.innerText = 'Finalizar';
+            return;
         }
 
         // Ocultar vistas de pasos y controles

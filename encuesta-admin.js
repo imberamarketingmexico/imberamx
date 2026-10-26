@@ -108,8 +108,14 @@ document.addEventListener('DOMContentLoaded', () => {
             allVisits = visitsRes.data || [];
             allResponses = responsesRes.data || [];
 
+            console.log(`[SuperAdmin] Cargadas ${allVisits.length} visitas y ${allResponses.length} respuestas.`);
+
             updateKpis();
-            renderCharts();
+            try {
+                renderCharts();
+            } catch (errCharts) {
+                console.error('Error renderizando gráficas:', errCharts);
+            }
             renderTable(allResponses);
         } catch (err) {
             console.error('Error al cargar datos del scorecard:', err);
@@ -190,12 +196,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function createOrUpdateChart(id, config) {
-            if (chartInstances[id]) {
-                chartInstances[id].destroy();
-            }
-            const ctx = document.getElementById(id);
-            if (ctx) {
-                chartInstances[id] = new Chart(ctx, config);
+            const canvas = document.getElementById(id);
+            if (!canvas) return;
+
+            try {
+                if (typeof Chart !== 'undefined') {
+                    const existing = Chart.getChart(canvas);
+                    if (existing) {
+                        existing.destroy();
+                    } else if (chartInstances[id]) {
+                        chartInstances[id].destroy();
+                    }
+                    chartInstances[id] = new Chart(canvas, config);
+                }
+            } catch (chartErr) {
+                console.warn(`Error al renderizar gráfica ${id}:`, chartErr);
             }
         }
 
