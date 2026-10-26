@@ -68,28 +68,29 @@ CREATE TABLE IF NOT EXISTS public.encuesta_visitas (
 ALTER TABLE public.encuesta_respuestas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.encuesta_visitas ENABLE ROW LEVEL SECURITY;
 
--- 4. POLÍTICAS PERMISIVAS PARA LA CLAVE ANON PÚBLICA
--- Permite insertar encuestas libremente desde el frontend
-CREATE POLICY "Permitir insercion publica de encuestas" 
-ON public.encuesta_respuestas FOR INSERT 
+-- 4. POLÍTICAS UNIVERSALES (APLICAN A VISITANTES ANÓNIMOS Y USUARIOS LOGUEADOS)
+DROP POLICY IF EXISTS "Permitir insercion anonima respuestas" ON public.encuesta_respuestas;
+DROP POLICY IF EXISTS "Permitir lectura anonima respuestas" ON public.encuesta_respuestas;
+DROP POLICY IF EXISTS "Permitir insercion anonima visitas" ON public.encuesta_visitas;
+DROP POLICY IF EXISTS "Permitir lectura anonima visitas" ON public.encuesta_visitas;
+DROP POLICY IF EXISTS "Permitir insercion publica de encuestas" ON public.encuesta_respuestas;
+DROP POLICY IF EXISTS "Permitir lectura de encuestas" ON public.encuesta_respuestas;
+DROP POLICY IF EXISTS "Permitir insercion de visitas" ON public.encuesta_visitas;
+DROP POLICY IF EXISTS "Permitir lectura de visitas" ON public.encuesta_visitas;
+DROP POLICY IF EXISTS "Permitir actualizacion de visitas" ON public.encuesta_visitas;
+
+CREATE POLICY "Permitir insercion encuestas universal" 
+ON public.encuesta_respuestas FOR INSERT TO public 
 WITH CHECK (true);
 
--- Permite consultar encuestas para el panel superadmin protegido
-CREATE POLICY "Permitir lectura de encuestas" 
-ON public.encuesta_respuestas FOR SELECT 
+CREATE POLICY "Permitir lectura encuestas universal" 
+ON public.encuesta_respuestas FOR SELECT TO public 
 USING (true);
 
--- Permite registrar visitas
-CREATE POLICY "Permitir insercion de visitas" 
-ON public.encuesta_visitas FOR INSERT 
+CREATE POLICY "Permitir insercion visitas universal" 
+ON public.encuesta_visitas FOR INSERT TO public 
 WITH CHECK (true);
 
--- Permite consultar visitas para estadísticas
-CREATE POLICY "Permitir lectura de visitas" 
-ON public.encuesta_visitas FOR SELECT 
-USING (true);
-
--- Permite actualizar visita a completada
-CREATE POLICY "Permitir actualizacion de visitas" 
-ON public.encuesta_visitas FOR UPDATE 
+CREATE POLICY "Permitir lectura visitas universal" 
+ON public.encuesta_visitas FOR SELECT TO public 
 USING (true);
