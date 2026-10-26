@@ -127,11 +127,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalVisits = allVisits.length;
         const totalResp = allResponses.length;
         
-        kpiVisits.innerText = totalVisits.toLocaleString('es-MX');
+        // Cada encuesta completada implica como mínimo una visita
+        const effectiveVisits = Math.max(totalVisits, totalResp);
+        
+        kpiVisits.innerText = effectiveVisits.toLocaleString('es-MX');
         kpiResponses.innerText = totalResp.toLocaleString('es-MX');
 
-        // Tasa de finalización
-        const rate = totalVisits > 0 ? Math.round((totalResp / totalVisits) * 100) : (totalResp > 0 ? 100 : 0);
+        // Tasa de finalización (tope de 100%)
+        const rate = effectiveVisits > 0 ? Math.min(100, Math.round((totalResp / effectiveVisits) * 100)) : 0;
         kpiRate.innerText = `${rate}%`;
 
         // CSAT Promedio Global (Preguntas de escala 1 a 5: P1, P2, P3, P9, P10)

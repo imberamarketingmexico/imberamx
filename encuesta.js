@@ -279,6 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
             stepViews.forEach(v => v.classList.remove('active'));
             surveyActions.style.display = 'none';
 
+            // Limpiar ID de visita para que próximas aperturas se cuenten
+            sessionStorage.removeItem('imb_survey_visit_id');
+
             // Mostrar pantalla de éxito
             successView.classList.add('active');
             progressBar.style.width = '100%';
