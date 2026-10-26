@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imbera | Scorecard Comercial</title>
+    <!-- Privado: Excluir de buscadores -->
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    
+    <!-- Fuentes Locales -->
+    <link rel="stylesheet" href="/fonts.css">
+    
+    <!-- Estilos de la Encuesta -->
+    <link rel="stylesheet" href="/encuesta.css">
+</head>
+<body class="survey-body">
+
+    <!-- Header del Scorecard -->
+    <header class="survey-header">
+        <div class="survey-header-container">
+            <div class="survey-brand">
+                <img src="/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera" class="survey-brand-logo" width="110" height="36">
+            </div>
+            <div class="survey-subtitle">
+                DEMO · SCORECARD COMERCIAL
+            </div>
+        </div>
+        <!-- Barra de Progreso Superior -->
+        <div class="survey-progress-track">
+            <div class="survey-progress-bar" id="progressBar"></div>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal de la Encuesta -->
+    <main class="survey-main-container">
+        <div class="survey-card" id="surveyCard">
+            
+            <!-- PASO 1 -->
+            <div class="survey-step-view active" data-step="1">
+                <div class="survey-step-counter">Pregunta 1 de 10</div>
+                <h2 class="survey-question-title">¿Qué tan satisfecho estás con el cumplimiento de las entregas de tus enfriadores, considerando los tiempos acordados y las cantidades solicitadas?</h2>
+                
+                <div class="survey-scale-group" data-question="p1">
+                    <div class="survey-scale-option" data-value="1">
+                        <span class="survey-scale-number">1</span>
+                        <span class="survey-scale-label">Muy insatisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="2">
+                        <span class="survey-scale-number">2</span>
+                        <span class="survey-scale-label">Insatisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="3">
+                        <span class="survey-scale-number">3</span>
+                        <span class="survey-scale-label">Neutral</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="4">
+                        <span class="survey-scale-number">4</span>
+                        <span class="survey-scale-label">Satisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="5">
+                        <span class="survey-scale-number">5</span>
+                        <span class="survey-scale-label">Muy Satisfecho</span>
+                    </div>
+                </div>
+
+                <div class="survey-factor-heading">¿Qué factor influye más en tu respuesta?</div>
+                <div class="survey-checkbox-group" data-question="p1_factors">
+                    <div class="survey-checkbox-item" data-val="Cumplimiento de tiempos y cantidades acordadas en el pedido inicial o después de realizar algún ajuste.">
+                        <span class="survey-custom-box"></span>
+                        <span>Cumplimiento de tiempos y cantidades acordadas en el pedido inicial o después de realizar algún ajuste.</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="Rapidez de respuesta ante solicitudes de cotización o nuevos pedidos">
+                        <span class="survey-custom-box"></span>
+                        <span>Rapidez de respuesta ante solicitudes de cotización o nuevos pedidos</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="Flexibilidad para ajustar la producción.">
+                        <span class="survey-custom-box"></span>
+                        <span>Flexibilidad para ajustar la producción.</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="Condiciones en las que recibes los equipos, sin daños o percances derivados del traslado">
+                        <span class="survey-custom-box"></span>
+                        <span>Condiciones en las que recibes los equipos, sin daños o percances derivados del traslado</span>
+                    </div>
+                    <div class="survey-other-item">
+                        <span class="survey-other-label">Otro:</span>
+                        <input type="text" class="survey-other-input" id="p1_other" placeholder="Especifique...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 2 -->
+            <div class="survey-step-view" data-step="2">
+                <div class="survey-step-counter">Pregunta 2 de 10</div>
+                <h2 class="survey-question-title">Considerando la recepción de tus equipos, ¿qué tan satisfecho estás con el estado físico y el cumplimiento de las características solicitadas?</h2>
+                
+                <div class="survey-scale-group" data-question="p2">
+                    <div class="survey-scale-option" data-value="1">
+                        <span class="survey-scale-number">1</span>
+                        <span class="survey-scale-label">Muy insatisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="2">
+                        <span class="survey-scale-number">2</span>
+                        <span class="survey-scale-label">Insatisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="3">
+                        <span class="survey-scale-number">3</span>
+                        <span class="survey-scale-label">Neutral</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="4">
+                        <span class="survey-scale-number">4</span>
+                        <span class="survey-scale-label">Satisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="5">
+                        <span class="survey-scale-number">5</span>
+                        <span class="survey-scale-label">Muy Satisfecho</span>
+                    </div>
+                </div>
+
+                <div class="survey-factor-heading">¿Qué factor influye más en tu respuesta?</div>
+                <div class="survey-checkbox-group" data-question="p2_factors">
+                    <div class="survey-checkbox-item" data-val="Equipamiento en óptimas condiciones sin golpes.">
+                        <span class="survey-custom-box"></span>
+                        <span>Equipamiento en óptimas condiciones sin golpes.</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="Equipamiento, componentes, elementos gráficos acorde a la solicitud">
+                        <span class="survey-custom-box"></span>
+                        <span>Equipamiento, componentes, elementos gráficos acorde a la solicitud</span>
+                    </div>
+                    <div class="survey-other-item">
+                        <span class="survey-other-label">Otro:</span>
+                        <input type="text" class="survey-other-input" id="p2_other" placeholder="Especifique...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 3 -->
+            <div class="survey-step-view" data-step="3">
+                <div class="survey-step-counter">Pregunta 3 de 10</div>
+                <h2 class="survey-question-title">Cuando se presenta una falla en tus equipos, ¿qué tan satisfecho estás con la atención y solución brindada por Imbera?</h2>
+                
+                <div class="survey-scale-group" data-question="p3">
+                    <div class="survey-scale-option" data-value="1">
+                        <span class="survey-scale-number">1</span>
+                        <span class="survey-scale-label">Muy insatisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="2">
+                        <span class="survey-scale-number">2</span>
+                        <span class="survey-scale-label">Insatisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="3">
+                        <span class="survey-scale-number">3</span>
+                        <span class="survey-scale-label">Neutral</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="4">
+                        <span class="survey-scale-number">4</span>
+                        <span class="survey-scale-label">Satisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="5">
+                        <span class="survey-scale-number">5</span>
+                        <span class="survey-scale-label">Muy Satisfecho</span>
+                    </div>
+                </div>
+
+                <div class="survey-factor-heading">¿Qué factor influye más en tu respuesta?</div>
+                <div class="survey-checkbox-group" data-question="p3_factors">
+                    <div class="survey-checkbox-item" data-val="La velocidad para resolver alguna inconformidad.">
+                        <span class="survey-custom-box"></span>
+                        <span>La velocidad para resolver alguna inconformidad.</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="El proceso para hacer válida la garantía.">
+                        <span class="survey-custom-box"></span>
+                        <span>El proceso para hacer válida la garantía.</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="Rapidez de respuesta ante solicitudes de cotización o nuevos pedidos">
+                        <span class="survey-custom-box"></span>
+                        <span>Rapidez de respuesta ante solicitudes de cotización o nuevos pedidos</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="El costo.">
+                        <span class="survey-custom-box"></span>
+                        <span>El costo.</span>
+                    </div>
+                    <div class="survey-other-item">
+                        <span class="survey-other-label">Otro:</span>
+                        <input type="text" class="survey-other-input" id="p3_other" placeholder="Especifique...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 4 -->
+            <div class="survey-step-view" data-step="4">
+                <div class="survey-step-counter">Pregunta 4 de 10</div>
+                <h2 class="survey-question-title">Después de la instalación de tus equipos, ¿qué tan satisfecho estás con el soporte postventa brindado considerando la atención técnica y disponibilidad de refacciones?</h2>
+                
+                <div class="survey-scale-group" data-question="p4">
+                    <div class="survey-scale-option" data-value="1">
+                        <span class="survey-scale-number">1</span>
+                        <span class="survey-scale-label">No resolvió mi necesidad</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="2">
+                        <span class="survey-scale-number">2</span>
+                        <span class="survey-scale-label">La atención fue insuficiente</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="3">
+                        <span class="survey-scale-number">3</span>
+                        <span class="survey-scale-label">Resolvió parcialmente mi necesidad</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="4">
+                        <span class="survey-scale-number">4</span>
+                        <span class="survey-scale-label">Resolvió completamente mi necesidad</span>
+                    </div>
+                </div>
+
+                <div class="survey-factor-heading">¿Qué factor influye más en tu respuesta?</div>
+                <div class="survey-checkbox-group" data-question="p4_factors">
+                    <div class="survey-checkbox-item" data-val="Disponibilidad de refacciones para mantener los equipos operando.">
+                        <span class="survey-custom-box"></span>
+                        <span>Disponibilidad de refacciones para mantener los equipos operando.</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="Tiempo requerido para recibir las refacciones solicitadas">
+                        <span class="survey-custom-box"></span>
+                        <span>Tiempo requerido para recibir las refacciones solicitadas</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="Rapidez con la que recibes respuesta después de solicitar soporte técnico">
+                        <span class="survey-custom-box"></span>
+                        <span>Rapidez con la que recibes respuesta después de solicitar soporte técnico</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="Capacidad del equipo técnico para atender y resolver tus necesidades.">
+                        <span class="survey-custom-box"></span>
+                        <span>Capacidad del equipo técnico para atender y resolver tus necesidades.</span>
+                    </div>
+                    <div class="survey-other-item">
+                        <span class="survey-other-label">Otro:</span>
+                        <input type="text" class="survey-other-input" id="p4_other" placeholder="Especifique...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 5 -->
+            <div class="survey-step-view" data-step="5">
+                <div class="survey-step-counter">Pregunta 5 de 10</div>
+                <h2 class="survey-question-title">¿Qué tan familiarizado estás con las soluciones de innovación y tecnología que ofrece Imbera?</h2>
+                
+                <div class="survey-scale-group" data-question="p5">
+                    <div class="survey-scale-option" data-value="1">
+                        <span class="survey-scale-number">1</span>
+                        <span class="survey-scale-label">No las conozco</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="2">
+                        <span class="survey-scale-number">2</span>
+                        <span class="survey-scale-label">He escuchado de ellas, pero no las conozco</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="3">
+                        <span class="survey-scale-number">3</span>
+                        <span class="survey-scale-label">Conozco algunas</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="4">
+                        <span class="survey-scale-number">4</span>
+                        <span class="survey-scale-label">Las conozco muy bien</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 6 -->
+            <div class="survey-step-view" data-step="6">
+                <div class="survey-step-counter">Pregunta 6 de 10</div>
+                <h2 class="survey-question-title">¿Has tenido oportunidad de utilizar, probar o implementar alguna solución Smart Cooler de Imbera?</h2>
+                
+                <div class="survey-radio-group" data-question="p6">
+                    <div class="survey-radio-item" data-value="si_actualmente">
+                        <span class="survey-radio-circle"></span>
+                        <span>Sí, actualmente las utilizo.</span>
+                    </div>
+                    <div class="survey-radio-item" data-value="si_probadas">
+                        <span class="survey-radio-circle"></span>
+                        <span>Sí, las he probado.</span>
+                    </div>
+                    <div class="survey-radio-item" data-value="no">
+                        <span class="survey-radio-circle"></span>
+                        <span>No.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 7 -->
+            <div class="survey-step-view" data-step="7">
+                <div class="survey-step-counter">Pregunta 7 de 10</div>
+                <h2 class="survey-question-title">¿Cuál es el atributo que más valor aportaría a tu negocio en cada una de las siguientes soluciones?</h2>
+                
+                <!-- Smart -->
+                <div class="survey-category-block">
+                    <div class="survey-category-title">Smart</div>
+                    <div class="survey-checkbox-group" data-question="p7_smart">
+                        <div class="survey-checkbox-item" data-val="Publicidad y contenido digital">
+                            <span class="survey-custom-box"></span>
+                            <span>Publicidad y contenido digital</span>
+                        </div>
+                        <div class="survey-checkbox-item" data-val="Venta automatizada / Vending">
+                            <span class="survey-custom-box"></span>
+                            <span>Venta automatizada / Vending</span>
+                        </div>
+                        <div class="survey-checkbox-item" data-val="Interacción con el shopper">
+                            <span class="survey-custom-box"></span>
+                            <span>Interacción con el shopper</span>
+                        </div>
+                        <div class="survey-checkbox-item" data-val="Visibilidad y diferenciación de marca">
+                            <span class="survey-custom-box"></span>
+                            <span>Visibilidad y diferenciación de marca</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conectividad -->
+                <div class="survey-category-block">
+                    <div class="survey-category-title">Conectividad</div>
+                    <div class="survey-checkbox-group" data-question="p7_conectividad">
+                        <div class="survey-checkbox-item" data-val="Monitoreo remoto">
+                            <span class="survey-custom-box"></span>
+                            <span>Monitoreo remoto</span>
+                        </div>
+                        <div class="survey-checkbox-item" data-val="Control de temperatura y alerta de fallas">
+                            <span class="survey-custom-box"></span>
+                            <span>Control de temperatura y alerta de fallas</span>
+                        </div>
+                        <div class="survey-checkbox-item" data-val="Visibilidad del estatus del equipo">
+                            <span class="survey-custom-box"></span>
+                            <span>Visibilidad del estatus del equipo</span>
+                        </div>
+                        <div class="survey-checkbox-item" data-val="Gestión del parque frío">
+                            <span class="survey-custom-box"></span>
+                            <span>Gestión del parque frío</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IoT -->
+                <div class="survey-category-block">
+                    <div class="survey-category-title">IoT</div>
+                    <div class="survey-checkbox-group" data-question="p7_iot">
+                        <div class="survey-checkbox-item" data-val="Datos en tiempo real">
+                            <span class="survey-custom-box"></span>
+                            <span>Datos en tiempo real</span>
+                        </div>
+                        <div class="survey-checkbox-item" data-val="Mantenimiento preventivo/predictivo">
+                            <span class="survey-custom-box"></span>
+                            <span>Mantenimiento preventivo/predictivo</span>
+                        </div>
+                        <div class="survey-checkbox-item" data-val="Análisis del desempeño y optimización de la operación">
+                            <span class="survey-custom-box"></span>
+                            <span>Análisis del desempeño y optimización de la operación</span>
+                        </div>
+                        <div class="survey-checkbox-item" data-val="Información para toma de decisiones">
+                            <span class="survey-custom-box"></span>
+                            <span>Información para toma de decisiones</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 8 -->
+            <div class="survey-step-view" data-step="8">
+                <div class="survey-step-counter">Pregunta 8 de 10</div>
+                <h2 class="survey-question-title">¿Actualmente utilizas alguna de las soluciones de sostenibilidad que ofrece Imbera, como eficiencia energética, disposición final de equipos o recuperación de materiales?</h2>
+                
+                <div class="survey-radio-group" data-question="p8">
+                    <div class="survey-radio-item" data-value="si">
+                        <span class="survey-radio-circle"></span>
+                        <span>Sí, actualmente las utilizo.</span>
+                    </div>
+                    <div class="survey-radio-item" data-value="no">
+                        <span class="survey-radio-circle"></span>
+                        <span>No.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 9 -->
+            <div class="survey-step-view" data-step="9">
+                <div class="survey-step-counter">Pregunta 9 de 10</div>
+                <h2 class="survey-question-title">¿Qué tan satisfecho estás con la experiencia y los resultados obtenidos con las soluciones de sostenibilidad de Imbera?</h2>
+                
+                <div class="survey-scale-group" data-question="p9">
+                    <div class="survey-scale-option" data-value="1">
+                        <span class="survey-scale-number">1</span>
+                        <span class="survey-scale-label">Muy insatisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="2">
+                        <span class="survey-scale-number">2</span>
+                        <span class="survey-scale-label">Insatisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="3">
+                        <span class="survey-scale-number">3</span>
+                        <span class="survey-scale-label">Neutral</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="4">
+                        <span class="survey-scale-number">4</span>
+                        <span class="survey-scale-label">Satisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="5">
+                        <span class="survey-scale-number">5</span>
+                        <span class="survey-scale-label">Muy Satisfecho</span>
+                    </div>
+                </div>
+
+                <div class="survey-factor-heading">¿Qué factor influye más en tu respuesta?</div>
+                <div class="survey-checkbox-group" data-question="p9_factors">
+                    <div class="survey-checkbox-item" data-val="El cumplimiento con los estándares de eficiencia energética">
+                        <span class="survey-custom-box"></span>
+                        <span>El cumplimiento con los estándares de eficiencia energética</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="El manejo de los equipos dados de baja (disposición final / EOS)">
+                        <span class="survey-custom-box"></span>
+                        <span>El manejo de los equipos dados de baja (disposición final / EOS)</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="La recuperación y aprovechamiento de materiales">
+                        <span class="survey-custom-box"></span>
+                        <span>La recuperación y aprovechamiento de materiales</span>
+                    </div>
+                    <div class="survey-other-item">
+                        <span class="survey-other-label">Otro:</span>
+                        <input type="text" class="survey-other-input" id="p9_other" placeholder="Especifique...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 10 -->
+            <div class="survey-step-view" data-step="10">
+                <div class="survey-step-counter">Pregunta 10 de 10</div>
+                <h2 class="survey-question-title">¿Qué tan satisfecho estás con la relación y el acompañamiento que recibes por parte del equipo comercial de Imbera?</h2>
+                
+                <div class="survey-scale-group" data-question="p10">
+                    <div class="survey-scale-option" data-value="1">
+                        <span class="survey-scale-number">1</span>
+                        <span class="survey-scale-label">Muy insatisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="2">
+                        <span class="survey-scale-number">2</span>
+                        <span class="survey-scale-label">Insatisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="3">
+                        <span class="survey-scale-number">3</span>
+                        <span class="survey-scale-label">Neutral</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="4">
+                        <span class="survey-scale-number">4</span>
+                        <span class="survey-scale-label">Satisfecho</span>
+                    </div>
+                    <div class="survey-scale-option" data-value="5">
+                        <span class="survey-scale-number">5</span>
+                        <span class="survey-scale-label">Muy Satisfecho</span>
+                    </div>
+                </div>
+
+                <div class="survey-factor-heading">¿Qué factor influye más en tu respuesta?</div>
+                <div class="survey-checkbox-group" data-question="p10_factors">
+                    <div class="survey-checkbox-item" data-val="Facilidad para contactar al equipo comercial cuando lo necesitas">
+                        <span class="survey-custom-box"></span>
+                        <span>Facilidad para contactar al equipo comercial cuando lo necesitas</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="Capacidad para comprender tus necesidades y prioridades.">
+                        <span class="survey-custom-box"></span>
+                        <span>Capacidad para comprender tus necesidades y prioridades.</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="Agilidad para responder solicitudes o necesidades.">
+                        <span class="survey-custom-box"></span>
+                        <span>Agilidad para responder solicitudes o necesidades.</span>
+                    </div>
+                    <div class="survey-checkbox-item" data-val="Capacidad para dar seguimiento y resolver tus solicitudes">
+                        <span class="survey-custom-box"></span>
+                        <span>Capacidad para dar seguimiento y resolver tus solicitudes</span>
+                    </div>
+                    <div class="survey-other-item">
+                        <span class="survey-other-label">Otro:</span>
+                        <input type="text" class="survey-other-input" id="p10_other" placeholder="Especifique...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANTALLA FINAL (AGRADECIMIENTO) -->
+            <div class="survey-step-view" id="surveySuccessView">
+                <div class="survey-success-container">
+                    <div class="survey-check-icon">✓</div>
+                    <h2 class="survey-success-title">Gracias por tu participación.</h2>
+                    <p class="survey-success-subtitle">Demo finalizado.</p>
+                </div>
+            </div>
+
+            <!-- BOTONES DE ACCIÓN (ANTERIOR / SIGUIENTE) -->
+            <div class="survey-actions" id="surveyActions">
+                <button type="button" class="btn-survey-prev hidden" id="btnPrev">Anterior</button>
+                <button type="button" class="btn-survey-next" id="btnNext">Siguiente</button>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Supabase Client & Lógica de Encuesta -->
+    <script src="/supabase.js"></script>
+    <script src="/supabase-client.js"></script>
+    <script src="/encuesta.js?v=1.0"></script>
+</body>
+</html>

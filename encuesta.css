@@ -1,0 +1,525 @@
+/* ==============================================================================
+   IMBERA SCORECARD COMERCIAL: ESTILOS DE LA ENCUESTA
+   ============================================================================== */
+
+:root {
+    --primary-teal: #004d61;
+    --primary-teal-dark: #003644;
+    --primary-teal-light: #e6f3f7;
+    --green-accent: #005a36;
+    --slate-900: #0f172a;
+    --slate-800: #1e293b;
+    --slate-700: #334155;
+    --slate-600: #475569;
+    --slate-500: #64748b;
+    --slate-400: #94a3b8;
+    --slate-200: #e2e8f0;
+    --slate-100: #f1f5f9;
+    --slate-50: #f8fafc;
+    --white: #ffffff;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+    --transition: all 0.2s ease-in-out;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body.survey-body {
+    background-color: var(--slate-50);
+    color: var(--slate-900);
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Scorecard */
+.survey-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--slate-200);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.survey-header-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.survey-brand {
+    font-size: 19px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: var(--slate-900);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.survey-brand-logo {
+    height: 32px;
+    width: auto;
+}
+
+.survey-subtitle {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--slate-500);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+/* Barra de progreso superior */
+.survey-progress-track {
+    width: 100%;
+    height: 5px;
+    background-color: #cbd5e1;
+    position: relative;
+    overflow: hidden;
+}
+
+.survey-progress-bar {
+    height: 100%;
+    width: 10%;
+    background-color: var(--primary-teal);
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Contenedor principal de la encuesta */
+.survey-main-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 16px 50px;
+}
+
+.survey-card {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--slate-200);
+    max-width: 820px;
+    width: 100%;
+    padding: 36px 40px;
+    position: relative;
+    transition: var(--transition);
+}
+
+/* Encabezado del paso */
+.survey-step-counter {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--slate-500);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.survey-question-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--slate-900);
+    line-height: 1.4;
+    margin-bottom: 24px;
+    letter-spacing: -0.2px;
+}
+
+/* Escala de Calificación (1 a 5 o 1 a 4) */
+.survey-scale-group {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.survey-scale-option {
+    flex: 1;
+    background: var(--white);
+    border: 1.5px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    padding: 16px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 86px;
+}
+
+.survey-scale-option:hover {
+    border-color: var(--primary-teal);
+    background-color: var(--slate-50);
+}
+
+.survey-scale-option.active {
+    border-color: var(--primary-teal);
+    background-color: var(--primary-teal-light);
+    box-shadow: 0 0 0 1px var(--primary-teal);
+}
+
+.survey-scale-number {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--slate-900);
+    margin-bottom: 4px;
+    line-height: 1;
+}
+
+.survey-scale-option.active .survey-scale-number {
+    color: var(--primary-teal);
+}
+
+.survey-scale-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--slate-500);
+    line-height: 1.25;
+    text-align: center;
+}
+
+.survey-scale-option.active .survey-scale-label {
+    color: var(--primary-teal-dark);
+}
+
+/* Subpregunta: ¿Qué factor influye más en tu respuesta? */
+.survey-factor-heading {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--slate-900);
+    margin-top: 24px;
+    margin-bottom: 14px;
+}
+
+.survey-checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.survey-checkbox-item {
+    background: var(--white);
+    border: 1.5px solid var(--slate-200);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 14px;
+    color: var(--slate-800);
+    font-weight: 500;
+    line-height: 1.4;
+    user-select: none;
+}
+
+.survey-checkbox-item:hover {
+    border-color: var(--slate-400);
+    background: var(--slate-50);
+}
+
+.survey-checkbox-item.active {
+    border-color: var(--primary-teal);
+    background: #f0f8fa;
+}
+
+.survey-custom-box {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid var(--slate-400);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: var(--transition);
+    background: var(--white);
+}
+
+.survey-checkbox-item.active .survey-custom-box {
+    background: var(--primary-teal);
+    border-color: var(--primary-teal);
+}
+
+.survey-custom-box::after {
+    content: '';
+    width: 5px;
+    height: 9px;
+    border: solid var(--white);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    display: none;
+    margin-bottom: 2px;
+}
+
+.survey-checkbox-item.active .survey-custom-box::after {
+    display: block;
+}
+
+/* Campo "Otro: ..." */
+.survey-other-item {
+    background: var(--white);
+    border: 1.5px solid var(--slate-200);
+    border-radius: var(--radius-md);
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+}
+
+.survey-other-item:focus-within {
+    border-color: var(--primary-teal);
+    box-shadow: 0 0 0 1px var(--primary-teal);
+}
+
+.survey-other-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--slate-600);
+    white-space: nowrap;
+}
+
+.survey-other-input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--slate-900);
+    background: transparent;
+}
+
+/* Preguntas Tipo Radio (Pregunta 6 y 8) */
+.survey-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.survey-radio-item {
+    background: var(--white);
+    border: 1.5px solid var(--slate-200);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--slate-800);
+    user-select: none;
+}
+
+.survey-radio-item:hover {
+    border-color: var(--slate-400);
+    background: var(--slate-50);
+}
+
+.survey-radio-item.active {
+    border-color: var(--primary-teal);
+    background: #f0f8fa;
+}
+
+.survey-radio-circle {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid var(--slate-400);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: var(--transition);
+    background: var(--white);
+}
+
+.survey-radio-item.active .survey-radio-circle {
+    border-color: var(--primary-teal);
+}
+
+.survey-radio-circle::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--primary-teal);
+    display: none;
+}
+
+.survey-radio-item.active .survey-radio-circle::after {
+    display: block;
+}
+
+/* Categorías Pregunta 7 (Smart, Conectividad, IoT) */
+.survey-category-block {
+    margin-bottom: 24px;
+}
+
+.survey-category-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--slate-900);
+    margin-bottom: 12px;
+}
+
+/* Barra inferior de navegación (Anterior / Siguiente) */
+.survey-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--slate-200);
+}
+
+.btn-survey-prev {
+    background-color: #f1f5f9;
+    color: var(--slate-700);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 12px 28px;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.btn-survey-prev:hover {
+    background-color: #e2e8f0;
+    color: var(--slate-900);
+}
+
+.btn-survey-prev.hidden {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.btn-survey-next {
+    background-color: var(--primary-teal);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 14.5px;
+    padding: 12px 34px;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+    margin-left: auto;
+}
+
+.btn-survey-next:hover {
+    background-color: var(--primary-teal-dark);
+    box-shadow: 0 4px 12px rgba(0, 77, 97, 0.25);
+}
+
+.btn-survey-next:disabled {
+    background-color: var(--slate-300);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Pantalla Final de Éxito */
+.survey-success-container {
+    text-align: center;
+    padding: 60px 20px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.survey-check-icon {
+    font-size: 48px;
+    color: var(--primary-teal);
+    margin-bottom: 16px;
+    display: inline-block;
+}
+
+.survey-success-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--slate-900);
+    margin-bottom: 12px;
+}
+
+.survey-success-subtitle {
+    font-size: 16px;
+    color: var(--slate-500);
+    font-weight: 500;
+}
+
+/* Transición animada de pasos */
+.survey-step-view {
+    display: none;
+}
+
+.survey-step-view.active {
+    display: block;
+    animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .survey-card {
+        padding: 24px 20px;
+    }
+
+    .survey-question-title {
+        font-size: 18px;
+    }
+
+    .survey-scale-group {
+        gap: 6px;
+    }
+
+    .survey-scale-option {
+        padding: 10px 4px;
+        min-height: 70px;
+    }
+
+    .survey-scale-number {
+        font-size: 17px;
+    }
+
+    .survey-scale-label {
+        font-size: 9.5px;
+    }
+
+    .survey-brand {
+        font-size: 16px;
+    }
+
+    .survey-subtitle {
+        font-size: 11px;
+    }
+}

@@ -45,7 +45,20 @@
       ]
     },
     {
-      "source": "/(supabase\\.js|papaparse\\.min\\.js|fonts\\.css)",
+      "source": "/(encuesta|encuesta/.*|encuesta\\.html|encuesta-admin\\.html|encuesta\\.js|encuesta-admin\\.js|encuesta\\.css|encuesta-admin\\.css)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/(supabase\\.js|papaparse\\.min\\.js|chart\\.min\\.js|fonts\\.css)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -71,6 +84,14 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/encuesta/superadmin",
+      "destination": "/encuesta-admin.html"
+    },
+    {
+      "source": "/encuesta",
+      "destination": "/encuesta.html"
+    },
     {
       "source": "/storage/v1/object/public/:path*",
       "destination": "https://qezrauybkpzcenqilwcw.supabase.co/storage/v1/object/public/:path*"
