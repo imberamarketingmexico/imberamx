@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imbera | SuperAdmin Scorecard Comercial</title>
+    <!-- Privado: Excluir de buscadores -->
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    
+    <!-- Fuentes Locales -->
+    <link rel="stylesheet" href="/fonts.css">
+    
+    <!-- Estilos del Panel -->
+    <link rel="stylesheet" href="/encuesta-admin.css">
+</head>
+<body class="admin-body">
+
+    <!-- Modal de Inicio de Sesión (Gate con Contraseña) -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-card">
+            <img src="/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera" class="login-logo" width="130" height="42">
+            <h1 class="login-title">SuperAdmin Scorecard</h1>
+            <p class="login-subtitle">Ingresa la contraseña general para acceder a los datos de la encuesta.</p>
+            
+            <form id="loginForm" autocomplete="off">
+                <div class="login-input-group">
+                    <input type="password" id="adminPassword" class="login-input" placeholder="Contraseña de acceso" required autofocus>
+                </div>
+                <div class="login-error" id="loginError">Contraseña incorrecta. Inténtalo de nuevo.</div>
+                <button type="submit" class="btn-login-submit">Acceder al Panel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Barra de Navegación del Panel SuperAdmin -->
+    <header class="admin-navbar">
+        <div class="admin-nav-container">
+            <div class="admin-nav-left">
+                <img src="/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera" class="admin-nav-logo" width="105" height="34">
+                <span class="admin-badge-super">SuperAdmin · Scorecard</span>
+            </div>
+            <div class="admin-nav-right">
+                <button type="button" class="btn-action-light" id="btnRefresh" title="Actualizar datos">
+                    🔄 Actualizar
+                </button>
+                <button type="button" class="btn-action-teal" id="btnExportCsv" title="Exportar todas las respuestas a Excel/CSV">
+                    📥 Exportar CSV
+                </button>
+                <button type="button" class="btn-action-light" id="btnLogout" title="Cerrar sesión">
+                    Salir
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal del Panel -->
+    <main class="admin-container">
+        
+        <!-- Tarjetas KPI Principales -->
+        <section class="kpi-grid">
+            <!-- KPI 1: Aperturas Totales -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">Aperturas / Visitas</span>
+                    <div class="kpi-icon-wrap icon-blue">👁️</div>
+                </div>
+                <div class="kpi-value" id="kpiVisits">0</div>
+                <div class="kpi-subtitle">Usuarios que abrieron el link</div>
+            </div>
+
+            <!-- KPI 2: Encuestas Completadas -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">Encuestas Completadas</span>
+                    <div class="kpi-icon-wrap icon-green">✅</div>
+                </div>
+                <div class="kpi-value" id="kpiResponses">0</div>
+                <div class="kpi-subtitle">Formularios finalizados (10/10)</div>
+            </div>
+
+            <!-- KPI 3: Tasa de Conversión -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">Tasa de Finalización</span>
+                    <div class="kpi-icon-wrap icon-teal">📈</div>
+                </div>
+                <div class="kpi-value" id="kpiRate">0%</div>
+                <div class="kpi-subtitle">Completadas vs. Abiertas</div>
+            </div>
+
+            <!-- KPI 4: CSAT Promedio General -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">Satisfacción General (CSAT)</span>
+                    <div class="kpi-icon-wrap icon-amber">⭐</div>
+                </div>
+                <div class="kpi-value" id="kpiCsat">-</div>
+                <div class="kpi-subtitle">Promedio de escala sobre 5.0</div>
+            </div>
+        </section>
+
+        <!-- Selector de Pestañas (Tabs) -->
+        <nav class="admin-tabs">
+            <button type="button" class="admin-tab-btn active" data-tab="tab-charts">📊 Analítica & Gráficas por Pregunta</button>
+            <button type="button" class="admin-tab-btn" data-tab="tab-table">📋 Respuestas Individuales</button>
+        </nav>
+
+        <!-- TAB 1: GRÁFICAS POR PREGUNTA -->
+        <section class="tab-content active" id="tab-charts">
+            <div class="charts-grid">
+                
+                <!-- Card P1 -->
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div class="chart-badge">Pregunta 1 de 10</div>
+                        <h3 class="chart-title">Cumplimiento en tiempos y cantidades de entrega</h3>
+                        <div class="chart-average" id="avg_p1">Promedio: - / 5.0</div>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="chart_p1"></canvas>
+                    </div>
+                    <div class="chart-factors-list" id="factors_p1">
+                        <div class="chart-factors-heading">Factores que más influyen:</div>
+                        <div class="factors-content">Cargando...</div>
+                    </div>
+                </div>
+
+                <!-- Card P2 -->
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div class="chart-badge">Pregunta 2 de 10</div>
+                        <h3 class="chart-title">Recepción de equipos y estado físico</h3>
+                        <div class="chart-average" id="avg_p2">Promedio: - / 5.0</div>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="chart_p2"></canvas>
+                    </div>
+                    <div class="chart-factors-list" id="factors_p2">
+                        <div class="chart-factors-heading">Factores que más influyen:</div>
+                        <div class="factors-content">Cargando...</div>
+                    </div>
+                </div>
+
+                <!-- Card P3 -->
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div class="chart-badge">Pregunta 3 de 10</div>
+                        <h3 class="chart-title">Atención y solución de fallas / garantías</h3>
+                        <div class="chart-average" id="avg_p3">Promedio: - / 5.0</div>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="chart_p3"></canvas>
+                    </div>
+                    <div class="chart-factors-list" id="factors_p3">
+                        <div class="chart-factors-heading">Factores que más influyen:</div>
+                        <div class="factors-content">Cargando...</div>
+                    </div>
+                </div>
+
+                <!-- Card P4 -->
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div class="chart-badge">Pregunta 4 de 10</div>
+                        <h3 class="chart-title">Soporte postventa y disponibilidad de refacciones</h3>
+                        <div class="chart-average" id="avg_p4">Promedio: - / 4.0</div>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="chart_p4"></canvas>
+                    </div>
+                    <div class="chart-factors-list" id="factors_p4">
+                        <div class="chart-factors-heading">Factores que más influyen:</div>
+                        <div class="factors-content">Cargando...</div>
+                    </div>
+                </div>
+
+                <!-- Card P5 -->
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div class="chart-badge">Pregunta 5 de 10</div>
+                        <h3 class="chart-title">Familiaridad con innovación y tecnología Imbera</h3>
+                        <div class="chart-average" id="avg_p5">Nivel promedio: - / 4.0</div>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="chart_p5"></canvas>
+                    </div>
+                </div>
+
+                <!-- Card P6 -->
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div class="chart-badge">Pregunta 6 de 10</div>
+                        <h3 class="chart-title">Uso de Soluciones Smart Cooler</h3>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="chart_p6"></canvas>
+                    </div>
+                </div>
+
+                <!-- Card P7 (Full width) -->
+                <div class="chart-card full-width">
+                    <div class="chart-card-header">
+                        <div class="chart-badge">Pregunta 7 de 10</div>
+                        <h3 class="chart-title">Atributos de Mayor Valor: Smart, Conectividad e IoT</h3>
+                    </div>
+                    <div class="chart-canvas-container" style="height: 300px;">
+                        <canvas id="chart_p7"></canvas>
+                    </div>
+                </div>
+
+                <!-- Card P8 -->
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div class="chart-badge">Pregunta 8 de 10</div>
+                        <h3 class="chart-title">Uso de Soluciones de Sostenibilidad</h3>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="chart_p8"></canvas>
+                    </div>
+                </div>
+
+                <!-- Card P9 -->
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div class="chart-badge">Pregunta 9 de 10</div>
+                        <h3 class="chart-title">Satisfacción con soluciones de sostenibilidad</h3>
+                        <div class="chart-average" id="avg_p9">Promedio: - / 5.0</div>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="chart_p9"></canvas>
+                    </div>
+                    <div class="chart-factors-list" id="factors_p9">
+                        <div class="chart-factors-heading">Factores que más influyen:</div>
+                        <div class="factors-content">Cargando...</div>
+                    </div>
+                </div>
+
+                <!-- Card P10 -->
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div class="chart-badge">Pregunta 10 de 10</div>
+                        <h3 class="chart-title">Relación y acompañamiento del equipo comercial</h3>
+                        <div class="chart-average" id="avg_p10">Promedio: - / 5.0</div>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="chart_p10"></canvas>
+                    </div>
+                    <div class="chart-factors-list" id="factors_p10">
+                        <div class="chart-factors-heading">Factores que más influyen:</div>
+                        <div class="factors-content">Cargando...</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 2: TABLA DE RESPUESTAS INDIVIDUALES -->
+        <section class="tab-content" id="tab-table">
+            <div class="table-card">
+                <div class="table-toolbar">
+                    <input type="text" class="table-search-input" id="tableSearch" placeholder="🔍 Filtrar por fecha o ID...">
+                    <div style="font-size: 13px; color: var(--slate-500);" id="tableCountLabel">0 encuestas encontradas</div>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha / Hora</th>
+                                <th>P1 Entrega</th>
+                                <th>P2 Estado</th>
+                                <th>P3 Fallas</th>
+                                <th>P4 Postventa</th>
+                                <th>P5 Innovación</th>
+                                <th>P6 Smart</th>
+                                <th>P8 Sostenibilidad</th>
+                                <th>P9 CSAT Sost.</th>
+                                <th>P10 Comercial</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td colspan="12" style="text-align: center; color: var(--slate-500); padding: 30px;">Cargando respuestas...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal para Ver Detalle Completo de una Encuesta -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Detalle de Encuesta</h3>
+                <button type="button" class="modal-close-btn" id="modalCloseBtn">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Inyectado dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Librería Local Chart.js + Supabase + Lógica Admin -->
+    <script src="/chart.min.js"></script>
+    <script src="/supabase.js"></script>
+    <script src="/supabase-client.js"></script>
+    <script src="/encuesta-admin.js?v=1.0"></script>
+</body>
+</html>

@@ -86,11 +86,23 @@
   "rewrites": [
     {
       "source": "/encuesta/superadmin",
+      "destination": "/encuesta/superadmin/index.html"
+    },
+    {
+      "source": "/encuesta/superadmin/",
+      "destination": "/encuesta/superadmin/index.html"
+    },
+    {
+      "source": "/encuesta-admin",
       "destination": "/encuesta-admin.html"
     },
     {
       "source": "/encuesta",
-      "destination": "/encuesta.html"
+      "destination": "/encuesta/index.html"
+    },
+    {
+      "source": "/encuesta/",
+      "destination": "/encuesta/index.html"
     },
     {
       "source": "/storage/v1/object/public/:path*",
