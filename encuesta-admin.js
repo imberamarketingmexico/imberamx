@@ -66,9 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     btnRefresh.addEventListener('click', () => {
-        btnRefresh.innerHTML = '🔄 Cargando...';
+        btnRefresh.innerHTML = '<i class="fa-solid fa-arrows-rotate fa-spin"></i> Actualizando...';
         loadDashboardData().finally(() => {
-            btnRefresh.innerHTML = '🔄 Actualizar';
+            btnRefresh.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> Actualizar';
         });
     });
 

@@ -44,13 +44,13 @@
             </div>
             <div class="admin-nav-right">
                 <button type="button" class="btn-action-light" id="btnRefresh" title="Actualizar datos">
-                    🔄 Actualizar
+                    <i class="fa-solid fa-arrows-rotate"></i> Actualizar
                 </button>
                 <button type="button" class="btn-action-teal" id="btnExportCsv" title="Exportar todas las respuestas a Excel/CSV">
-                    📥 Exportar CSV
+                    <i class="fa-solid fa-file-arrow-down"></i> Exportar CSV
                 </button>
                 <button type="button" class="btn-action-light" id="btnLogout" title="Cerrar sesión">
-                    Salir
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Salir
                 </button>
             </div>
         </div>
@@ -65,7 +65,7 @@
             <div class="kpi-card">
                 <div class="kpi-header">
                     <span class="kpi-title">Aperturas / Visitas</span>
-                    <div class="kpi-icon-wrap icon-blue">👁️</div>
+                    <div class="kpi-icon-wrap"><i class="fa-regular fa-eye"></i></div>
                 </div>
                 <div class="kpi-value" id="kpiVisits">0</div>
                 <div class="kpi-subtitle">Usuarios que abrieron el link</div>
@@ -75,7 +75,7 @@
             <div class="kpi-card">
                 <div class="kpi-header">
                     <span class="kpi-title">Encuestas Completadas</span>
-                    <div class="kpi-icon-wrap icon-green">✅</div>
+                    <div class="kpi-icon-wrap"><i class="fa-solid fa-clipboard-check"></i></div>
                 </div>
                 <div class="kpi-value" id="kpiResponses">0</div>
                 <div class="kpi-subtitle">Formularios finalizados (10/10)</div>
@@ -85,7 +85,7 @@
             <div class="kpi-card">
                 <div class="kpi-header">
                     <span class="kpi-title">Tasa de Finalización</span>
-                    <div class="kpi-icon-wrap icon-teal">📈</div>
+                    <div class="kpi-icon-wrap"><i class="fa-solid fa-chart-line"></i></div>
                 </div>
                 <div class="kpi-value" id="kpiRate">0%</div>
                 <div class="kpi-subtitle">Completadas vs. Abiertas</div>
@@ -95,7 +95,7 @@
             <div class="kpi-card">
                 <div class="kpi-header">
                     <span class="kpi-title">Satisfacción General (CSAT)</span>
-                    <div class="kpi-icon-wrap icon-amber">⭐</div>
+                    <div class="kpi-icon-wrap"><i class="fa-regular fa-star"></i></div>
                 </div>
                 <div class="kpi-value" id="kpiCsat">-</div>
                 <div class="kpi-subtitle">Promedio de escala sobre 5.0</div>
@@ -104,8 +104,8 @@
 
         <!-- Selector de Pestañas (Tabs) -->
         <nav class="admin-tabs">
-            <button type="button" class="admin-tab-btn active" data-tab="tab-charts">📊 Analítica & Gráficas por Pregunta</button>
-            <button type="button" class="admin-tab-btn" data-tab="tab-table">📋 Respuestas Individuales</button>
+            <button type="button" class="admin-tab-btn active" data-tab="tab-charts"><i class="fa-solid fa-chart-column"></i> Gráficas Generales</button>
+            <button type="button" class="admin-tab-btn" data-tab="tab-table"><i class="fa-solid fa-table-list"></i> Datos y Respuestas</button>
         </nav>
 
         <!-- TAB 1: GRÁFICAS POR PREGUNTA -->
@@ -260,7 +260,10 @@
         <section class="tab-content" id="tab-table">
             <div class="table-card">
                 <div class="table-toolbar">
-                    <input type="text" class="table-search-input" id="tableSearch" placeholder="🔍 Filtrar por fecha o ID...">
+                    <div class="table-search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass table-search-icon"></i>
+                        <input type="text" class="table-search-input" id="tableSearch" placeholder="Filtrar por fecha o calificación...">
+                    </div>
                     <div style="font-size: 13px; color: var(--slate-500);" id="tableCountLabel">0 encuestas encontradas</div>
                 </div>
                 <div class="table-responsive">
