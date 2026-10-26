@@ -1376,6 +1376,9 @@ ul {
 
 .footer-logo {
     height: 45px;
+    width: auto;
+    max-width: 140px;
+    object-fit: contain;
     margin-bottom: 15px;
 }
 
