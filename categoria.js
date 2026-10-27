@@ -1,5 +1,21 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
+    const SUPABASE_REST_URL = 'https://qezrauybkpzcenqilwcw.supabase.co/rest/v1';
+    const SUPABASE_REST_HEADERS = {
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlenJhdXlia3B6Y2VucWlsd2N3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5Mzk1OTIsImV4cCI6MjEwNzUxNTU5Mn0.KTLV5uA8ZWYmdJ9QexaY0G1ZzuWDr5CZTsBldSOk2-w',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlenJhdXlia3B6Y2VucWlsd2N3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5Mzk1OTIsImV4cCI6MjEwNzUxNTU5Mn0.KTLV5uA8ZWYmdJ9QexaY0G1ZzuWDr5CZTsBldSOk2-w'
+    };
+
+    function getSb() {
+        if (window.imberaSupabase && typeof window.imberaSupabase.client === 'function') {
+            const c = window.imberaSupabase.client();
+            if (c) return c;
+        }
+        if (typeof supabase !== 'undefined' && supabase.createClient) {
+            return supabase.createClient('https://qezrauybkpzcenqilwcw.supabase.co', SUPABASE_REST_HEADERS.apikey);
+        }
+        return null;
+    }
+    const sb = getSb();
     
     const officialTree = [
         {
@@ -95,14 +111,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     const catalogGridEl = document.getElementById('catalogGrid');
     const resultsCountEl = document.getElementById('resultsCount');
 
-    try {
-        if (sb) {
-            const { data, error } = await sb.from('categories').select('*').order('display_order');
-            if (data && !error && data.length > 0) {
-                dbCategories = data;
+    async function fetchCategoriesList() {
+        if (dbCategories && dbCategories.length > 0) return dbCategories;
+        const client = getSb();
+        if (client) {
+            try {
+                const { data, error } = await client.from('categories').select('*').order('display_order');
+                if (data && !error && data.length > 0) {
+                    dbCategories = data;
+                    return dbCategories;
+                }
+            } catch(e) {
+                console.warn('client categories query error:', e);
             }
         }
-    } catch(e) {}
+        // Direct REST fallback
+        try {
+            const res = await fetch(`${SUPABASE_REST_URL}/categories?select=*&order=display_order`, {
+                headers: SUPABASE_REST_HEADERS
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data) && data.length > 0) {
+                    dbCategories = data;
+                    return dbCategories;
+                }
+            }
+        } catch(e) {
+            console.warn('REST categories query error:', e);
+        }
+        return dbCategories;
+    }
+
+    await fetchCategoriesList();
 
     // Build hierarchy map
     const parents = dbCategories.filter(c => !c.parent_id);
@@ -205,7 +246,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     : `<a href="/categoria">Catálogo</a> | <span>Búsqueda: <strong>"${escapeHtml(searchQuery)}"</strong></span>`;
             }
 
-            const searchInput = document.querySelector('.search-form input');
+            const searchInput = document.querySelector('.search-form input[name="q"], .search-form input[type="text"], .search-form input:not([type="hidden"])');
             if (searchInput) {
                 searchInput.value = isUuid ? '' : searchQuery;
             }
@@ -436,64 +477,114 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
     }
 
+    async function fetchCategoryProducts(targetIds) {
+        if (!targetIds || targetIds.length === 0) return [];
+        const client = getSb();
+        if (client) {
+            try {
+                const { data, error } = await client.from('products').select('*, categories(*)').eq('is_active', true).in('category_id', targetIds);
+                if (!error && data) return data;
+            } catch(e) {
+                console.warn('client products query error:', e);
+            }
+        }
+        // Direct REST fallback
+        try {
+            const idsList = targetIds.map(encodeURIComponent).join(',');
+            const res = await fetch(`${SUPABASE_REST_URL}/products?select=*,categories(*)&is_active=eq.true&category_id=in.(${idsList})`, {
+                headers: SUPABASE_REST_HEADERS
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data)) return data;
+            }
+        } catch(e) {
+            console.warn('REST products query error:', e);
+        }
+        return [];
+    }
+
+    async function fetchAllActiveProducts() {
+        const client = getSb();
+        if (client) {
+            try {
+                const { data, error } = await client.from('products').select('*, categories(*)').eq('is_active', true);
+                if (!error && data && data.length > 0) return data;
+            } catch(e) {
+                console.warn('client all products query error:', e);
+            }
+        }
+        // Direct REST fallback
+        try {
+            const res = await fetch(`${SUPABASE_REST_URL}/products?select=*,categories(*)&is_active=eq.true`, {
+                headers: SUPABASE_REST_HEADERS
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data)) return data;
+            }
+        } catch(e) {
+            console.warn('REST all products query error:', e);
+        }
+        return [];
+    }
+
     async function loadProducts() {
         if (!catalogGridEl) return;
         catalogGridEl.innerHTML = '<div style="grid-column: span 3; text-align: center; padding: 50px 0;"><i class="fa-solid fa-spinner fa-spin fa-2x text-primary"></i><p class="mt-2 text-muted">Cargando equipos...</p></div>';
 
         try {
-            if (sb) {
-                if (searchQuery) {
-                    // Consulta completa de productos activos para búsqueda inteligente y sugerencias cercanas
-                    const { data, error } = await sb.from('products').select('*, categories(*)').eq('is_active', true);
-                    if (!error && data && data.length > 0) {
-                        const outcome = executeSmartSearch(searchQuery, data);
+            if (searchQuery) {
+                const allActive = await fetchAllActiveProducts();
+                if (allActive && allActive.length > 0) {
+                    const outcome = executeSmartSearch(searchQuery, allActive);
 
-                        // Si se buscó un UUID directo y sólo hay 1 producto, redirigir a detalle
-                        if (outcome.isUuid && outcome.items.length === 1) {
-                            const p = outcome.items[0];
-                            const catSlug = p.categories?.slug || 'equipos';
-                            const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-                            window.location.replace(`/${catSlug}/${modelSlug}?sku=${encodeURIComponent(p.sku)}`);
-                            return;
-                        }
-
-                        dbProducts = outcome.items;
-                        renderProductsGrid(outcome);
+                    // Si se buscó un UUID directo y sólo hay 1 producto, redirigir a detalle
+                    if (outcome.isUuid && outcome.items.length === 1) {
+                        const p = outcome.items[0];
+                        const catSlug = p.categories?.slug || 'equipos';
+                        const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+                        window.location.replace(`/${catSlug}/${modelSlug}?sku=${encodeURIComponent(p.sku)}`);
                         return;
                     }
-                } else if (dbCategories.length > 0) {
-                    let query = sb.from('products').select('*, categories(*)').eq('is_active', true);
-                    if (selectedSubSlug) {
-                        const targetSub = dbCategories.find(c => c.slug === selectedSubSlug);
-                        if (targetSub) {
-                            query = query.eq('category_id', targetSub.id);
-                        }
-                    } else if (selectedCatSlug) {
-                        const targetParent = dbCategories.find(c => c.slug === selectedCatSlug && !c.parent_id);
-                        if (targetParent) {
-                            const childIds = dbCategories.filter(c => c.parent_id === targetParent.id).map(c => c.id);
-                            const allRelevantIds = [targetParent.id, ...childIds];
-                            query = query.in('category_id', allRelevantIds);
-                        }
-                    }
 
-                    const { data, error } = await query;
-                    if (!error && data) {
-                        dbProducts = data;
-                        renderProductsGrid({ items: dbProducts, mode: 'category' });
-                        return;
-                    }
+                    dbProducts = outcome.items;
+                    renderProductsGrid(outcome);
+                    return;
+                } else {
+                    renderProductsGrid({ items: [], mode: 'empty', query: searchQuery });
+                    return;
                 }
+            }
+
+            // Modo Categoría
+            await fetchCategoriesList();
+            let targetCatIds = [];
+            if (selectedSubSlug) {
+                const sub = dbCategories.find(c => c.slug === selectedSubSlug);
+                if (sub) targetCatIds.push(sub.id);
+            } else if (selectedCatSlug) {
+                const cat = dbCategories.find(c => c.slug === selectedCatSlug);
+                if (cat) {
+                    targetCatIds.push(cat.id);
+                    // Incluir subcategorías hijas si es categoría padre
+                    const childIds = dbCategories.filter(c => c.parent_id === cat.id).map(c => c.id);
+                    targetCatIds.push(...childIds);
+                }
+            }
+
+            if (targetCatIds.length > 0) {
+                const prods = await fetchCategoryProducts(targetCatIds);
+                dbProducts = prods || [];
+                renderProductsGrid({ items: dbProducts, mode: 'category' });
+                return;
+            } else {
+                renderProductsGrid({ items: [], mode: 'category' });
+                return;
             }
         } catch(e) {
             console.error('Error al cargar productos:', e);
-        }
-
-        // Fallback default sample grid if no products yet in Supabase for this category
-        if (!searchQuery) {
-            renderFallbackGrid();
-        } else {
-            renderProductsGrid({ items: [], mode: 'empty' });
+            renderProductsGrid({ items: [], mode: searchQuery ? 'empty' : 'category' });
         }
     }
 
@@ -578,14 +669,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (!products || products.length === 0) {
-            catalogGridEl.innerHTML = `
-                <div style="grid-column: span 3; text-align: center; padding: 60px 20px;">
-                    <i class="fa-solid fa-magnifying-glass fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i>
-                    <h3 style="font-size: 20px; color: #475569; margin-bottom: 8px;">No se encontraron productos para "${escapeHtml(query)}"</h3>
-                    <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Intenta buscando por modelo (ej. VR17, G3D42, CCV), tipo de equipo o código numérico.</p>
-                    <a href="/categoria" class="btn-view" style="display: inline-block; padding: 10px 24px; text-decoration: none;">Ver todo el catálogo</a>
-                </div>
-            `;
+            if (resultsCountEl) resultsCountEl.innerText = 'Mostrando 0 productos';
+
+            if (mode === 'category' || !searchQuery) {
+                catalogGridEl.innerHTML = `
+                    <div style="grid-column: span 3; text-align: center; padding: 60px 20px;">
+                        <i class="fa-solid fa-box-open fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i>
+                        <h3 style="font-size: 20px; color: #475569; margin-bottom: 8px;">No hay equipos registrados en esta categoría</h3>
+                        <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Pronto agregaremos más modelos a esta sección. Te invitamos a conocer otros equipos disponibles en nuestro catálogo.</p>
+                        <a href="/categoria" class="btn-view" style="display: inline-block; padding: 10px 24px; text-decoration: none;">Ver todo el catálogo</a>
+                    </div>
+                `;
+            } else {
+                const isUuidQuery = isUuid || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(query);
+                catalogGridEl.innerHTML = `
+                    <div style="grid-column: span 3; text-align: center; padding: 60px 20px;">
+                        <i class="fa-solid fa-magnifying-glass fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i>
+                        <h3 style="font-size: 20px; color: #475569; margin-bottom: 8px;">${isUuidQuery ? 'Búsqueda de Equipos' : `No se encontraron productos para "${escapeHtml(query)}"`}</h3>
+                        <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">${isUuidQuery ? 'Ingresa el modelo (ej. VR17, G3D42), nombre o código en la barra de búsqueda.' : 'Intenta buscando por modelo (ej. VR17, G3D42, CCV), tipo de equipo o código numérico.'}</p>
+                        <a href="/categoria" class="btn-view" style="display: inline-block; padding: 10px 24px; text-decoration: none;">Ver todo el catálogo</a>
+                    </div>
+                `;
+            }
             return;
         }
 
@@ -623,32 +728,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }).join('');
 
         catalogGridEl.innerHTML = (currentNoticeHtml || '') + cardsHtml;
-    }
-
-    function renderFallbackGrid() {
-        const sampleProducts = [
-            { name: 'G3D42 ESPECIAL', code: '1030002', img: 'images/Enfriador_G3D42_Especial.jpg' },
-            { name: 'VR17', code: '1024175', img: 'images/Enfriador_VR17.jpg' },
-            { name: 'VR17 ESPECIAL', code: '1023825', img: 'images/Enfriador_VR17_especial.jpg' },
-            { name: 'VMC19B', code: '1025843', img: 'images/Enfriador_VMC19B.jpg' }
-        ];
-
-        if (resultsCountEl) resultsCountEl.innerText = `Mostrando ${sampleProducts.length} productos`;
-
-        catalogGridEl.innerHTML = sampleProducts.map(p => {
-            const modelSlug = p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-            const targetUrl = `/enfriadores/enfriadores-verticales/${modelSlug}?sku=${encodeURIComponent(p.code)}`;
-            return `
-                <div class="catalog-item" data-href="${targetUrl}" role="link" tabindex="0" aria-label="Ver detalles de ${p.name}">
-                    <div class="item-img"><img src="${p.img}" alt="${p.name} - Código ${p.code}" loading="lazy"></div>
-                    <div class="item-info">
-                        <h3>${p.name}</h3>
-                        <p>Código: <strong>${p.code}</strong></p>
-                        <a href="${targetUrl}" class="btn-view">Ver equipo</a>
-                    </div>
-                </div>
-            `;
-        }).join('');
     }
 
     // Click and keyboard accessibility for catalog items

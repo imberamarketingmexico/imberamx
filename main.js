@@ -113,6 +113,11 @@ document.addEventListener('DOMContentLoaded', () => {
             inp.value = csrfVal;
         });
         document.querySelectorAll('form').forEach(f => {
+            if (f.classList.contains('search-form') || (f.method && f.method.toUpperCase() === 'GET') || f.getAttribute('action') === '/categoria') {
+                const strayCsrf = f.querySelector('input[name="csrf_token"]');
+                if (strayCsrf) strayCsrf.remove();
+                return;
+            }
             if (!f.querySelector('input[name="csrf_token"]')) {
                 const hiddenInput = document.createElement('input');
                 hiddenInput.type = 'hidden';
@@ -212,7 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchBoxes = document.querySelectorAll('.search-box');
     searchBoxes.forEach(box => {
         const form = box.querySelector('.search-form');
-        const searchInput = form ? form.querySelector('input') : null;
+        const strayCsrf = form ? form.querySelector('input[name="csrf_token"]') : null;
+        if (strayCsrf) strayCsrf.remove();
+
+        const searchInput = form ? form.querySelector('input[name="q"], input[type="text"], input:not([type="hidden"])') : null;
         if (!form || !searchInput) return;
 
         // Ensure form submission targets /categoria?q=... and avoid browser autofill collisions
