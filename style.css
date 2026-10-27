@@ -861,26 +861,26 @@ ul {
 
 /* About / Intro Section Special Adjustment */
 #about {
-    padding: 20px 0; /* Even more compact */
+    padding: 60px 0;
 }
 .about-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.15fr 0.85fr;
     align-items: center;
-    gap: 60px;
+    gap: 50px;
 }
 
 .section-title-large {
-    font-size: 48px;
+    font-size: 44px;
     font-weight: 700;
     color: var(--primary-color); /* Navy Blue */
-    line-height: 1.1;
-    margin-bottom: 25px;
+    line-height: 1.15;
+    margin-bottom: 22px;
 }
 
 .section-description {
-    font-size: 18px;
-    color: #666;
+    font-size: 17px;
+    color: #555;
     margin-bottom: 30px;
     line-height: 1.6;
 }
@@ -901,9 +901,23 @@ ul {
     color: var(--white);
 }
 
+.about-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .about-image img {
+    max-width: 440px;
     width: 100%;
-    /* Shadow and radius removed as requested */
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.08));
+    transition: transform 0.3s ease;
+}
+
+.about-image img:hover {
+    transform: translateY(-4px);
 }
 
 /* Benefits Section */
@@ -1169,7 +1183,12 @@ ul {
 @media (max-width: 992px) {
     .about-grid {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 36px;
+        text-align: center;
+    }
+
+    .about-image img {
+        max-width: 360px;
     }
     
     .section-title-large {
