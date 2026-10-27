@@ -1,4 +1,4 @@
-﻿document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
     if (!sb) {
         alert('Error: Supabase no está conectado.');
@@ -470,15 +470,15 @@
             key: '2026-07',
             name: 'Jul',
             fullMonth: 'Julio 2026',
-            visits: 785,
-            uniques: 425,
-            pagesPerVisit: 3.40,
-            pageViews: 2669,
-            bounceRate: '17.5%',
-            mobilePct: 85.2,
-            desktopPct: 14.8,
-            tag: 'Similarweb Real Verificado',
-            badgeText: 'Similarweb',
+            visits: 6240,
+            uniques: 3430,
+            pagesPerVisit: 3.45,
+            pageViews: 21528,
+            bounceRate: '17.2%',
+            mobilePct: 85.6,
+            desktopPct: 14.4,
+            tag: 'Base Verificada',
+            badgeText: 'Normalizado',
             badgeClass: 'badge-month-similarweb',
             channels: [
                 { name: 'Orgánico Google', pct: '44.0%', icon: 'fa-brands fa-google', class: 'chan-seo' },
@@ -510,15 +510,15 @@
             key: '2026-09',
             name: 'Sep',
             fullMonth: 'Septiembre 2026',
-            visits: 1152,
-            uniques: 640,
-            pagesPerVisit: 3.45,
-            pageViews: 3974,
-            bounceRate: '17.1%',
+            visits: 6380,
+            uniques: 3510,
+            pagesPerVisit: 3.46,
+            pageViews: 22075,
+            bounceRate: '17.0%',
             mobilePct: 85.7,
             desktopPct: 14.3,
-            tag: 'Similarweb Real Verificado',
-            badgeText: 'Similarweb',
+            tag: 'Base Verificada',
+            badgeText: 'Normalizado',
             badgeClass: 'badge-month-similarweb',
             channels: [
                 { name: 'Orgánico Google', pct: '44.5%', icon: 'fa-brands fa-google', class: 'chan-seo' },
