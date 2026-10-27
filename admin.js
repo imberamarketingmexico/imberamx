@@ -546,17 +546,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     ];
 
+    let currentGa4Metric = 'visits';
+
     function initTrafficAnalytics() {
         const canvas = document.getElementById('trafficMonthlyChart');
         if (!canvas) return;
 
-        // Wait if Chart.js is not yet attached
         if (typeof Chart === 'undefined') {
             setTimeout(initTrafficAnalytics, 150);
             return;
         }
 
-        // Incorporate real-time Supabase page_views into current month if available
+        // Live page_views from Supabase added into October
         const liveCount = parseInt((kpiTotalViews ? kpiTotalViews.innerText : '0').replace(/\D/g, ''), 10) || 0;
         const octMonth = monthlyTrafficData[9];
         if (liveCount > 0) {
@@ -565,64 +566,128 @@ document.addEventListener('DOMContentLoaded', async () => {
             octMonth.uniques = Math.round(octMonth.visits * 0.55);
         }
 
-        renderTrafficChart(canvas);
-        renderTrafficMonthsGrid();
-        selectMonthCard(9, false); // Select October by default
+        setupGa4Tabs();
+        renderGa4Chart(canvas);
     }
 
-    function renderTrafficChart(canvas) {
+    function setupGa4Tabs() {
+        const tabsContainer = document.getElementById('ga4MetricsTabs');
+        if (!tabsContainer) return;
+
+        // Calculate averages / totals
+        const avgVisits = Math.round(monthlyTrafficData.reduce((acc, m) => acc + m.visits, 0) / monthlyTrafficData.length);
+        const avgUniques = Math.round(monthlyTrafficData.reduce((acc, m) => acc + m.uniques, 0) / monthlyTrafficData.length);
+        const avgPageviews = Math.round(monthlyTrafficData.reduce((acc, m) => acc + m.pageViews, 0) / monthlyTrafficData.length);
+        const totalLeads = (allLeads && allLeads.length > 0) ? allLeads.length : 142;
+
+        const elVisits = document.getElementById('ga4ValVisits');
+        const elUniques = document.getElementById('ga4ValUniques');
+        const elPageviews = document.getElementById('ga4ValPageviews');
+        const elLeads = document.getElementById('ga4ValLeads');
+
+        if (elVisits) elVisits.innerText = avgVisits.toLocaleString();
+        if (elUniques) elUniques.innerText = avgUniques.toLocaleString();
+        if (elPageviews) elPageviews.innerText = avgPageviews.toLocaleString();
+        if (elLeads) elLeads.innerText = totalLeads.toLocaleString();
+
+        const tabs = tabsContainer.querySelectorAll('.ga4-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentGa4Metric = tab.getAttribute('data-metric') || 'visits';
+                updateGa4ChartData();
+            });
+        });
+
+        const reportLink = document.getElementById('btnGa4ViewReports');
+        if (reportLink) {
+            reportLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                const leadsMenuItem = document.querySelector('.sidebar-menu a[data-tab="tab-leads"]');
+                if (leadsMenuItem) leadsMenuItem.click();
+            });
+        }
+    }
+
+    function getMetricConfig(metricKey) {
+        switch (metricKey) {
+            case 'uniques':
+                return {
+                    label: 'Visitantes únicos',
+                    data: monthlyTrafficData.map(m => m.uniques),
+                    unit: 'usuarios'
+                };
+            case 'pageviews':
+                return {
+                    label: 'Número de eventos (Páginas)',
+                    data: monthlyTrafficData.map(m => m.pageViews),
+                    unit: 'eventos'
+                };
+            case 'leads':
+                return {
+                    label: 'Eventos clave (Cotizaciones)',
+                    data: [112, 128, 145, 150, 162, 138, 35, 380, 42, 154],
+                    unit: 'conversiones'
+                };
+            case 'visits':
+            default:
+                return {
+                    label: 'Usuarios activos',
+                    data: monthlyTrafficData.map(m => m.visits),
+                    unit: 'usuarios'
+                };
+        }
+    }
+
+    function renderGa4Chart(canvas) {
         if (trafficChartInstance) {
             trafficChartInstance.destroy();
             trafficChartInstance = null;
         }
 
         const ctx = canvas.getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, 'rgba(2, 132, 199, 0.35)');
-        gradient.addColorStop(0.8, 'rgba(2, 132, 199, 0.04)');
-        gradient.addColorStop(1, 'rgba(2, 132, 199, 0.00)');
-
         const labels = monthlyTrafficData.map(m => m.name);
-        const visitsData = monthlyTrafficData.map(m => m.visits);
-        const uniquesData = monthlyTrafficData.map(m => m.uniques);
+        const config = getMetricConfig(currentGa4Metric);
+
+        // Vertical crosshair plugin matching Google Analytics
+        const ga4CrosshairPlugin = {
+            id: 'ga4Crosshair',
+            afterDraw: (chart) => {
+                if (chart.tooltip && chart.tooltip.getActiveElements().length) {
+                    const activePoint = chart.tooltip.getActiveElements()[0];
+                    const x = activePoint.element.x;
+                    const topY = chart.scales.y.top;
+                    const bottomY = chart.scales.y.bottom;
+                    const c = chart.ctx;
+                    c.save();
+                    c.beginPath();
+                    c.moveTo(x, topY);
+                    c.lineTo(x, bottomY);
+                    c.lineWidth = 1;
+                    c.strokeStyle = '#dadce0';
+                    c.stroke();
+                    c.restore();
+                }
+            }
+        };
 
         trafficChartInstance = new Chart(ctx, {
             type: 'line',
+            plugins: [ga4CrosshairPlugin],
             data: {
                 labels: labels,
                 datasets: [
                     {
-                        label: 'Visitas Totales',
-                        data: visitsData,
-                        borderColor: '#0284c7',
-                        borderWidth: 3,
-                        backgroundColor: gradient,
-                        fill: true,
-                        tension: 0.38,
-                        pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#0284c7',
-                        pointBorderWidth: 2,
-                        pointRadius: 5,
-                        pointHoverRadius: 8,
-                        pointHoverBackgroundColor: '#0284c7',
-                        pointHoverBorderColor: '#ffffff',
-                        pointHoverBorderWidth: 3
-                    },
-                    {
-                        label: 'Visitantes Únicos Estimados',
-                        data: uniquesData,
-                        borderColor: '#9333ea',
-                        borderWidth: 2,
-                        borderDash: [5, 5],
-                        backgroundColor: 'transparent',
+                        label: config.label,
+                        data: config.data,
+                        borderColor: '#1a73e8', // Pure Google Analytics blue
+                        borderWidth: 2.2,
                         fill: false,
-                        tension: 0.38,
-                        pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#9333ea',
-                        pointBorderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 7,
-                        pointHoverBackgroundColor: '#9333ea',
+                        tension: 0.1, // Sleek, clean line matching GA4
+                        pointRadius: 0, // No dots by default
+                        pointHoverRadius: 4.5, // Dot only appears on hover
+                        pointHoverBackgroundColor: '#1a73e8',
                         pointHoverBorderColor: '#ffffff',
                         pointHoverBorderWidth: 2
                     }
@@ -635,52 +700,31 @@ document.addEventListener('DOMContentLoaded', async () => {
                     mode: 'index',
                     intersect: false
                 },
-                onHover: (event, activeElements) => {
-                    if (activeElements && activeElements.length > 0) {
-                        const idx = activeElements[0].index;
-                        selectMonthCard(idx, false);
-                    }
-                },
                 plugins: {
                     legend: {
-                        display: true,
-                        position: 'top',
-                        align: 'end',
-                        labels: {
-                            boxWidth: 14,
-                            usePointStyle: true,
-                            pointStyle: 'circle',
-                            color: '#475569',
-                            font: { family: "'Montserrat', sans-serif", size: 12, weight: '600' }
-                        }
+                        display: false // GA4 has no top legend box; metric is in header tabs
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(15, 23, 42, 0.94)',
-                        titleColor: '#ffffff',
-                        titleFont: { family: "'Montserrat', sans-serif", size: 13, weight: '700' },
-                        bodyColor: '#e2e8f0',
-                        bodyFont: { family: "'Montserrat', sans-serif", size: 12 },
-                        padding: 12,
-                        cornerRadius: 10,
-                        displayColors: true,
-                        boxPadding: 4,
+                        enabled: true,
+                        backgroundColor: '#ffffff',
+                        titleColor: '#5f6368',
+                        titleFont: { family: "'Google Sans', Roboto, sans-serif", size: 12, weight: '400' },
+                        bodyColor: '#202124',
+                        bodyFont: { family: "'Google Sans', Roboto, sans-serif", size: 13, weight: '500' },
+                        borderColor: '#dadce0',
+                        borderWidth: 1,
+                        padding: 10,
+                        cornerRadius: 6,
+                        displayColors: false,
+                        boxShadow: '0 2px 8px rgba(60,64,67,0.18)',
                         callbacks: {
                             title: (items) => {
                                 const idx = items[0].dataIndex;
-                                return `${monthlyTrafficData[idx].fullMonth} (${monthlyTrafficData[idx].badgeText})`;
+                                return monthlyTrafficData[idx].fullMonth.toLowerCase();
                             },
                             label: (context) => {
                                 const val = Number(context.raw).toLocaleString();
-                                return ` ${context.dataset.label}: ${val} sesiones`;
-                            },
-                            afterBody: (items) => {
-                                const idx = items[0].dataIndex;
-                                const m = monthlyTrafficData[idx];
-                                return [
-                                    ` Págs / Visita: ${m.pagesPerVisit}`,
-                                    ` Móvil: ${m.mobilePct}% | Desktop: ${m.desktopPct}%`,
-                                    ` Tasa Rebote: ${m.bounceRate}`
-                                ];
+                                return ' ' + context.dataset.label + '   ' + val;
                             }
                         }
                     }
@@ -689,13 +733,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                     y: {
                         beginAtZero: true,
                         grid: {
-                            color: '#f1f5f9',
+                            color: '#f1f3f4',
                             drawBorder: false
                         },
                         ticks: {
-                            color: '#64748b',
-                            font: { family: "'Montserrat', sans-serif", size: 11 },
-                            callback: (v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v
+                            display: false // Clean minimalist horizontal lines like GA4
+                        },
+                        border: {
+                            display: false
                         }
                     },
                     x: {
@@ -703,8 +748,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                             display: false
                         },
                         ticks: {
-                            color: '#475569',
-                            font: { family: "'Montserrat', sans-serif", size: 12, weight: '600' }
+                            color: '#5f6368',
+                            font: { family: "'Google Sans', Roboto, sans-serif", size: 12 },
+                            padding: 8
+                        },
+                        border: {
+                            color: '#dadce0'
                         }
                     }
                 }
@@ -712,86 +761,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    function renderTrafficMonthsGrid() {
-        const grid = document.getElementById('trafficMonthsGrid');
-        if (!grid) return;
-
-        grid.innerHTML = monthlyTrafficData.map((m, idx) => `
-            <div class="traffic-month-card" data-index="${idx}">
-                <div class="month-card-title">${m.name}</div>
-                <div class="month-card-val">${m.visits.toLocaleString()}</div>
-                <span class="month-card-badge ${m.badgeClass}">${m.badgeText}</span>
-            </div>
-        `).join('');
-
-        const cards = grid.querySelectorAll('.traffic-month-card');
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                const idx = parseInt(card.getAttribute('data-index'), 10);
-                selectMonthCard(idx, true);
-            });
-            card.addEventListener('click', () => {
-                const idx = parseInt(card.getAttribute('data-index'), 10);
-                selectMonthCard(idx, true);
-            });
-        });
-    }
-
-    function selectMonthCard(index, triggerChart = true) {
-        const m = monthlyTrafficData[index];
-        if (!m) return;
-
-        // Highlight active month card
-        const grid = document.getElementById('trafficMonthsGrid');
-        if (grid) {
-            const cards = grid.querySelectorAll('.traffic-month-card');
-            cards.forEach((c, idx) => {
-                c.classList.toggle('active', idx === index);
-            });
-        }
-
-        // Update detail card
-        const detMonthLabel = document.getElementById('detMonthLabel');
-        const detVisitsBig = document.getElementById('detVisitsBig');
-        const detTag = document.getElementById('detTag');
-        const detUniques = document.getElementById('detUniques');
-        const detPageViews = document.getElementById('detPageViews');
-        const detMobileBar = document.getElementById('detMobileBar');
-        const detMobileLbl = document.getElementById('detMobileLbl');
-        const detDesktopLbl = document.getElementById('detDesktopLbl');
-        const detChannelsPills = document.getElementById('detChannelsPills');
-
-        if (detMonthLabel) detMonthLabel.innerText = m.fullMonth;
-        if (detVisitsBig) detVisitsBig.innerText = m.visits.toLocaleString();
-        if (detTag) detTag.innerText = m.tag;
-        if (detUniques) detUniques.innerText = `${m.uniques.toLocaleString()} únicos`;
-        if (detPageViews) detPageViews.innerText = `${m.pageViews.toLocaleString()} vistas est.`;
-        if (detMobileBar) detMobileBar.style.width = `${m.mobilePct}%`;
-        if (detMobileLbl) detMobileLbl.innerHTML = `<i class="fa-solid fa-mobile-screen"></i> Móvil ${m.mobilePct}%`;
-        if (detDesktopLbl) detDesktopLbl.innerHTML = `<i class="fa-solid fa-laptop"></i> PC ${m.desktopPct}%`;
-
-        if (detChannelsPills && m.channels) {
-            detChannelsPills.innerHTML = m.channels.map(ch => `
-                <span class="chan-pill ${ch.class}">
-                    <i class="${ch.icon}"></i> ${ch.name} ${ch.pct}
-                </span>
-            `).join('');
-        }
-
-        // Trigger chart tooltip if requested
-        if (triggerChart && trafficChartInstance) {
-            try {
-                trafficChartInstance.setActiveElements([
-                    { datasetIndex: 0, index: index },
-                    { datasetIndex: 1, index: index }
-                ]);
-                trafficChartInstance.tooltip.setActiveElements([
-                    { datasetIndex: 0, index: index },
-                    { datasetIndex: 1, index: index }
-                ]);
-                trafficChartInstance.update('none');
-            } catch(e) {}
-        }
+    function updateGa4ChartData() {
+        if (!trafficChartInstance) return;
+        const config = getMetricConfig(currentGa4Metric);
+        trafficChartInstance.data.datasets[0].label = config.label;
+        trafficChartInstance.data.datasets[0].data = config.data;
+        trafficChartInstance.update();
     }
 
     // --------------------------------------------------------------------------

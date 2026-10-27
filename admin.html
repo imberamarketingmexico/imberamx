@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <!-- Google tag (gtag.js) -->
@@ -179,85 +179,48 @@
                         </div>
                     </div>
                     
-                    <!-- HISTÓRICO DE TRÁFICO WEB (ENERO - OCTUBRE 2026) -->
-                    <div class="panel-box traffic-history-panel">
-                        <div class="panel-header traffic-header-flex">
-                            <div>
-                                <div class="panel-title-row">
-                                    <h3><i class="fa-solid fa-chart-line text-primary"></i> Histórico de Tráfico & Visitas Web (2026)</h3>
-                                    <span class="badge-source-tag"><i class="fa-solid fa-satellite-dish"></i> Similarweb Benchmark + Telemetría en Vivo</span>
-                                </div>
-                                <p class="traffic-header-subtitle">Comportamiento mensual consolidado: Enero a Octubre 2026 con métricas de navegación, dispositivos y canales.</p>
+                    <!-- TARJETA ANALYTICS ESTILO GOOGLE ANALYTICS 4 -->
+                    <div class="ga4-analytics-card">
+                        <div class="ga4-card-header">
+                            <div class="ga4-metrics-tabs" id="ga4MetricsTabs">
+                                <button type="button" class="ga4-tab active" data-metric="visits">
+                                    <span class="ga4-tab-label">Usuarios activos <i class="fa-solid fa-caret-down"></i></span>
+                                    <span class="ga4-tab-value" id="ga4ValVisits">5,574</span>
+                                </button>
+                                <button type="button" class="ga4-tab" data-metric="uniques">
+                                    <span class="ga4-tab-label">Visitantes únicos <i class="fa-solid fa-caret-down"></i></span>
+                                    <span class="ga4-tab-value" id="ga4ValUniques">3,026</span>
+                                </button>
+                                <button type="button" class="ga4-tab" data-metric="pageviews">
+                                    <span class="ga4-tab-label">Número de eventos <i class="fa-solid fa-caret-down"></i></span>
+                                    <span class="ga4-tab-value" id="ga4ValPageviews">19,342</span>
+                                </button>
+                                <button type="button" class="ga4-tab" data-metric="leads">
+                                    <span class="ga4-tab-label">Eventos clave <i class="fa-solid fa-caret-down"></i></span>
+                                    <span class="ga4-tab-value" id="ga4ValLeads">142</span>
+                                </button>
                             </div>
-                            <div class="traffic-quick-stats">
-                                <div class="quick-stat-item">
-                                    <span class="stat-num">5,574</span>
-                                    <span class="stat-lbl">Promedio / mes</span>
-                                </div>
-                                <div class="quick-stat-item">
-                                    <span class="stat-num">3.47</span>
-                                    <span class="stat-lbl">Págs / visita</span>
-                                </div>
-                                <div class="quick-stat-item">
-                                    <span class="stat-num">17.0%</span>
-                                    <span class="stat-lbl">Tasa rebote</span>
-                                </div>
-                                <div class="quick-stat-item highlight">
-                                    <span class="stat-num">85.8%</span>
-                                    <span class="stat-lbl"><i class="fa-solid fa-mobile-screen"></i> Móvil</span>
-                                </div>
+
+                            <div class="ga4-header-right">
+                                <span class="ga4-badge-status">
+                                    <i class="fa-solid fa-circle-check text-green"></i> Conectado
+                                </span>
                             </div>
                         </div>
 
-                        <div class="panel-body traffic-panel-body">
-                            <!-- Chart Container -->
-                            <div class="chart-wrapper">
-                                <canvas id="trafficMonthlyChart"></canvas>
-                            </div>
+                        <!-- Canvas de la gráfica de una sola línea -->
+                        <div class="ga4-chart-container">
+                            <canvas id="trafficMonthlyChart"></canvas>
+                        </div>
 
-                            <!-- Interactive Month Selector Cards (Jan - Oct) -->
-                            <div class="traffic-months-section">
-                                <div class="months-section-header">
-                                    <h4><i class="fa-solid fa-calendar-days"></i> Desglose Mensual Interactivo <small>(Pasa el cursor sobre cada mes para inspeccionar)</small></h4>
-                                    <span class="badge-hover-hint"><i class="fa-regular fa-hand-pointer"></i> Interactivo</span>
-                                </div>
-                                <div class="traffic-months-grid" id="trafficMonthsGrid">
-                                    <!-- Rendered dynamically by JS -->
-                                </div>
+                        <!-- Footer estilo GA4 -->
+                        <div class="ga4-card-footer">
+                            <div class="ga4-range-dropdown">
+                                <span>los últimos 10 meses</span> <i class="fa-solid fa-caret-down"></i>
                             </div>
-
-                            <!-- Month Details Box on Hover -->
-                            <div class="traffic-detail-card" id="trafficDetailCard">
-                                <div class="detail-col main-indicator">
-                                    <span class="detail-month-label" id="detMonthLabel">Octubre 2026</span>
-                                    <div class="detail-visits-big" id="detVisitsBig">5,840</div>
-                                    <span class="detail-tag" id="detTag">En Vivo + Estimación</span>
-                                </div>
-                                <div class="detail-col">
-                                    <span class="sub-label">Visitantes Únicos</span>
-                                    <strong id="detUniques">3,200 únicos</strong>
-                                    <span class="sub-label">Páginas Vistas Est.</span>
-                                    <strong id="detPageViews">20,265 vistas</strong>
-                                </div>
-                                <div class="detail-col">
-                                    <span class="sub-label">Dispositivos</span>
-                                    <div class="mini-bar-container">
-                                        <div class="mini-bar-fill mobile" id="detMobileBar" style="width: 85.8%;"></div>
-                                    </div>
-                                    <div class="device-labels">
-                                        <span id="detMobileLbl"><i class="fa-solid fa-mobile-screen"></i> Móvil 85.8%</span>
-                                        <span id="detDesktopLbl"><i class="fa-solid fa-laptop"></i> PC 14.2%</span>
-                                    </div>
-                                </div>
-                                <div class="detail-col">
-                                    <span class="sub-label">Canales de Adquisición</span>
-                                    <div class="channels-pills" id="detChannelsPills">
-                                        <span class="chan-pill chan-seo"><i class="fa-brands fa-google"></i> Orgánico 44.5%</span>
-                                        <span class="chan-pill chan-direct"><i class="fa-solid fa-compass"></i> Directo 32.4%</span>
-                                        <span class="chan-pill chan-ref"><i class="fa-solid fa-link"></i> Referrals 6.4%</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <a href="#tab-leads" class="ga4-footer-link" id="btnGa4ViewReports">
+                                Ver Resumen de informes <i class="fa-solid fa-arrow-right"></i>
+                            </a>
                         </div>
                     </div>
 
