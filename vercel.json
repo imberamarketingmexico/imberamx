@@ -165,32 +165,24 @@
       "destination": "/404.html"
     },
     {
-      "source": "/producto",
-      "destination": "/producto.html"
-    },
-    {
       "source": "/producto/:path*",
-      "destination": "/producto.html"
-    },
-    {
-      "source": "/categoria",
-      "destination": "/categoria.html"
+      "destination": "/producto"
     },
     {
       "source": "/categoria/:path*",
-      "destination": "/categoria.html"
+      "destination": "/categoria"
     },
     {
       "source": "/:cat(enfriadores|congeladores|healthcare|vitrinas|procesamiento-y-pesaje|fabricas-de-hielo|conservadores-de-hielo|cortinas-de-aire|camaras-de-conservacion|home-cooler|linea-profesional|coccion|procesamiento|accesorios|linea-cobalt|enfriadores-verticales|enfriadores-cerveceros|enfriadores-verticales-especiales|enfriadores-ecoinverter|enfriadores-inverter-bluetooth|enfriador-horizontal|congeladores-horizontales|congeladores-verticales|congeladores-horizontal-doble-temperatura|congeladores-horizontal-pta-cristal|vitrinas-cremeras|vitrinas-carniceras|pesaje|rebanadoras|molinos|sierras|refrigeradores-para-consultorios|refrigeradores-para-hospitales|refrigeradores-para-laboratorios)/:sub/:item",
-      "destination": "/producto.html"
+      "destination": "/producto"
     },
     {
       "source": "/:cat(enfriadores|congeladores|healthcare|vitrinas|procesamiento-y-pesaje|fabricas-de-hielo|conservadores-de-hielo|cortinas-de-aire|camaras-de-conservacion|home-cooler|linea-profesional|coccion|procesamiento|accesorios|linea-cobalt|enfriadores-verticales|enfriadores-cerveceros|enfriadores-verticales-especiales|enfriadores-ecoinverter|enfriadores-inverter-bluetooth|enfriador-horizontal|congeladores-horizontales|congeladores-verticales|congeladores-horizontal-doble-temperatura|congeladores-horizontal-pta-cristal|vitrinas-cremeras|vitrinas-carniceras|pesaje|rebanadoras|molinos|sierras|refrigeradores-para-consultorios|refrigeradores-para-hospitales|refrigeradores-para-laboratorios)/:sub",
-      "destination": "/categoria.html"
+      "destination": "/categoria"
     },
     {
       "source": "/:cat(enfriadores|congeladores|healthcare|vitrinas|procesamiento-y-pesaje|fabricas-de-hielo|conservadores-de-hielo|cortinas-de-aire|camaras-de-conservacion|home-cooler|linea-profesional|coccion|procesamiento|accesorios|linea-cobalt|enfriadores-verticales|enfriadores-cerveceros|enfriadores-verticales-especiales|enfriadores-ecoinverter|enfriadores-inverter-bluetooth|enfriador-horizontal|congeladores-horizontales|congeladores-verticales|congeladores-horizontal-doble-temperatura|congeladores-horizontal-pta-cristal|vitrinas-cremeras|vitrinas-carniceras|pesaje|rebanadoras|molinos|sierras|refrigeradores-para-consultorios|refrigeradores-para-hospitales|refrigeradores-para-laboratorios)",
-      "destination": "/categoria.html"
+      "destination": "/categoria"
     }
   ]
 }

@@ -726,8 +726,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const cardsHtml = products.map(p => {
             // Short model name preferred, fallback to commercial name
             const displayName = p.model_code || p.commercial_name;
-            const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-            const targetUrl = `/producto/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
+            const targetUrl = `/producto?sku=${encodeURIComponent(p.sku)}`;
 
             return `
                 <div class="catalog-item" data-href="${targetUrl}" role="link" tabindex="0" aria-label="Ver detalles de ${displayName}">
