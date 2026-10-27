@@ -97,6 +97,30 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
 
+        // Touch swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const container = document.querySelector('.carousel-container');
+        if (container && !container.dataset.swipeBound) {
+            container.dataset.swipeBound = 'true';
+            container.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            container.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                const diff = touchStartX - touchEndX;
+                if (Math.abs(diff) > 40) {
+                    if (diff > 0) {
+                        nextSlide();
+                    } else {
+                        prevSlide();
+                    }
+                    resetAutoPlay();
+                }
+            }, { passive: true });
+        }
+
         startAutoPlay();
     }
 
