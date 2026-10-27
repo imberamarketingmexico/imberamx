@@ -125,6 +125,8 @@
             adminUserEmailEl.innerText = currentAdminUser.email;
         }
         initDashboardData();
+        setTimeout(initTrafficAnalytics, 100);
+        setTimeout(initTrafficAnalytics, 400);
     }
 
     if (loginForm) {
@@ -565,6 +567,9 @@
         }
 
         renderVisitorsChart(canvas);
+        setTimeout(() => {
+            if (trafficChartInstance) trafficChartInstance.resize();
+        }, 120);
     }
 
     function renderVisitorsChart(canvas) {
