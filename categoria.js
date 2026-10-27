@@ -534,17 +534,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         catalogGridEl.innerHTML = '<div style="grid-column: span 3; text-align: center; padding: 50px 0;"><i class="fa-solid fa-spinner fa-spin fa-2x text-primary"></i><p class="mt-2 text-muted">Cargando equipos...</p></div>';
 
         try {
+            const allActive = await fetchAllActiveProducts();
+
             if (searchQuery) {
-                const allActive = await fetchAllActiveProducts();
                 if (allActive && allActive.length > 0) {
                     const outcome = executeSmartSearch(searchQuery, allActive);
 
                     // Si se buscó un UUID directo y sólo hay 1 producto, redirigir a detalle
                     if (outcome.isUuid && outcome.items.length === 1) {
                         const p = outcome.items[0];
-                        const catSlug = p.categories?.slug || 'equipos';
                         const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-                        window.location.replace(`/${catSlug}/${modelSlug}?sku=${encodeURIComponent(p.sku)}`);
+                        window.location.replace(`/producto/${modelSlug}?sku=${encodeURIComponent(p.sku)}`);
                         return;
                     }
 
@@ -560,28 +560,46 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Modo Categoría
             await fetchCategoriesList();
             let targetCatIds = [];
+            let targetCatRecord = null;
+            let targetSubRecord = null;
+
             if (selectedSubSlug) {
-                const sub = dbCategories.find(c => c.slug === selectedSubSlug);
-                if (sub) targetCatIds.push(sub.id);
+                targetSubRecord = dbCategories.find(c => c.slug === selectedSubSlug);
+                if (targetSubRecord) targetCatIds.push(targetSubRecord.id);
             } else if (selectedCatSlug) {
-                const cat = dbCategories.find(c => c.slug === selectedCatSlug);
-                if (cat) {
-                    targetCatIds.push(cat.id);
+                targetCatRecord = dbCategories.find(c => c.slug === selectedCatSlug);
+                if (targetCatRecord) {
+                    targetCatIds.push(targetCatRecord.id);
                     // Incluir subcategorías hijas si es categoría padre
-                    const childIds = dbCategories.filter(c => c.parent_id === cat.id).map(c => c.id);
+                    const childIds = dbCategories.filter(c => c.parent_id === targetCatRecord.id).map(c => c.id);
                     targetCatIds.push(...childIds);
                 }
             }
 
-            if (targetCatIds.length > 0) {
-                const prods = await fetchCategoryProducts(targetCatIds);
-                dbProducts = prods || [];
-                renderProductsGrid({ items: dbProducts, mode: 'category' });
-                return;
-            } else {
-                renderProductsGrid({ items: [], mode: 'category' });
-                return;
-            }
+            // Filtrado resiliente: por ID de categoría, por ID de join y por slug
+            const matchedProducts = (allActive || []).filter(p => {
+                // Coincidencia por ID directo
+                if (targetCatIds.length > 0) {
+                    if (targetCatIds.includes(p.category_id)) return true;
+                    if (p.categories && targetCatIds.includes(p.categories.id)) return true;
+                }
+                // Coincidencia por subcategoría seleccionada
+                if (selectedSubSlug) {
+                    if (p.categories && p.categories.slug === selectedSubSlug) return true;
+                }
+                // Coincidencia por categoría padre seleccionada
+                if (selectedCatSlug && !selectedSubSlug) {
+                    if (p.categories) {
+                        if (p.categories.slug === selectedCatSlug) return true;
+                        if (targetCatRecord && p.categories.parent_id === targetCatRecord.id) return true;
+                    }
+                }
+                return false;
+            });
+
+            dbProducts = matchedProducts;
+            renderProductsGrid({ items: dbProducts, mode: 'category' });
+            return;
         } catch(e) {
             console.error('Error al cargar productos:', e);
             renderProductsGrid({ items: [], mode: searchQuery ? 'empty' : 'category' });
@@ -709,9 +727,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Short model name preferred, fallback to commercial name
             const displayName = p.model_code || p.commercial_name;
             const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-            const catSlug = selectedCatSlug || (p.categories?.slug || 'enfriadores');
-            const subSlug = selectedSubSlug || (p.categories?.slug || 'equipos');
-            const targetUrl = `/${catSlug}/${subSlug}/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
+            const targetUrl = `/producto/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
 
             return `
                 <div class="catalog-item" data-href="${targetUrl}" role="link" tabindex="0" aria-label="Ver detalles de ${displayName}">

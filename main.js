@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const displayName = p.model_code || p.commercial_name;
                         const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
                         const catSlug = p.categories?.slug || 'equipos';
-                        const targetUrl = `/${catSlug}/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
+                        const targetUrl = `/producto/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
                         const img = p.main_image || 'images/Enfriador_G3D42_Especial.jpg';
 
                         return `
