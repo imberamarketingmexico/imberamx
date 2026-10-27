@@ -395,10 +395,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     const sb = window.imberaSupabase.client();
 
-                    // Carga en memoria una sola vez para búsqueda instantánea en 0ms
+                    // Carga en memoria compartida para búsqueda instantánea en 0ms
+                    if (!cachedProducts) {
+                        if (window.__imberaAllProducts && Array.isArray(window.__imberaAllProducts) && window.__imberaAllProducts.length > 0) {
+                            cachedProducts = window.__imberaAllProducts;
+                        } else {
+                            try {
+                                const raw = sessionStorage.getItem('imbera_all_prods_v2');
+                                if (raw) cachedProducts = JSON.parse(raw);
+                            } catch(e) {}
+                        }
+                    }
+
                     if (!cachedProducts) {
                         const { data, error } = await sb.from('products').select('*, categories(*)').eq('is_active', true);
-                        if (!error && data) cachedProducts = data;
+                        if (!error && data && data.length > 0) {
+                            cachedProducts = data;
+                            window.__imberaAllProducts = data;
+                            try { sessionStorage.setItem('imbera_all_prods_v2', JSON.stringify(data)); } catch(e) {}
+                        }
                     }
 
                     if (!cachedProducts || cachedProducts.length === 0) {

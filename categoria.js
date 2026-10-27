@@ -113,12 +113,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function fetchCategoriesList() {
         if (dbCategories && dbCategories.length > 0) return dbCategories;
+
+        // Check sessionStorage cache
+        try {
+            const cached = sessionStorage.getItem('imbera_categories_v2');
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    dbCategories = parsed;
+                    return dbCategories;
+                }
+            }
+        } catch(e) {}
+
         const client = getSb();
         if (client) {
             try {
                 const { data, error } = await client.from('categories').select('*').order('display_order');
                 if (data && !error && data.length > 0) {
                     dbCategories = data;
+                    try { sessionStorage.setItem('imbera_categories_v2', JSON.stringify(dbCategories)); } catch(e) {}
                     return dbCategories;
                 }
             } catch(e) {
@@ -134,6 +148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const data = await res.json();
                 if (Array.isArray(data) && data.length > 0) {
                     dbCategories = data;
+                    try { sessionStorage.setItem('imbera_categories_v2', JSON.stringify(dbCategories)); } catch(e) {}
                     return dbCategories;
                 }
             }
@@ -505,27 +520,88 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     async function fetchAllActiveProducts() {
+        // 1. In-memory global cache
+        if (window.__imberaAllProducts && Array.isArray(window.__imberaAllProducts) && window.__imberaAllProducts.length > 0) {
+            return window.__imberaAllProducts;
+        }
+
+        // 2. sessionStorage cache
+        try {
+            const raw = sessionStorage.getItem('imbera_all_prods_v2');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    window.__imberaAllProducts = parsed;
+                    return parsed;
+                }
+            }
+        } catch(e) {}
+
+        let products = null;
+
+        // 3. Supabase Client (First try with join, then try raw)
         const client = getSb();
         if (client) {
             try {
                 const { data, error } = await client.from('products').select('*, categories(*)').eq('is_active', true);
-                if (!error && data && data.length > 0) return data;
+                if (!error && Array.isArray(data) && data.length > 0) {
+                    products = data;
+                }
             } catch(e) {
-                console.warn('client all products query error:', e);
+                console.warn('client all products with join query error:', e);
+            }
+
+            if (!products) {
+                try {
+                    const { data, error } = await client.from('products').select('*').eq('is_active', true);
+                    if (!error && Array.isArray(data) && data.length > 0) {
+                        products = data;
+                    }
+                } catch(e) {
+                    console.warn('client raw products query error:', e);
+                }
             }
         }
-        // Direct REST fallback
-        try {
-            const res = await fetch(`${SUPABASE_REST_URL}/products?select=*,categories(*)&is_active=eq.true`, {
-                headers: SUPABASE_REST_HEADERS
-            });
-            if (res.ok) {
-                const data = await res.json();
-                if (Array.isArray(data)) return data;
+
+        // 4. Direct REST fallback (with join, then raw)
+        if (!products) {
+            try {
+                const res = await fetch(`${SUPABASE_REST_URL}/products?select=*,categories(*)&is_active=eq.true`, {
+                    headers: SUPABASE_REST_HEADERS
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (Array.isArray(data) && data.length > 0) {
+                        products = data;
+                    }
+                }
+            } catch(e) {
+                console.warn('REST all products with join query error:', e);
             }
-        } catch(e) {
-            console.warn('REST all products query error:', e);
         }
+
+        if (!products) {
+            try {
+                const res = await fetch(`${SUPABASE_REST_URL}/products?select=*&is_active=eq.true`, {
+                    headers: SUPABASE_REST_HEADERS
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (Array.isArray(data) && data.length > 0) {
+                        products = data;
+                    }
+                }
+            } catch(e) {
+                console.warn('REST raw products query error:', e);
+            }
+        }
+
+        if (Array.isArray(products) && products.length > 0) {
+            window.__imberaAllProducts = products;
+            try { sessionStorage.setItem('imbera_all_prods_v2', JSON.stringify(products)); } catch(e) {}
+            return products;
+        }
+
         return [];
     }
 
@@ -534,7 +610,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         catalogGridEl.innerHTML = '<div style="grid-column: span 3; text-align: center; padding: 50px 0;"><i class="fa-solid fa-spinner fa-spin fa-2x text-primary"></i><p class="mt-2 text-muted">Cargando equipos...</p></div>';
 
         try {
+            await fetchCategoriesList();
             const allActive = await fetchAllActiveProducts();
+
+            // Asegurar que cada producto tenga su categoría resuelta
+            allActive.forEach(p => {
+                if (p.categories && Array.isArray(p.categories) && p.categories.length > 0) {
+                    p.categories = p.categories[0];
+                } else if (!p.categories && dbCategories.length > 0) {
+                    p.categories = dbCategories.find(c => c.id === p.category_id) || null;
+                }
+            });
 
             if (searchQuery) {
                 if (allActive && allActive.length > 0) {
@@ -543,8 +629,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // Si se buscó un UUID directo y sólo hay 1 producto, redirigir a detalle
                     if (outcome.isUuid && outcome.items.length === 1) {
                         const p = outcome.items[0];
-                        const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-                        window.location.replace(`/producto/${modelSlug}?sku=${encodeURIComponent(p.sku)}`);
+                        window.location.replace(`/producto?sku=${encodeURIComponent(p.sku)}`);
                         return;
                     }
 
@@ -558,42 +643,51 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             // Modo Categoría
-            await fetchCategoriesList();
             let targetCatIds = [];
             let targetCatRecord = null;
             let targetSubRecord = null;
 
             if (selectedSubSlug) {
-                targetSubRecord = dbCategories.find(c => c.slug === selectedSubSlug);
+                const subClean = selectedSubSlug.toLowerCase().trim();
+                targetSubRecord = dbCategories.find(c => (c.slug || '').toLowerCase().trim() === subClean);
                 if (targetSubRecord) targetCatIds.push(targetSubRecord.id);
-            } else if (selectedCatSlug) {
-                targetCatRecord = dbCategories.find(c => c.slug === selectedCatSlug);
-                if (targetCatRecord) {
+            }
+            if (selectedCatSlug) {
+                const catClean = selectedCatSlug.toLowerCase().trim();
+                targetCatRecord = dbCategories.find(c => (c.slug || '').toLowerCase().trim() === catClean);
+                if (targetCatRecord && !selectedSubSlug) {
                     targetCatIds.push(targetCatRecord.id);
-                    // Incluir subcategorías hijas si es categoría padre
+                    // Incluir subcategorías hijas
                     const childIds = dbCategories.filter(c => c.parent_id === targetCatRecord.id).map(c => c.id);
                     targetCatIds.push(...childIds);
                 }
             }
 
-            // Filtrado resiliente: por ID de categoría, por ID de join y por slug
+            // Filtrado resiliente: por ID de categoría, por join y por slug
             const matchedProducts = (allActive || []).filter(p => {
-                // Coincidencia por ID directo
+                const catObj = p.categories || dbCategories.find(c => c.id === p.category_id);
+                const catObjSlug = (catObj?.slug || '').toLowerCase().trim();
+
+                // 1. Coincidencia por ID directo (subcategoría o padre con hijas)
                 if (targetCatIds.length > 0) {
                     if (targetCatIds.includes(p.category_id)) return true;
-                    if (p.categories && targetCatIds.includes(p.categories.id)) return true;
+                    if (catObj && targetCatIds.includes(catObj.id)) return true;
                 }
-                // Coincidencia por subcategoría seleccionada
+
+                // 2. Coincidencia por subcategoría seleccionada
                 if (selectedSubSlug) {
-                    if (p.categories && p.categories.slug === selectedSubSlug) return true;
+                    const subClean = selectedSubSlug.toLowerCase().trim();
+                    if (catObjSlug === subClean) return true;
+                    if (targetSubRecord && p.category_id === targetSubRecord.id) return true;
                 }
-                // Coincidencia por categoría padre seleccionada
+
+                // 3. Coincidencia por categoría padre seleccionada (cuando no hay subcategoría específica)
                 if (selectedCatSlug && !selectedSubSlug) {
-                    if (p.categories) {
-                        if (p.categories.slug === selectedCatSlug) return true;
-                        if (targetCatRecord && p.categories.parent_id === targetCatRecord.id) return true;
-                    }
+                    const catClean = selectedCatSlug.toLowerCase().trim();
+                    if (catObjSlug === catClean) return true;
+                    if (catObj && targetCatRecord && catObj.parent_id === targetCatRecord.id) return true;
                 }
+
                 return false;
             });
 
