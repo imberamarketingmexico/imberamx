@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async () => {
+async function initCatalog() {
     const SUPABASE_REST_URL = 'https://qezrauybkpzcenqilwcw.supabase.co/rest/v1';
     const SUPABASE_REST_HEADERS = {
         'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlenJhdXlia3B6Y2VucWlsd2N3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5Mzk1OTIsImV4cCI6MjEwNzUxNTU5Mn0.KTLV5uA8ZWYmdJ9QexaY0G1ZzuWDr5CZTsBldSOk2-w',
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Check sessionStorage cache
         try {
-            const cached = sessionStorage.getItem('imbera_categories_v2');
+            const cached = sessionStorage.getItem('imbera_categories_v3');
             if (cached) {
                 const parsed = JSON.parse(cached);
                 if (Array.isArray(parsed) && parsed.length > 0) {
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const { data, error } = await client.from('categories').select('*').order('display_order');
                 if (data && !error && data.length > 0) {
                     dbCategories = data;
-                    try { sessionStorage.setItem('imbera_categories_v2', JSON.stringify(dbCategories)); } catch(e) {}
+                    try { sessionStorage.setItem('imbera_categories_v3', JSON.stringify(dbCategories)); } catch(e) {}
                     return dbCategories;
                 }
             } catch(e) {
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const data = await res.json();
                 if (Array.isArray(data) && data.length > 0) {
                     dbCategories = data;
-                    try { sessionStorage.setItem('imbera_categories_v2', JSON.stringify(dbCategories)); } catch(e) {}
+                    try { sessionStorage.setItem('imbera_categories_v3', JSON.stringify(dbCategories)); } catch(e) {}
                     return dbCategories;
                 }
             }
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return `
                 <li class="cat-item ${isCatActive ? 'active expanded' : ''}">
                     <div class="cat-parent-row">
-                        <a href="categoria.html?cat=${cat.slug}" class="cat-parent-link ${isCatActive && !selectedSubSlug ? 'selected' : ''}">
+                        <a href="/categoria?cat=${cat.slug}" class="cat-parent-link ${isCatActive && !selectedSubSlug ? 'selected' : ''}">
                             ${cat.name}
                         </a>
                         ${hasSubs ? `<button type="button" class="btn-toggle-sub" data-target="sub-${cat.slug}"><i class="fa-solid ${isCatActive ? 'fa-minus' : 'fa-plus'}"></i></button>` : ''}
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 const isSubActive = (sub.slug === selectedSubSlug);
                                 return `
                                     <li class="${isSubActive ? 'active' : ''}">
-                                        <a href="categoria.html?cat=${cat.slug}&sub=${sub.slug}" class="${isSubActive ? 'selected' : ''}">
+                                        <a href="/categoria?cat=${cat.slug}&sub=${sub.slug}" class="${isSubActive ? 'selected' : ''}">
                                             ${sub.name}
                                         </a>
                                     </li>
@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     "@type": "ListItem",
                     "position": 2,
                     "name": currentCat ? currentCat.name : "Catálogo",
-                    "item": window.location.origin + `/categoria.html?cat=${currentCat?.slug || ''}`
+                    "item": window.location.origin + `/categoria?cat=${currentCat?.slug || ''}`
                 }
             ]
         };
@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (breadcrumbsSubEl) {
             if (currentSub) {
-                breadcrumbsSubEl.innerHTML = `<a href="categoria.html?cat=${currentCat.slug}">${currentCat.name}</a> | <span>${currentSub.name}</span>`;
+                breadcrumbsSubEl.innerHTML = `<a href="/categoria?cat=${currentCat.slug}">${currentCat.name}</a> | <span>${currentSub.name}</span>`;
             } else if (currentCat) {
                 breadcrumbsSubEl.innerHTML = `<span>${currentCat.name}</span>`;
             }
@@ -527,7 +527,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 2. sessionStorage cache
         try {
-            const raw = sessionStorage.getItem('imbera_all_prods_v2');
+            const raw = sessionStorage.getItem('imbera_all_prods_v3');
             if (raw) {
                 const parsed = JSON.parse(raw);
                 if (Array.isArray(parsed) && parsed.length > 0) {
@@ -598,7 +598,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (Array.isArray(products) && products.length > 0) {
             window.__imberaAllProducts = products;
-            try { sessionStorage.setItem('imbera_all_prods_v2', JSON.stringify(products)); } catch(e) {}
+            try { sessionStorage.setItem('imbera_all_prods_v3', JSON.stringify(products)); } catch(e) {}
             return products;
         }
 
@@ -615,10 +615,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Asegurar que cada producto tenga su categoría resuelta
             allActive.forEach(p => {
-                if (p.categories && Array.isArray(p.categories) && p.categories.length > 0) {
-                    p.categories = p.categories[0];
-                } else if (!p.categories && dbCategories.length > 0) {
+                if (Array.isArray(p.categories)) {
+                    p.categories = p.categories.length > 0 ? p.categories[0] : null;
+                }
+                if (!p.categories && dbCategories && dbCategories.length > 0 && p.category_id) {
                     p.categories = dbCategories.find(c => c.id === p.category_id) || null;
+                }
+                if (!p.category_id && p.categories?.id) {
+                    p.category_id = p.categories.id;
                 }
             });
 
@@ -860,4 +864,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCatalog);
+} else {
+    initCatalog();
+}
+

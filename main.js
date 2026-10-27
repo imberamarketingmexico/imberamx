@@ -401,18 +401,39 @@ document.addEventListener('DOMContentLoaded', () => {
                             cachedProducts = window.__imberaAllProducts;
                         } else {
                             try {
-                                const raw = sessionStorage.getItem('imbera_all_prods_v2');
+                                const raw = sessionStorage.getItem('imbera_all_prods_v3');
                                 if (raw) cachedProducts = JSON.parse(raw);
                             } catch(e) {}
                         }
                     }
 
                     if (!cachedProducts) {
-                        const { data, error } = await sb.from('products').select('*, categories(*)').eq('is_active', true);
-                        if (!error && data && data.length > 0) {
-                            cachedProducts = data;
-                            window.__imberaAllProducts = data;
-                            try { sessionStorage.setItem('imbera_all_prods_v2', JSON.stringify(data)); } catch(e) {}
+                        try {
+                            const { data, error } = await sb.from('products').select('*, categories(*)').eq('is_active', true);
+                            if (!error && data && data.length > 0) {
+                                cachedProducts = data;
+                            }
+                        } catch(e) {}
+
+                        // Direct REST fallback if sb client query failed
+                        if (!cachedProducts) {
+                            try {
+                                const restUrl = 'https://qezrauybkpzcenqilwcw.supabase.co/rest/v1/products?select=*,categories(*)&is_active=eq.true';
+                                const restHeaders = {
+                                    'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlenJhdXlia3B6Y2VucWlsd2N3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5Mzk1OTIsImV4cCI6MjEwNzUxNTU5Mn0.KTLV5uA8ZWYmdJ9QexaY0G1ZzuWDr5CZTsBldSOk2-w',
+                                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlenJhdXlia3B6Y2VucWlsd2N3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5Mzk1OTIsImV4cCI6MjEwNzUxNTU5Mn0.KTLV5uA8ZWYmdJ9QexaY0G1ZzuWDr5CZTsBldSOk2-w'
+                                };
+                                const res = await fetch(restUrl, { headers: restHeaders });
+                                if (res.ok) {
+                                    const data = await res.json();
+                                    if (Array.isArray(data) && data.length > 0) cachedProducts = data;
+                                }
+                            } catch(e) {}
+                        }
+
+                        if (cachedProducts && cachedProducts.length > 0) {
+                            window.__imberaAllProducts = cachedProducts;
+                            try { sessionStorage.setItem('imbera_all_prods_v3', JSON.stringify(cachedProducts)); } catch(e) {}
                         }
                     }
 
@@ -544,8 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 prodSlider.innerHTML = shuffled.map(p => {
                     const displayName = p.model_code || p.commercial_name;
-                    const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-                    const targetUrl = `/producto/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
+                    const targetUrl = `/producto?sku=${encodeURIComponent(p.sku)}`;
                     const imgUrl = p.main_image || 'images/Enfriador_G3D42_Especial.jpg';
                     const subtitle = p.subtitle ? `<p class="product-subtitle">${p.subtitle}</p>` : '';
                     return `
