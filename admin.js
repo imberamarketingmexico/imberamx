@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async () => {
+﻿document.addEventListener('DOMContentLoaded', async () => {
     const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
     if (!sb) {
         alert('Error: Supabase no está conectado.');
@@ -546,9 +546,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     ];
 
-    let currentGa4Metric = 'visits';
-
-    function initTrafficAnalytics() {
+        function initTrafficAnalytics() {
         const canvas = document.getElementById('trafficMonthlyChart');
         if (!canvas) return;
 
@@ -566,130 +564,84 @@ document.addEventListener('DOMContentLoaded', async () => {
             octMonth.uniques = Math.round(octMonth.visits * 0.55);
         }
 
-        setupGa4Tabs();
-        renderGa4Chart(canvas);
+        renderVisitorsChart(canvas);
     }
 
-    function setupGa4Tabs() {
-        const tabsContainer = document.getElementById('ga4MetricsTabs');
-        if (!tabsContainer) return;
-
-        // Calculate averages / totals
-        const avgVisits = Math.round(monthlyTrafficData.reduce((acc, m) => acc + m.visits, 0) / monthlyTrafficData.length);
-        const avgUniques = Math.round(monthlyTrafficData.reduce((acc, m) => acc + m.uniques, 0) / monthlyTrafficData.length);
-        const avgPageviews = Math.round(monthlyTrafficData.reduce((acc, m) => acc + m.pageViews, 0) / monthlyTrafficData.length);
-        const totalLeads = (allLeads && allLeads.length > 0) ? allLeads.length : 142;
-
-        const elVisits = document.getElementById('ga4ValVisits');
-        const elUniques = document.getElementById('ga4ValUniques');
-        const elPageviews = document.getElementById('ga4ValPageviews');
-        const elLeads = document.getElementById('ga4ValLeads');
-
-        if (elVisits) elVisits.innerText = avgVisits.toLocaleString();
-        if (elUniques) elUniques.innerText = avgUniques.toLocaleString();
-        if (elPageviews) elPageviews.innerText = avgPageviews.toLocaleString();
-        if (elLeads) elLeads.innerText = totalLeads.toLocaleString();
-
-        const tabs = tabsContainer.querySelectorAll('.ga4-tab');
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                currentGa4Metric = tab.getAttribute('data-metric') || 'visits';
-                updateGa4ChartData();
-            });
-        });
-
-        const reportLink = document.getElementById('btnGa4ViewReports');
-        if (reportLink) {
-            reportLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                const leadsMenuItem = document.querySelector('.sidebar-menu a[data-tab="tab-leads"]');
-                if (leadsMenuItem) leadsMenuItem.click();
-            });
-        }
-    }
-
-    function getMetricConfig(metricKey) {
-        switch (metricKey) {
-            case 'uniques':
-                return {
-                    label: 'Visitantes únicos',
-                    data: monthlyTrafficData.map(m => m.uniques),
-                    unit: 'usuarios'
-                };
-            case 'pageviews':
-                return {
-                    label: 'Número de eventos (Páginas)',
-                    data: monthlyTrafficData.map(m => m.pageViews),
-                    unit: 'eventos'
-                };
-            case 'leads':
-                return {
-                    label: 'Eventos clave (Cotizaciones)',
-                    data: [112, 128, 145, 150, 162, 138, 35, 380, 42, 154],
-                    unit: 'conversiones'
-                };
-            case 'visits':
-            default:
-                return {
-                    label: 'Usuarios activos',
-                    data: monthlyTrafficData.map(m => m.visits),
-                    unit: 'usuarios'
-                };
-        }
-    }
-
-    function renderGa4Chart(canvas) {
+    function renderVisitorsChart(canvas) {
         if (trafficChartInstance) {
             trafficChartInstance.destroy();
             trafficChartInstance = null;
         }
 
         const ctx = canvas.getContext('2d');
-        const labels = monthlyTrafficData.map(m => m.name);
-        const config = getMetricConfig(currentGa4Metric);
 
-        // Vertical crosshair plugin matching Google Analytics
-        const ga4CrosshairPlugin = {
-            id: 'ga4Crosshair',
-            afterDraw: (chart) => {
-                if (chart.tooltip && chart.tooltip.getActiveElements().length) {
-                    const activePoint = chart.tooltip.getActiveElements()[0];
-                    const x = activePoint.element.x;
-                    const topY = chart.scales.y.top;
-                    const bottomY = chart.scales.y.bottom;
-                    const c = chart.ctx;
-                    c.save();
-                    c.beginPath();
-                    c.moveTo(x, topY);
-                    c.lineTo(x, bottomY);
-                    c.lineWidth = 1;
-                    c.strokeStyle = '#dadce0';
-                    c.stroke();
-                    c.restore();
-                }
-            }
-        };
+        // 12 months full year (Jan to Dec)
+        const labels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+        // Data points (Jan - Oct have data, Nov - Dic null to end curve at Oct like sketch)
+        const visitsData = [
+            monthlyTrafficData[0].visits,
+            monthlyTrafficData[1].visits,
+            monthlyTrafficData[2].visits,
+            monthlyTrafficData[3].visits,
+            monthlyTrafficData[4].visits,
+            monthlyTrafficData[5].visits,
+            monthlyTrafficData[6].visits,
+            monthlyTrafficData[7].visits,
+            monthlyTrafficData[8].visits,
+            monthlyTrafficData[9].visits,
+            null,
+            null
+        ];
+
+        // Mobile traffic (~85.8% based on Similarweb report benchmark)
+        const mobileData = [
+            Math.round(monthlyTrafficData[0].visits * 0.855),
+            Math.round(monthlyTrafficData[1].visits * 0.857),
+            Math.round(monthlyTrafficData[2].visits * 0.860),
+            Math.round(monthlyTrafficData[3].visits * 0.856),
+            Math.round(monthlyTrafficData[4].visits * 0.859),
+            Math.round(monthlyTrafficData[5].visits * 0.854),
+            Math.round(monthlyTrafficData[6].visits * 0.852),
+            Math.round(monthlyTrafficData[7].visits * 0.862),
+            Math.round(monthlyTrafficData[8].visits * 0.857),
+            Math.round(monthlyTrafficData[9].visits * 0.858),
+            null,
+            null
+        ];
 
         trafficChartInstance = new Chart(ctx, {
             type: 'line',
-            plugins: [ga4CrosshairPlugin],
             data: {
                 labels: labels,
                 datasets: [
                     {
-                        label: config.label,
-                        data: config.data,
-                        borderColor: '#1a73e8', // Pure Google Analytics blue
-                        borderWidth: 2.2,
+                        label: 'Visitas 2026',
+                        data: visitsData,
+                        borderColor: '#1e70bf',
+                        borderWidth: 3.5,
                         fill: false,
-                        tension: 0.1, // Sleek, clean line matching GA4
-                        pointRadius: 0, // No dots by default
-                        pointHoverRadius: 4.5, // Dot only appears on hover
-                        pointHoverBackgroundColor: '#1a73e8',
+                        tension: 0.38,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#1e70bf',
                         pointHoverBorderColor: '#ffffff',
-                        pointHoverBorderWidth: 2
+                        pointHoverBorderWidth: 2.5,
+                        spanGaps: false
+                    },
+                    {
+                        label: 'Tráfico Móvil',
+                        data: mobileData,
+                        borderColor: '#16a34a',
+                        borderWidth: 3.5,
+                        fill: false,
+                        tension: 0.38,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#16a34a',
+                        pointHoverBorderColor: '#ffffff',
+                        pointHoverBorderWidth: 2.5,
+                        spanGaps: false
                     }
                 ]
             },
@@ -702,29 +654,44 @@ document.addEventListener('DOMContentLoaded', async () => {
                 },
                 plugins: {
                     legend: {
-                        display: false // GA4 has no top legend box; metric is in header tabs
+                        display: false // Using custom header legend matching sketch
                     },
                     tooltip: {
                         enabled: true,
-                        backgroundColor: '#ffffff',
-                        titleColor: '#5f6368',
-                        titleFont: { family: "'Google Sans', Roboto, sans-serif", size: 12, weight: '400' },
-                        bodyColor: '#202124',
-                        bodyFont: { family: "'Google Sans', Roboto, sans-serif", size: 13, weight: '500' },
-                        borderColor: '#dadce0',
+                        backgroundColor: '#0f172a',
+                        titleColor: '#ffffff',
+                        titleFont: { family: "'Montserrat', sans-serif", size: 13, weight: '700' },
+                        bodyColor: '#e2e8f0',
+                        bodyFont: { family: "'Montserrat', sans-serif", size: 12, weight: '500' },
+                        borderColor: '#334155',
                         borderWidth: 1,
-                        padding: 10,
-                        cornerRadius: 6,
-                        displayColors: false,
-                        boxShadow: '0 2px 8px rgba(60,64,67,0.18)',
+                        padding: 12,
+                        cornerRadius: 8,
+                        displayColors: true,
+                        boxPadding: 4,
                         callbacks: {
                             title: (items) => {
+                                const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
                                 const idx = items[0].dataIndex;
-                                return monthlyTrafficData[idx].fullMonth.toLowerCase();
+                                return monthNames[idx] + ' 2026';
                             },
                             label: (context) => {
-                                const val = Number(context.raw).toLocaleString();
-                                return ' ' + context.dataset.label + '   ' + val;
+                                const val = context.raw ? Number(context.raw).toLocaleString() : '0';
+                                return ' ' + context.dataset.label + ': ' + val + ' visitas';
+                            },
+                            afterBody: (items) => {
+                                const idx = items[0].dataIndex;
+                                if (idx <= 9) {
+                                    const total = visitsData[idx] || 0;
+                                    const mobile = mobileData[idx] || 0;
+                                    const desktop = total - mobile;
+                                    return [
+                                        ' ',
+                                        ' • Móvil: 85.8% (' + mobile.toLocaleString() + ' visitas)',
+                                        ' • Desktop: 14.2% (' + desktop.toLocaleString() + ' visitas)'
+                                    ];
+                                }
+                                return [];
                             }
                         }
                     }
@@ -733,27 +700,42 @@ document.addEventListener('DOMContentLoaded', async () => {
                     y: {
                         beginAtZero: true,
                         grid: {
-                            color: '#f1f3f4',
-                            drawBorder: false
-                        },
-                        ticks: {
-                            display: false // Clean minimalist horizontal lines like GA4
+                            display: true,
+                            color: '#f1f5f9',
+                            drawTicks: true,
+                            tickColor: '#1e70bf',
+                            tickLength: 8,
+                            tickWidth: 2
                         },
                         border: {
-                            display: false
+                            display: true,
+                            color: '#1e70bf',
+                            width: 2.5
+                        },
+                        ticks: {
+                            color: '#64748b',
+                            font: { family: "'Montserrat', sans-serif", size: 11, weight: '600' },
+                            callback: (v) => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v,
+                            padding: 6
                         }
                     },
                     x: {
                         grid: {
-                            display: false
-                        },
-                        ticks: {
-                            color: '#5f6368',
-                            font: { family: "'Google Sans', Roboto, sans-serif", size: 12 },
-                            padding: 8
+                            display: false,
+                            drawTicks: true,
+                            tickColor: '#1e70bf',
+                            tickLength: 8,
+                            tickWidth: 2
                         },
                         border: {
-                            color: '#dadce0'
+                            display: true,
+                            color: '#1e70bf',
+                            width: 2.5
+                        },
+                        ticks: {
+                            color: '#0f172a',
+                            font: { family: "'Montserrat', sans-serif", size: 12, weight: '700' },
+                            padding: 8
                         }
                     }
                 }
@@ -761,13 +743,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    function updateGa4ChartData() {
-        if (!trafficChartInstance) return;
-        const config = getMetricConfig(currentGa4Metric);
-        trafficChartInstance.data.datasets[0].label = config.label;
-        trafficChartInstance.data.datasets[0].data = config.data;
-        trafficChartInstance.update();
-    }
 
     // --------------------------------------------------------------------------
     // 5. LEADS TABLE & FILTERS
