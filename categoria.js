@@ -114,6 +114,12 @@ async function initCatalog() {
     async function fetchCategoriesList() {
         if (dbCategories && dbCategories.length > 0) return dbCategories;
 
+        // 0. Static In-Memory Baseline (0ms Instant & Offline Resilience)
+        if (window.IMBERA_DATA && Array.isArray(window.IMBERA_DATA.categories) && window.IMBERA_DATA.categories.length > 0) {
+            dbCategories = window.IMBERA_DATA.categories;
+            return dbCategories;
+        }
+
         // Check sessionStorage cache
         try {
             const cached = sessionStorage.getItem('imbera_categories_v3');
@@ -525,7 +531,13 @@ async function initCatalog() {
             return window.__imberaAllProducts;
         }
 
-        // 2. sessionStorage cache
+        // 2. Static In-Memory Baseline (0ms Instant & Offline Resilience)
+        if (window.IMBERA_DATA && Array.isArray(window.IMBERA_DATA.products) && window.IMBERA_DATA.products.length > 0) {
+            window.__imberaAllProducts = window.IMBERA_DATA.products;
+            return window.IMBERA_DATA.products;
+        }
+
+        // 3. sessionStorage cache
         try {
             const raw = sessionStorage.getItem('imbera_all_prods_v3');
             if (raw) {

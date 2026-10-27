@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // --- INSTANT CACHE CHECK (0ms Render) ---
+    // --- INSTANT CACHE & STATIC BASELINE CHECK (0ms Render) ---
     let cached = null;
     try {
         if (skuParam) {
@@ -281,6 +281,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     } catch(e) {}
+
+    if (!cached && window.IMBERA_DATA && Array.isArray(window.IMBERA_DATA.products)) {
+        const skuNorm = (skuParam || '').trim().toLowerCase();
+        const idNorm = (idParam || '').trim().toLowerCase();
+        cached = window.IMBERA_DATA.products.find(p => {
+            if (skuNorm && (String(p.sku || '').toLowerCase() === skuNorm || String(p.model_code || '').toLowerCase() === skuNorm)) return true;
+            if (idNorm && String(p.id || '').toLowerCase() === idNorm) return true;
+            return false;
+        });
+    }
 
     if (cached) {
         renderProductData(cached);

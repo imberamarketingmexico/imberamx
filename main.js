@@ -391,29 +391,30 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             debounceTimer = setTimeout(async () => {
-                if (!window.imberaSupabase) return;
-                try {
-                    const sb = window.imberaSupabase.client();
-
-                    // Carga en memoria compartida para búsqueda instantánea en 0ms
-                    if (!cachedProducts) {
-                        if (window.__imberaAllProducts && Array.isArray(window.__imberaAllProducts) && window.__imberaAllProducts.length > 0) {
-                            cachedProducts = window.__imberaAllProducts;
-                        } else {
-                            try {
-                                const raw = sessionStorage.getItem('imbera_all_prods_v3');
-                                if (raw) cachedProducts = JSON.parse(raw);
-                            } catch(e) {}
-                        }
-                    }
-
-                    if (!cachedProducts) {
+                // Carga en memoria compartida / línea base para búsqueda instantánea en 0ms
+                if (!cachedProducts) {
+                    if (window.__imberaAllProducts && Array.isArray(window.__imberaAllProducts) && window.__imberaAllProducts.length > 0) {
+                        cachedProducts = window.__imberaAllProducts;
+                    } else if (window.IMBERA_DATA && Array.isArray(window.IMBERA_DATA.products) && window.IMBERA_DATA.products.length > 0) {
+                        cachedProducts = window.IMBERA_DATA.products;
+                        window.__imberaAllProducts = cachedProducts;
+                    } else {
                         try {
+                            const raw = sessionStorage.getItem('imbera_all_prods_v3');
+                            if (raw) cachedProducts = JSON.parse(raw);
+                        } catch(e) {}
+                    }
+                }
+
+                if (!cachedProducts && window.imberaSupabase) {
+                    try {
+                        const sb = window.imberaSupabase.client();
+                        if (sb) {
                             const { data, error } = await sb.from('products').select('*, categories(*)').eq('is_active', true);
                             if (!error && data && data.length > 0) {
                                 cachedProducts = data;
                             }
-                        } catch(e) {}
+                        }
 
                         // Direct REST fallback if sb client query failed
                         if (!cachedProducts) {
@@ -435,7 +436,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             window.__imberaAllProducts = cachedProducts;
                             try { sessionStorage.setItem('imbera_all_prods_v3', JSON.stringify(cachedProducts)); } catch(e) {}
                         }
-                    }
+                    } catch(e) {}
+                }
 
                     if (!cachedProducts || cachedProducts.length === 0) {
                         dropdown.classList.remove('active');
