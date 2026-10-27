@@ -495,6 +495,85 @@ body.survey-body {
     }
 }
 
+/* Paso 0: Formulario de Datos del Participante */
+.survey-step-desc {
+    font-size: 14.5px;
+    color: var(--slate-600);
+    margin-top: -6px;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.survey-form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.survey-form-group.hidden {
+    display: none;
+}
+
+.survey-form-label {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--slate-700);
+    margin-bottom: 8px;
+}
+
+.survey-form-label .required {
+    color: #e11d48;
+}
+
+.survey-form-input,
+.survey-form-select {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--slate-200);
+    border-radius: var(--radius-md);
+    font-size: 14.5px;
+    font-family: inherit;
+    color: var(--slate-900);
+    background-color: var(--white);
+    outline: none;
+    transition: var(--transition);
+}
+
+.survey-form-input:focus,
+.survey-form-select:focus {
+    border-color: var(--primary-teal);
+    box-shadow: 0 0 0 3px rgba(0, 77, 97, 0.12);
+}
+
+.survey-form-input.error,
+.survey-form-select.error {
+    border-color: #e11d48;
+    background-color: #fff1f2;
+}
+
+.survey-select-wrapper {
+    position: relative;
+}
+
+.survey-select-wrapper::after {
+    content: '\f078';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--slate-400);
+    font-size: 12px;
+    pointer-events: none;
+}
+
+.survey-form-select {
+    appearance: none;
+    cursor: pointer;
+    padding-right: 40px;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
     .survey-card {

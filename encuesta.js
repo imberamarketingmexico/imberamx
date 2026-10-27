@@ -3,11 +3,16 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    let currentStep = 1;
+    let currentStep = 0;
     const totalSteps = 10;
     
     // Almacén de respuestas
     const surveyData = {
+        nombre: '',
+        empresa: '',
+        rol: '',
+        rol_otro: '',
+
         p1: null,
         p1_factors: [],
         p1_other: '',
@@ -75,6 +80,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     recordVisitStart();
 
+    // Dropdown Rol: Mostrar u ocultar campo especifique si es "Otro"
+    const selRol = document.getElementById('userRol');
+    const groupRolOtro = document.getElementById('groupRolOtro');
+    const inpRolOtro = document.getElementById('userRolOtro');
+    if (selRol && groupRolOtro) {
+        selRol.addEventListener('change', (e) => {
+            selRol.classList.remove('error');
+            if (e.target.value === 'Otro') {
+                groupRolOtro.classList.remove('hidden');
+                if (inpRolOtro) inpRolOtro.focus();
+            } else {
+                groupRolOtro.classList.add('hidden');
+                if (inpRolOtro) inpRolOtro.value = '';
+            }
+        });
+    }
+
+    // Limpiar errores en inputs de paso 0 al escribir
+    ['userNombre', 'userEmpresa', 'userRolOtro'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => el.classList.remove('error'));
+        }
+    });
+
     // Actualizar visualización del paso actual
     function updateStepView() {
         stepViews.forEach(view => {
@@ -82,21 +112,19 @@ document.addEventListener('DOMContentLoaded', () => {
             view.classList.toggle('active', stepNum === currentStep);
         });
 
-        // Actualizar barra de progreso
-        const progressPercent = (currentStep / totalSteps) * 100;
+        // Actualizar barra de progreso (Paso 0 = 5%, Pasos 1 a 10 = 10% a 100%)
+        const progressPercent = currentStep === 0 ? 5 : (currentStep / totalSteps) * 100;
         progressBar.style.width = `${progressPercent}%`;
 
         // Botón Anterior
-        if (currentStep === 1) {
+        if (currentStep === 0) {
             btnPrev.classList.add('hidden');
-        } else {
+            btnNext.innerText = 'Comenzar';
+        } else if (currentStep === totalSteps) {
             btnPrev.classList.remove('hidden');
-        }
-
-        // Texto del botón siguiente
-        if (currentStep === totalSteps) {
             btnNext.innerText = 'Finalizar';
         } else {
+            btnPrev.classList.remove('hidden');
             btnNext.innerText = 'Siguiente';
         }
 
@@ -171,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Navegación: Botón Anterior
     btnPrev.addEventListener('click', () => {
-        if (currentStep > 1) {
+        if (currentStep > 0) {
             currentStep--;
             updateStepView();
         }
@@ -179,7 +207,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Navegación: Botón Siguiente / Finalizar
     btnNext.addEventListener('click', async () => {
-        // Validación ligera: verificar si se respondió la pregunta principal del paso actual
+        // Paso 0: Validación de Datos del Participante
+        if (currentStep === 0) {
+            const inpNombre = document.getElementById('userNombre');
+            const inpEmpresa = document.getElementById('userEmpresa');
+            const selRol = document.getElementById('userRol');
+            const inpRolOtro = document.getElementById('userRolOtro');
+
+            const nombreVal = inpNombre ? inpNombre.value.trim() : '';
+            const empresaVal = inpEmpresa ? inpEmpresa.value.trim() : '';
+            const rolVal = selRol ? selRol.value : '';
+            const rolOtroVal = inpRolOtro ? inpRolOtro.value.trim() : '';
+
+            let hasError = false;
+
+            if (!nombreVal) {
+                if (inpNombre) inpNombre.classList.add('error');
+                hasError = true;
+            } else if (inpNombre) {
+                inpNombre.classList.remove('error');
+            }
+
+            if (!empresaVal) {
+                if (inpEmpresa) inpEmpresa.classList.add('error');
+                hasError = true;
+            } else if (inpEmpresa) {
+                inpEmpresa.classList.remove('error');
+            }
+
+            if (!rolVal) {
+                if (selRol) selRol.classList.add('error');
+                hasError = true;
+            } else if (selRol) {
+                selRol.classList.remove('error');
+            }
+
+            if (rolVal === 'Otro' && !rolOtroVal) {
+                if (inpRolOtro) inpRolOtro.classList.add('error');
+                hasError = true;
+            } else if (inpRolOtro) {
+                inpRolOtro.classList.remove('error');
+            }
+
+            if (hasError) {
+                const firstErr = document.querySelector('.survey-form-input.error, .survey-form-select.error');
+                if (firstErr) {
+                    firstErr.focus();
+                    firstErr.style.transform = 'translateX(4px)';
+                    setTimeout(() => firstErr.style.transform = 'translateX(-4px)', 80);
+                    setTimeout(() => firstErr.style.transform = 'translateX(0)', 160);
+                }
+                return;
+            }
+
+            surveyData.nombre = nombreVal;
+            surveyData.empresa = empresaVal;
+            surveyData.rol = rolVal;
+            surveyData.rol_otro = rolVal === 'Otro' ? rolOtroVal : '';
+
+            currentStep = 1;
+            updateStepView();
+            return;
+        }
+
+        // Validación pasos 1 a 10
         let answered = true;
         if (currentStep === 1 && surveyData.p1 === null) answered = false;
         if (currentStep === 2 && surveyData.p2 === null) answered = false;
@@ -220,6 +311,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const payload = {
+                nombre: surveyData.nombre || null,
+                empresa: surveyData.empresa || null,
+                rol: surveyData.rol || null,
+                rol_otro: surveyData.rol_otro || null,
+
                 p1_rating: surveyData.p1,
                 p1_factors: surveyData.p1_factors || [],
                 p1_other: surveyData.p1_other || null,
@@ -259,7 +355,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
             if (sb) {
-                const { error: insertError } = await sb.from('encuesta_respuestas').insert([payload]);
+                let { error: insertError } = await sb.from('encuesta_respuestas').insert([payload]);
+
+                // Fallback automático si las nuevas columnas no se han ejecutado en el SQL de Supabase
+                if (insertError && (insertError.code === 'PGRST204' || insertError.message?.toLowerCase().includes('column'))) {
+                    console.warn('Columnas directas no detectadas, guardando datos en respuestas_json...');
+                    const fallbackPayload = { ...payload };
+                    delete fallbackPayload.nombre;
+                    delete fallbackPayload.empresa;
+                    delete fallbackPayload.rol;
+                    delete fallbackPayload.rol_otro;
+                    const resFb = await sb.from('encuesta_respuestas').insert([fallbackPayload]);
+                    insertError = resFb.error;
+                }
+
                 if (insertError) {
                     console.error('Error insertando respuestas:', insertError);
                     alert('No se pudo guardar la encuesta: ' + (insertError.message || 'Error de conexión'));

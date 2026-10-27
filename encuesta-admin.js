@@ -398,12 +398,22 @@ document.addEventListener('DOMContentLoaded', () => {
         renderScaleChart('chart_p10', 'avg_p10', 'factors_p10', 'p10_rating', 'p10_factors', 'p10_other', scaleLabels5);
     }
 
+    // Helper escapeHtml
+    function escapeHtml(text) {
+        if (!text) return '';
+        return String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
     // --- 5. Renderizado de Tabla de Respuestas Detalladas ---
     function renderTable(dataList) {
         tableCountLabel.innerText = `${dataList.length} encuesta(s) completada(s)`;
 
         if (dataList.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="12" style="text-align: center; color: var(--slate-500); padding: 30px;">No hay encuestas registradas todavía.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="15" style="text-align: center; color: var(--slate-500); padding: 30px;">No hay encuestas registradas todavía.</td></tr>';
             return;
         }
 
@@ -433,10 +443,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 hour: '2-digit', minute: '2-digit'
             }) : 'Reciente';
 
+            const nombre = r.nombre || r.respuestas_json?.nombre || 'Anónimo';
+            const empresa = r.empresa || r.respuestas_json?.empresa || '-';
+            let rol = r.rol || r.respuestas_json?.rol || '-';
+            const rolOtro = r.rol_otro || r.respuestas_json?.rol_otro || '';
+            if (rol === 'Otro' && rolOtro) {
+                rol = `Otro (${rolOtro})`;
+            }
+
             html += `
                 <tr>
                     <td style="font-weight: 700; color: var(--slate-500);">#${dataList.length - idx}</td>
                     <td style="font-weight: 600;">${dateStr}</td>
+                    <td style="font-weight: 700; color: var(--slate-900);">${escapeHtml(nombre)}</td>
+                    <td style="color: var(--slate-700);">${escapeHtml(empresa)}</td>
+                    <td><span class="role-badge">${escapeHtml(rol)}</span></td>
                     <td>${formatRatingBadge(r.p1_rating)}</td>
                     <td>${formatRatingBadge(r.p2_rating)}</td>
                     <td>${formatRatingBadge(r.p3_rating)}</td>
@@ -476,7 +497,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const num = (allResponses.length - idx).toString();
             const dateStr = new Date(r.created_at).toLocaleString('es-MX');
             const otherText = (r.p1_other || '') + (r.p2_other || '') + (r.p3_other || '') + (r.p10_other || '');
-            return num.includes(query) || dateStr.toLowerCase().includes(query) || otherText.toLowerCase().includes(query);
+            const nombre = (r.nombre || r.respuestas_json?.nombre || '').toLowerCase();
+            const empresa = (r.empresa || r.respuestas_json?.empresa || '').toLowerCase();
+            const rol = (r.rol || r.respuestas_json?.rol || '').toLowerCase();
+            const rolOtro = (r.rol_otro || r.respuestas_json?.rol_otro || '').toLowerCase();
+            return num.includes(query) || dateStr.toLowerCase().includes(query) || otherText.toLowerCase().includes(query) || nombre.includes(query) || empresa.includes(query) || rol.includes(query) || rolOtro.includes(query);
         });
 
         renderTable(filtered);
@@ -487,6 +512,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!r) return;
         const dateStr = r.created_at ? new Date(r.created_at).toLocaleString('es-MX') : 'Reciente';
         modalTitle.innerText = `Detalle de Encuesta (${dateStr})`;
+
+        const nombre = r.nombre || r.respuestas_json?.nombre || 'Anónimo';
+        const empresa = r.empresa || r.respuestas_json?.empresa || 'No especificada';
+        let rol = r.rol || r.respuestas_json?.rol || 'No especificado';
+        const rolOtro = r.rol_otro || r.respuestas_json?.rol_otro || '';
+        if (rol === 'Otro' && rolOtro) {
+            rol = `Otro (${rolOtro})`;
+        }
 
         function renderRow(num, title, answer, factors, other) {
             let fHtml = '';
@@ -507,6 +540,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let bodyHtml = `
+            <div class="detail-participant-card">
+                <div class="detail-participant-item">
+                    <span class="detail-participant-label">Nombre del Participante</span>
+                    <span class="detail-participant-value">${escapeHtml(nombre)}</span>
+                </div>
+                <div class="detail-participant-item">
+                    <span class="detail-participant-label">Empresa</span>
+                    <span class="detail-participant-value">${escapeHtml(empresa)}</span>
+                </div>
+                <div class="detail-participant-item">
+                    <span class="detail-participant-label">Rol / Cargo</span>
+                    <span class="detail-participant-value">${escapeHtml(rol)}</span>
+                </div>
+            </div>
             ${renderRow(1, 'Cumplimiento de entregas, tiempos y cantidades', `${r.p1_rating ? r.p1_rating + ' / 5.0' : 'Sin respuesta'}`, r.p1_factors, r.p1_other)}
             ${renderRow(2, 'Estado físico y recepción de equipos', `${r.p2_rating ? r.p2_rating + ' / 5.0' : 'Sin respuesta'}`, r.p2_factors, r.p2_other)}
             ${renderRow(3, 'Atención y solución de fallas / garantías', `${r.p3_rating ? r.p3_rating + ' / 5.0' : 'Sin respuesta'}`, r.p3_factors, r.p3_other)}
@@ -538,6 +585,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const headers = [
             'ID',
             'Fecha y Hora',
+            'Nombre',
+            'Empresa',
+            'Rol',
+            'Rol Especificado',
             'P1 Entrega (Rating 1-5)',
             'P1 Factores',
             'P1 Otro',
@@ -575,9 +626,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         allResponses.forEach((r, idx) => {
             const dateStr = r.created_at ? new Date(r.created_at).toLocaleString('es-MX') : '';
+            const nombre = r.nombre || r.respuestas_json?.nombre || '';
+            const empresa = r.empresa || r.respuestas_json?.empresa || '';
+            const rol = r.rol || r.respuestas_json?.rol || '';
+            const rolOtro = r.rol_otro || r.respuestas_json?.rol_otro || '';
+
             const row = [
                 idx + 1,
                 escapeCsv(dateStr),
+                escapeCsv(nombre),
+                escapeCsv(empresa),
+                escapeCsv(rol),
+                escapeCsv(rolOtro),
                 escapeCsv(r.p1_rating),
                 escapeCsv(r.p1_factors),
                 escapeCsv(r.p1_other),

@@ -7,6 +7,12 @@ CREATE TABLE IF NOT EXISTS public.encuesta_respuestas (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     
+    -- Datos del participante (Paso 0)
+    nombre TEXT,
+    empresa TEXT,
+    rol TEXT,
+    rol_otro TEXT,
+    
     -- Pregunta 1
     p1_rating INTEGER CHECK (p1_rating BETWEEN 1 AND 5),
     p1_factors TEXT[] DEFAULT ARRAY[]::TEXT[],
@@ -94,3 +100,9 @@ WITH CHECK (true);
 CREATE POLICY "Permitir lectura visitas universal" 
 ON public.encuesta_visitas FOR SELECT TO public 
 USING (true);
+
+-- 5. MIGRACIÓN: SI LA TABLA YA EXISTÍA, AGREGAR LAS COLUMNAS DE PARTICIPANTE
+ALTER TABLE public.encuesta_respuestas ADD COLUMN IF NOT EXISTS nombre TEXT;
+ALTER TABLE public.encuesta_respuestas ADD COLUMN IF NOT EXISTS empresa TEXT;
+ALTER TABLE public.encuesta_respuestas ADD COLUMN IF NOT EXISTS rol TEXT;
+ALTER TABLE public.encuesta_respuestas ADD COLUMN IF NOT EXISTS rol_otro TEXT;

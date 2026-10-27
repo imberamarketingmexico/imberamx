@@ -38,8 +38,43 @@
     <main class="survey-main-container">
         <div class="survey-card" id="surveyCard">
             
+            <!-- PASO 0: DATOS DEL PARTICIPANTE -->
+            <div class="survey-step-view active" data-step="0">
+                <div class="survey-step-counter">Registro de Participante</div>
+                <h2 class="survey-question-title">Bienvenido a la Encuesta de Satisfacción Imbera</h2>
+                <p class="survey-step-desc">Por favor ingresa tus datos antes de comenzar para personalizar tus respuestas:</p>
+                
+                <div class="survey-form-group">
+                    <label class="survey-form-label" for="userNombre">Nombre completo <span class="required">*</span></label>
+                    <input type="text" id="userNombre" class="survey-form-input" placeholder="Ingresa tu nombre y apellido" autocomplete="name" required>
+                </div>
+
+                <div class="survey-form-group">
+                    <label class="survey-form-label" for="userEmpresa">Empresa <span class="required">*</span></label>
+                    <input type="text" id="userEmpresa" class="survey-form-input" placeholder="Nombre de tu empresa o negocio" autocomplete="organization" required>
+                </div>
+
+                <div class="survey-form-group">
+                    <label class="survey-form-label" for="userRol">Rol o Área <span class="required">*</span></label>
+                    <div class="survey-select-wrapper">
+                        <select id="userRol" class="survey-form-select" required>
+                            <option value="" disabled selected>Selecciona tu rol o área...</option>
+                            <option value="Ventas / Trade Marketing">Ventas / Trade Marketing</option>
+                            <option value="Abastecimiento">Abastecimiento</option>
+                            <option value="Refrigeración Comercial">Refrigeración Comercial</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="survey-form-group hidden" id="groupRolOtro">
+                    <label class="survey-form-label" for="userRolOtro">Especifica tu rol <span class="required">*</span></label>
+                    <input type="text" id="userRolOtro" class="survey-form-input" placeholder="Escribe tu puesto o función">
+                </div>
+            </div>
+
             <!-- PASO 1 -->
-            <div class="survey-step-view active" data-step="1">
+            <div class="survey-step-view" data-step="1">
                 <div class="survey-step-counter">Pregunta 1 de 10</div>
                 <h2 class="survey-question-title">¿Qué tan satisfecho estás con el cumplimiento de las entregas de tus enfriadores, considerando los tiempos acordados y las cantidades solicitadas?</h2>
                 
@@ -499,6 +534,6 @@
     <!-- Supabase Client & Lógica de Encuesta -->
     <script src="/supabase.js"></script>
     <script src="/supabase-client.js"></script>
-    <script src="/encuesta.js?v=1.4"></script>
+    <script src="/encuesta.js?v=1.5"></script>
 </body>
 </html>
