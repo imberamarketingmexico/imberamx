@@ -338,6 +338,9 @@ ul {
 
 .nav-links .desktop-arrow {
     font-size: 11px;
+    margin-left: 6px;
+    display: inline-block;
+    vertical-align: middle;
     transition: transform 0.22s ease, color 0.22s ease;
     color: inherit;
 }

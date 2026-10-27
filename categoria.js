@@ -103,6 +103,7 @@ async function initCatalog() {
 
     let dbCategories = [];
     let dbProducts = [];
+    let currentNoticeHtml = '';
 
     // DOM Elements
     const categoryTreeEl = document.getElementById('categoryTree');
@@ -738,8 +739,6 @@ async function initCatalog() {
             renderProductsGrid(sorted);
         });
     }
-
-    let currentNoticeHtml = '';
 
     function renderProductsGrid(input) {
         let products = [];
