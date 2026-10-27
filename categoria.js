@@ -275,53 +275,194 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // Algoritmo Inteligente de Búsqueda y Modelos Cercanos
+    function executeSmartSearch(query, products) {
+        if (!query || !products || products.length === 0) {
+            return { items: [], mode: 'empty', query: '' };
+        }
+
+        const clean = query.trim();
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clean);
+        if (isUuid) {
+            const direct = products.filter(p => p.id === clean);
+            if (direct.length > 0) return { items: direct, mode: 'exact', query: clean, isUuid: true };
+        }
+
+        const norm = clean.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const tokens = clean.toLowerCase().split(/[^a-z0-9]+/).filter(t => t.length > 0);
+
+        // Padding de modelos de 1 dígito (ej. vr4 <-> vr04)
+        const padMatch = norm.match(/^([a-z]+)(\d+)$/);
+        let zeroPadded = null;
+        let zeroStripped = null;
+        if (padMatch) {
+            const pfx = padMatch[1];
+            const num = padMatch[2];
+            if (num.length === 1) zeroPadded = `${pfx}0${num}`;
+            if (num.startsWith('0') && num.length > 1) zeroStripped = `${pfx}${parseInt(num, 10)}`;
+        }
+
+        // 1. COINCIDENCIAS DIRECTAS / EXACTAS / NORMALIZADAS
+        const exactMatches = [];
+        products.forEach(p => {
+            const mNorm = (p.model_code || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+            const cNorm = (p.commercial_name || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+            const sNorm = (p.sku || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+            const catName = (p.categories?.name || '').toLowerCase();
+            const catSlug = (p.categories?.slug || '').toLowerCase();
+
+            let score = 0;
+
+            // Coincidencia por código de modelo
+            if (mNorm === norm || (zeroPadded && mNorm === zeroPadded) || (zeroStripped && mNorm === zeroStripped)) {
+                score += 120;
+            } else if (mNorm.startsWith(norm)) {
+                score += 70;
+            } else if (mNorm.includes(norm)) {
+                score += 45;
+            }
+
+            // Coincidencia por SKU numérico
+            if (sNorm === norm) {
+                score += 100;
+            } else if (sNorm.includes(norm)) {
+                score += 50;
+            }
+
+            // Coincidencia por nombre comercial
+            if (cNorm.includes(norm)) {
+                score += 35;
+            }
+
+            // Coincidencia multi-término (ej. "vr 17", "g3d 42", "enfriador blanco")
+            if (tokens.length > 1) {
+                const allTokensFound = tokens.every(t => 
+                    (p.commercial_name || '').toLowerCase().includes(t) ||
+                    (p.model_code || '').toLowerCase().includes(t) ||
+                    (p.sku || '').toLowerCase().includes(t) ||
+                    catName.includes(t)
+                );
+                if (allTokensFound) score += 60;
+            }
+
+            // Sinónimos comunes de refrigeración comercial
+            if (/refrig|refri|enfriad|nevera/i.test(norm) && (catSlug === 'enfriadores' || cNorm.includes('enf') || catSlug === 'healthcare')) score += 30;
+            if (/congelad|freezer/i.test(norm) && (catSlug === 'congeladores' || cNorm.includes('con'))) score += 30;
+            if (/vitrina|cremera|carnic/i.test(norm) && (catSlug === 'vitrinas' || cNorm.includes('vmc'))) score += 30;
+            if (/cervec|beer|cerveza/i.test(norm) && (cNorm.includes('ccv') || catSlug.includes('cervec'))) score += 30;
+            if (/pesaj|bascul|balanz|peso/i.test(norm) && (cNorm.includes('bpk') || cNorm.includes('br') || catSlug.includes('pesaj'))) score += 30;
+            if (/rebanad|cortad/i.test(norm) && (cNorm.includes('rpk') || catSlug.includes('rebanad'))) score += 30;
+            if (/hielo|hielera/i.test(norm) && catSlug.includes('hielo')) score += 30;
+            if (/microonda|horno/i.test(norm) && cNorm.includes('microondas')) score += 30;
+
+            if (score > 0) {
+                exactMatches.push({ product: p, score });
+            }
+        });
+
+        if (exactMatches.length > 0) {
+            exactMatches.sort((a, b) => b.score - a.score);
+            return {
+                items: exactMatches.map(e => e.product),
+                mode: 'exact',
+                query: clean,
+                isUuid: isUuid
+            };
+        }
+
+        // 2. MODELOS CERCANOS EN LA MISMA FAMILIA (Ej: vr05, vr18, vr4, ccv100, g3d40)
+        const familyRegex = /^([a-z]+)(\d+(?:\.\d+)?)$/i;
+        const famMatch = norm.match(familyRegex);
+        if (famMatch) {
+            const prefix = famMatch[1];
+            const targetNum = parseFloat(famMatch[2]);
+
+            const familyMatches = [];
+            products.forEach(p => {
+                const mNorm = (p.model_code || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                const pMatch = mNorm.match(new RegExp(`^${prefix}(\\d+(?:\\.\\d+)?)`));
+                if (pMatch) {
+                    const pNum = parseFloat(pMatch[1]);
+                    const diff = Math.abs(pNum - targetNum);
+                    familyMatches.push({ product: p, diff });
+                }
+            });
+
+            if (familyMatches.length > 0) {
+                familyMatches.sort((a, b) => a.diff - b.diff);
+                const seen = new Set();
+                const deduped = [];
+                for (const f of familyMatches) {
+                    const code = f.product.model_code;
+                    if (!seen.has(code)) {
+                        seen.add(code);
+                        deduped.push(f.product);
+                    }
+                    if (deduped.length >= 9) break;
+                }
+                return {
+                    items: deduped,
+                    mode: 'close_family',
+                    family: prefix.toUpperCase(),
+                    query: clean
+                };
+            }
+        }
+
+        // 3. Coincidencia por prefijo general (ej. búsqueda de "vr", "ccv", "vmc", "g3")
+        if (norm.length >= 2) {
+            const prefixProds = products.filter(p => {
+                const mNorm = (p.model_code || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                return mNorm.startsWith(norm);
+            });
+            if (prefixProds.length > 0) {
+                return {
+                    items: prefixProds,
+                    mode: 'close_family',
+                    family: norm.toUpperCase(),
+                    query: clean
+                };
+            }
+        }
+
+        // 4. FALLBACK GLOBAL: Equipos insignia y populares
+        const fallbackCodes = ['VR17', 'G3D42', 'VR08', 'CCV320', 'VR04', 'VMC05A', 'VR19', 'VR11', 'VR20'];
+        const fallbackItems = products.filter(p => fallbackCodes.includes(p.model_code) || p.is_featured).slice(0, 8);
+
+        return {
+            items: fallbackItems.length > 0 ? fallbackItems : products.slice(0, 8),
+            mode: 'popular_fallback',
+            query: clean
+        };
+    }
+
     async function loadProducts() {
         if (!catalogGridEl) return;
         catalogGridEl.innerHTML = '<div style="grid-column: span 3; text-align: center; padding: 50px 0;"><i class="fa-solid fa-spinner fa-spin fa-2x text-primary"></i><p class="mt-2 text-muted">Cargando equipos...</p></div>';
 
         try {
             if (sb) {
-                let query = sb.from('products').select('*, categories(*)').eq('is_active', true);
-                
                 if (searchQuery) {
-                    const cleanQ = searchQuery.replace(/[,()]/g, ' ').trim();
-                    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanQ);
+                    // Consulta completa de productos activos para búsqueda inteligente y sugerencias cercanas
+                    const { data, error } = await sb.from('products').select('*, categories(*)').eq('is_active', true);
+                    if (!error && data && data.length > 0) {
+                        const outcome = executeSmartSearch(searchQuery, data);
 
-                    let orConditions = [];
-                    if (isUuid) {
-                        orConditions.push(`id.eq.${cleanQ}`);
-                    }
-                    orConditions.push(`commercial_name.ilike.%${cleanQ}%`);
-                    orConditions.push(`model_code.ilike.%${cleanQ}%`);
-                    orConditions.push(`sku.ilike.%${cleanQ}%`);
-                    orConditions.push(`subtitle.ilike.%${cleanQ}%`);
-                    orConditions.push(`description.ilike.%${cleanQ}%`);
-
-                    // Check for multi-word queries
-                    const terms = cleanQ.split(/\s+/).filter(t => t.length > 2);
-                    if (terms.length > 1) {
-                        terms.forEach(t => {
-                            orConditions.push(`commercial_name.ilike.%${t}%`);
-                            orConditions.push(`model_code.ilike.%${t}%`);
-                            orConditions.push(`sku.ilike.%${t}%`);
-                        });
-                    }
-
-                    // Check matching categories
-                    if (dbCategories.length > 0) {
-                        const matchedCats = dbCategories.filter(c => 
-                            c.name.toLowerCase().includes(cleanQ.toLowerCase()) || 
-                            c.slug.toLowerCase().includes(cleanQ.toLowerCase()) ||
-                            (terms.length > 0 && terms.some(t => c.name.toLowerCase().includes(t.toLowerCase())))
-                        );
-                        if (matchedCats.length > 0) {
-                            const catIds = matchedCats.map(c => c.id);
-                            orConditions.push(`category_id.in.(${catIds.join(',')})`);
+                        // Si se buscó un UUID directo y sólo hay 1 producto, redirigir a detalle
+                        if (outcome.isUuid && outcome.items.length === 1) {
+                            const p = outcome.items[0];
+                            const catSlug = p.categories?.slug || 'equipos';
+                            const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+                            window.location.replace(`/${catSlug}/${modelSlug}?sku=${encodeURIComponent(p.sku)}`);
+                            return;
                         }
-                    }
 
-                    query = query.or(orConditions.join(','));
+                        dbProducts = outcome.items;
+                        renderProductsGrid(outcome);
+                        return;
+                    }
                 } else if (dbCategories.length > 0) {
+                    let query = sb.from('products').select('*, categories(*)').eq('is_active', true);
                     if (selectedSubSlug) {
                         const targetSub = dbCategories.find(c => c.slug === selectedSubSlug);
                         if (targetSub) {
@@ -335,33 +476,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                             query = query.in('category_id', allRelevantIds);
                         }
                     }
-                }
 
-                const { data, error } = await query;
-                if (!error) {
-                    dbProducts = data || [];
-
-                    // If a direct UUID was searched and exactly one product was found, redirect to product detail
-                    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(searchQuery.trim());
-                    if (isUuid && dbProducts.length === 1) {
-                        const p = dbProducts[0];
-                        const catSlug = p.categories?.slug || 'equipos';
-                        const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-                        window.location.replace(`/${catSlug}/${modelSlug}?sku=${encodeURIComponent(p.sku)}`);
+                    const { data, error } = await query;
+                    if (!error && data) {
+                        dbProducts = data;
+                        renderProductsGrid({ items: dbProducts, mode: 'category' });
                         return;
                     }
-
-                    renderProductsGrid(dbProducts);
-                    return;
                 }
             }
-        } catch(e) {}
+        } catch(e) {
+            console.error('Error al cargar productos:', e);
+        }
 
         // Fallback default sample grid if no products yet in Supabase for this category
         if (!searchQuery) {
             renderFallbackGrid();
         } else {
-            renderProductsGrid([]);
+            renderProductsGrid({ items: [], mode: 'empty' });
         }
     }
 
@@ -388,38 +520,72 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    function renderProductsGrid(products) {
-        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(searchQuery);
+    let currentNoticeHtml = '';
 
-        if (resultsCountEl) {
-            if (searchQuery) {
+    function renderProductsGrid(input) {
+        let products = [];
+        let mode = 'normal';
+        let family = '';
+        let query = searchQuery;
+        let isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(query);
+
+        if (Array.isArray(input)) {
+            products = input;
+        } else if (input && typeof input === 'object') {
+            products = input.items || [];
+            mode = input.mode || 'normal';
+            family = input.family || '';
+            query = input.query || searchQuery;
+            isUuid = input.isUuid || isUuid;
+        }
+
+        // Generar banner informativo según el modo de búsqueda
+        if (mode === 'close_family') {
+            currentNoticeHtml = `
+                <div class="search-family-notice">
+                    <div class="notice-icon"><i class="fa-solid fa-circle-info"></i></div>
+                    <div class="notice-body">
+                        <h3>Mostrando modelos de la serie <strong>${family}</strong> más cercanos</h3>
+                        <p>No encontramos el modelo exacto "<strong>${escapeHtml(query)}</strong>", pero te recomendamos los siguientes equipos similares disponibles en el catálogo:</p>
+                    </div>
+                </div>
+            `;
+            if (resultsCountEl) {
+                resultsCountEl.innerText = `${products.length} modelo${products.length === 1 ? '' : 's'} de la serie ${family} recomendados`;
+            }
+        } else if (mode === 'popular_fallback') {
+            currentNoticeHtml = `
+                <div class="search-family-notice fallback">
+                    <div class="notice-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <div class="notice-body">
+                        <h3>No encontramos coincidencias exactas para "<strong>${escapeHtml(query)}</strong>"</h3>
+                        <p>Te mostramos nuestros equipos de refrigeración comercial más populares y solicitados:</p>
+                    </div>
+                </div>
+            `;
+            if (resultsCountEl) {
+                resultsCountEl.innerText = `Mostrando ${products.length} equipos destacados`;
+            }
+        } else if (mode === 'exact') {
+            currentNoticeHtml = '';
+            if (resultsCountEl) {
                 resultsCountEl.innerText = isUuid
                     ? `${products.length} resultado${products.length === 1 ? '' : 's'}`
-                    : `${products.length} resultado${products.length === 1 ? '' : 's'} para "${searchQuery}"`;
-            } else {
-                resultsCountEl.innerText = `Mostrando ${products.length} productos`;
+                    : `${products.length} resultado${products.length === 1 ? '' : 's'} para "${query}"`;
             }
+        } else if (resultsCountEl) {
+            resultsCountEl.innerText = `Mostrando ${products.length} productos`;
         }
 
         if (!products || products.length === 0) {
-            if (searchQuery) {
-                catalogGridEl.innerHTML = `
-                    <div style="grid-column: span 3; text-align: center; padding: 60px 20px;">
-                        <i class="fa-solid fa-magnifying-glass fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i>
-                        <h3 style="font-size: 20px; color: #475569; margin-bottom: 8px;">${isUuid ? 'No se encontraron equipos para esta búsqueda' : `No se encontraron productos para "${escapeHtml(searchQuery)}"`}</h3>
-                        <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Intenta buscando por modelo (ej. VR17, G3D42), tipo de equipo o código numérico.</p>
-                        <a href="/categoria" class="btn-view" style="display: inline-block; padding: 10px 24px; text-decoration: none;">Ver todo el catálogo</a>
-                    </div>
-                `;
-            } else {
-                catalogGridEl.innerHTML = `
-                    <div style="grid-column: span 3; text-align: center; padding: 60px 20px;">
-                        <i class="fa-solid fa-box-open fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i>
-                        <h3 style="font-size: 18px; color: #475569; margin-bottom: 8px;">No hay equipos registrados en esta categoría</h3>
-                        <p style="color: #94a3b8; font-size: 14px;">Pronto agregaremos más modelos a esta sección.</p>
-                    </div>
-                `;
-            }
+            catalogGridEl.innerHTML = `
+                <div style="grid-column: span 3; text-align: center; padding: 60px 20px;">
+                    <i class="fa-solid fa-magnifying-glass fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i>
+                    <h3 style="font-size: 20px; color: #475569; margin-bottom: 8px;">No se encontraron productos para "${escapeHtml(query)}"</h3>
+                    <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Intenta buscando por modelo (ej. VR17, G3D42, CCV), tipo de equipo o código numérico.</p>
+                    <a href="/categoria" class="btn-view" style="display: inline-block; padding: 10px 24px; text-decoration: none;">Ver todo el catálogo</a>
+                </div>
+            `;
             return;
         }
 
@@ -434,11 +600,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             } catch(e) {}
         });
 
-        catalogGridEl.innerHTML = products.map(p => {
+        const cardsHtml = products.map(p => {
             // Short model name preferred, fallback to commercial name
             const displayName = p.model_code || p.commercial_name;
             const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-            const catSlug = selectedCatSlug || 'enfriadores';
+            const catSlug = selectedCatSlug || (p.categories?.slug || 'enfriadores');
             const subSlug = selectedSubSlug || (p.categories?.slug || 'equipos');
             const targetUrl = `/${catSlug}/${subSlug}/${modelSlug}?sku=${encodeURIComponent(p.sku)}`;
 
@@ -455,6 +621,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
         }).join('');
+
+        catalogGridEl.innerHTML = (currentNoticeHtml || '') + cardsHtml;
     }
 
     function renderFallbackGrid() {

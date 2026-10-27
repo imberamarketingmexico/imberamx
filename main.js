@@ -256,6 +256,122 @@ document.addEventListener('DOMContentLoaded', () => {
                 .replace(/'/g, '&#39;');
         }
 
+        let cachedProducts = null;
+
+        // Función de búsqueda inteligente para Autocomplete
+        function smartMatchProducts(query, products) {
+            if (!query || !products || products.length === 0) return { items: [], mode: 'empty' };
+
+            const clean = query.trim();
+            const norm = clean.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const tokens = clean.toLowerCase().split(/[^a-z0-9]+/).filter(t => t.length > 0);
+
+            // Zero-padding para modelos (ej. vr4 <-> vr04)
+            const padMatch = norm.match(/^([a-z]+)(\d+)$/);
+            let zeroPadded = null;
+            let zeroStripped = null;
+            if (padMatch) {
+                const pfx = padMatch[1];
+                const num = padMatch[2];
+                if (num.length === 1) zeroPadded = `${pfx}0${num}`;
+                if (num.startsWith('0') && num.length > 1) zeroStripped = `${pfx}${parseInt(num, 10)}`;
+            }
+
+            // 1. Coincidencias Directas
+            const matches = [];
+            products.forEach(p => {
+                const mNorm = (p.model_code || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                const cNorm = (p.commercial_name || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                const sNorm = (p.sku || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                const catName = (p.categories?.name || '').toLowerCase();
+                const catSlug = (p.categories?.slug || '').toLowerCase();
+
+                let score = 0;
+                if (mNorm === norm || (zeroPadded && mNorm === zeroPadded) || (zeroStripped && mNorm === zeroStripped)) {
+                    score += 120;
+                } else if (mNorm.startsWith(norm)) {
+                    score += 70;
+                } else if (mNorm.includes(norm)) {
+                    score += 45;
+                }
+
+                if (sNorm === norm) score += 100;
+                else if (sNorm.includes(norm)) score += 50;
+
+                if (cNorm.includes(norm)) score += 35;
+
+                if (tokens.length > 1) {
+                    const allFound = tokens.every(t => 
+                        (p.commercial_name || '').toLowerCase().includes(t) ||
+                        (p.model_code || '').toLowerCase().includes(t) ||
+                        (p.sku || '').toLowerCase().includes(t) ||
+                        catName.includes(t)
+                    );
+                    if (allFound) score += 60;
+                }
+
+                // Sinónimos
+                if (/refrig|refri|enfriad|nevera/i.test(norm) && (catSlug === 'enfriadores' || cNorm.includes('enf'))) score += 30;
+                if (/congelad|freezer/i.test(norm) && (catSlug === 'congeladores' || cNorm.includes('con'))) score += 30;
+                if (/vitrina|cremera|carnic/i.test(norm) && (catSlug === 'vitrinas' || cNorm.includes('vmc'))) score += 30;
+                if (/cervec|beer|cerveza/i.test(norm) && (cNorm.includes('ccv') || catSlug.includes('cervec'))) score += 30;
+                if (/pesaj|bascul|balanz|peso/i.test(norm) && (cNorm.includes('bpk') || cNorm.includes('br') || catSlug.includes('pesaj'))) score += 30;
+                if (/rebanad|cortad/i.test(norm) && (cNorm.includes('rpk') || catSlug.includes('rebanad'))) score += 30;
+
+                if (score > 0) matches.push({ product: p, score });
+            });
+
+            if (matches.length > 0) {
+                matches.sort((a, b) => b.score - a.score);
+                return { items: matches.map(m => m.product).slice(0, 5), mode: 'exact' };
+            }
+
+            // 2. Modelos cercanos en la misma familia (ej. vr05, vr18, vr4, ccv100)
+            const famMatch = norm.match(/^([a-z]+)(\d+(?:\.\d+)?)$/i);
+            if (famMatch) {
+                const prefix = famMatch[1];
+                const targetNum = parseFloat(famMatch[2]);
+                const familyMatches = [];
+
+                products.forEach(p => {
+                    const mNorm = (p.model_code || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                    const pMatch = mNorm.match(new RegExp(`^${prefix}(\\d+(?:\\.\\d+)?)`));
+                    if (pMatch) {
+                        const pNum = parseFloat(pMatch[1]);
+                        const diff = Math.abs(pNum - targetNum);
+                        familyMatches.push({ product: p, diff });
+                    }
+                });
+
+                if (familyMatches.length > 0) {
+                    familyMatches.sort((a, b) => a.diff - b.diff);
+                    const seen = new Set();
+                    const deduped = [];
+                    for (const f of familyMatches) {
+                        if (!seen.has(f.product.model_code)) {
+                            seen.add(f.product.model_code);
+                            deduped.push(f.product);
+                        }
+                        if (deduped.length >= 5) break;
+                    }
+                    return { items: deduped, mode: 'close_family', family: prefix.toUpperCase() };
+                }
+            }
+
+            // 3. Coincidencia por prefijo (ej. "vr", "ccv", "vmc")
+            if (norm.length >= 2) {
+                const prefixProds = products.filter(p => {
+                    const mNorm = (p.model_code || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                    return mNorm.startsWith(norm);
+                }).slice(0, 5);
+                if (prefixProds.length > 0) {
+                    return { items: prefixProds, mode: 'close_family', family: norm.toUpperCase() };
+                }
+            }
+
+            return { items: [], mode: 'none' };
+        }
+
         searchInput.addEventListener('input', () => {
             clearTimeout(debounceTimer);
             const val = searchInput.value.trim();
@@ -270,23 +386,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!window.imberaSupabase) return;
                 try {
                     const sb = window.imberaSupabase.client();
-                    const cleanVal = val.replace(/[,()]/g, ' ').trim();
-                    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanVal);
 
-                    let orConditions = [];
-                    if (isUuid) orConditions.push(`id.eq.${cleanVal}`);
-                    orConditions.push(`commercial_name.ilike.%${cleanVal}%`);
-                    orConditions.push(`model_code.ilike.%${cleanVal}%`);
-                    orConditions.push(`sku.ilike.%${cleanVal}%`);
-                    orConditions.push(`subtitle.ilike.%${cleanVal}%`);
+                    // Carga en memoria una sola vez para búsqueda instantánea en 0ms
+                    if (!cachedProducts) {
+                        const { data, error } = await sb.from('products').select('*, categories(*)').eq('is_active', true);
+                        if (!error && data) cachedProducts = data;
+                    }
 
-                    const { data, error } = await sb.from('products')
-                        .select('*, categories(*)')
-                        .eq('is_active', true)
-                        .or(orConditions.join(','))
-                        .limit(5);
+                    if (!cachedProducts || cachedProducts.length === 0) {
+                        dropdown.classList.remove('active');
+                        return;
+                    }
 
-                    if (error || !data || data.length === 0) {
+                    const outcome = smartMatchProducts(val, cachedProducts);
+
+                    if (outcome.items.length === 0) {
                         dropdown.innerHTML = `
                             <div style="padding: 15px; text-align: center; color: #94a3b8; font-size: 13px;">
                                 No se encontraron resultados para "<strong>${escapeHtml(val)}</strong>"
@@ -297,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     // Cache products in sessionStorage for 0ms instant loading
-                    data.forEach(p => {
+                    outcome.items.forEach(p => {
                         try {
                             if (p.sku) sessionStorage.setItem('imbera_prod_sku_' + p.sku, JSON.stringify(p));
                             if (p.model_code) {
@@ -307,7 +421,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         } catch(e) {}
                     });
 
-                    dropdown.innerHTML = data.map(p => {
+                    let headerHtml = '';
+                    if (outcome.mode === 'close_family') {
+                        headerHtml = `
+                            <div class="search-suggestion-header">
+                                <i class="fa-solid fa-circle-info"></i> Modelos serie ${outcome.family} más cercanos:
+                            </div>
+                        `;
+                    }
+
+                    const itemsHtml = outcome.items.map(p => {
                         const displayName = p.model_code || p.commercial_name;
                         const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
                         const catSlug = p.categories?.slug || 'equipos';
@@ -323,16 +446,19 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </div>
                             </a>
                         `;
-                    }).join('') + `
-                        <a href="/categoria?q=${encodeURIComponent(val)}" class="search-view-all" style="display: block; padding: 10px; text-align: center; background: #f8fafc; font-size: 12px; font-weight: 700; color: var(--primary-color); border-top: 1px solid #e2e8f0; text-decoration: none;">
-                            Ver todos los resultados para "${val}" <i class="fa-solid fa-arrow-right" style="font-size: 10px; margin-left: 4px;"></i>
+                    }).join('');
+
+                    dropdown.innerHTML = headerHtml + itemsHtml + `
+                        <a href="/categoria?q=${encodeURIComponent(val)}" class="search-view-all">
+                            Ver todos los resultados para "${escapeHtml(val)}" <i class="fa-solid fa-arrow-right" style="font-size: 10px; margin-left: 4px;"></i>
                         </a>
                     `;
                     dropdown.classList.add('active');
                 } catch(e) {
+                    console.error('Error en búsqueda autocompletada:', e);
                     dropdown.classList.remove('active');
                 }
-            }, 250);
+            }, 180);
         });
 
         // Hide autocomplete on Escape or outside click
