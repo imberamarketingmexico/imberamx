@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const breadcrumbCat = document.getElementById('breadcrumb-cat');
         if (subCategory && breadcrumbCat) {
             breadcrumbCat.innerText = subCategory.name;
-            breadcrumbCat.href = `categoria.html?cat=${subCategory.slug}`;
+            breadcrumbCat.href = `/categoria?cat=${encodeURIComponent(subCategory.slug)}`;
         }
 
         // Description Bullets
