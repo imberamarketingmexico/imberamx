@@ -1395,7 +1395,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupModalDropzone('dropzoneMainImage', 'pUploadImageFile', 'pInputMainImage', 'product-images', 'Foto subida con éxito');
     setupModalDropzone('dropzonePdf1', 'pUploadPdf1', 'pInputDatasheet', 'product-docs', 'Ficha Técnica subida');
     setupModalDropzone('dropzonePdf2', 'pUploadPdf2', 'pInputManual', 'product-docs', 'Manual de Usuario subido');
-    setupModalDropzone('dropzonePdf3', 'pUploadPdf3', 'pInputPartsList', 'product-docs', 'Números de Parte subido');
+    setupModalDropzone('dropzonePdf3', 'pUploadPdf3', 'pInputPartsList', 'product-docs', 'Manual de Refacciones subido');
 
     function setupModalDropzone(dropzoneId, fileInputId, targetUrlInputId, bucketName, successLabel) {
         const dropzone = document.getElementById(dropzoneId);
