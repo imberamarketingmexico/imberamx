@@ -115,31 +115,12 @@ async function initCatalog() {
     async function fetchCategoriesList() {
         if (dbCategories && dbCategories.length > 0) return dbCategories;
 
-        // 0. Static In-Memory Baseline (0ms Instant & Offline Resilience)
-        if (window.IMBERA_DATA && Array.isArray(window.IMBERA_DATA.categories) && window.IMBERA_DATA.categories.length > 0) {
-            dbCategories = window.IMBERA_DATA.categories;
-            return dbCategories;
-        }
-
-        // Check sessionStorage cache
-        try {
-            const cached = sessionStorage.getItem('imbera_categories_v3');
-            if (cached) {
-                const parsed = JSON.parse(cached);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    dbCategories = parsed;
-                    return dbCategories;
-                }
-            }
-        } catch(e) {}
-
         const client = getSb();
         if (client) {
             try {
                 const { data, error } = await client.from('categories').select('*').order('display_order');
                 if (data && !error && data.length > 0) {
                     dbCategories = data;
-                    try { sessionStorage.setItem('imbera_categories_v3', JSON.stringify(dbCategories)); } catch(e) {}
                     return dbCategories;
                 }
             } catch(e) {
@@ -155,14 +136,20 @@ async function initCatalog() {
                 const data = await res.json();
                 if (Array.isArray(data) && data.length > 0) {
                     dbCategories = data;
-                    try { sessionStorage.setItem('imbera_categories_v3', JSON.stringify(dbCategories)); } catch(e) {}
                     return dbCategories;
                 }
             }
         } catch(e) {
             console.warn('REST categories query error:', e);
         }
-        return dbCategories;
+
+        // Static In-Memory Baseline Fallback (Offline Resilience)
+        if (window.IMBERA_DATA && Array.isArray(window.IMBERA_DATA.categories) && window.IMBERA_DATA.categories.length > 0) {
+            dbCategories = window.IMBERA_DATA.categories;
+            return dbCategories;
+        }
+
+        return dbCategories || [];
     }
 
     await fetchCategoriesList();
@@ -527,32 +514,14 @@ async function initCatalog() {
     }
 
     async function fetchAllActiveProducts() {
-        // 1. In-memory global cache
+        // 1. In-memory global cache during current page lifecycle
         if (window.__imberaAllProducts && Array.isArray(window.__imberaAllProducts) && window.__imberaAllProducts.length > 0) {
             return window.__imberaAllProducts;
         }
 
-        // 2. Static In-Memory Baseline (0ms Instant & Offline Resilience)
-        if (window.IMBERA_DATA && Array.isArray(window.IMBERA_DATA.products) && window.IMBERA_DATA.products.length > 0) {
-            window.__imberaAllProducts = window.IMBERA_DATA.products;
-            return window.IMBERA_DATA.products;
-        }
-
-        // 3. sessionStorage cache
-        try {
-            const raw = sessionStorage.getItem('imbera_all_prods_v3');
-            if (raw) {
-                const parsed = JSON.parse(raw);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    window.__imberaAllProducts = parsed;
-                    return parsed;
-                }
-            }
-        } catch(e) {}
-
         let products = null;
 
-        // 3. Supabase Client (First try with join, then try raw)
+        // 2. Supabase Client (First try with join, then try raw)
         const client = getSb();
         if (client) {
             try {
@@ -576,7 +545,7 @@ async function initCatalog() {
             }
         }
 
-        // 4. Direct REST fallback (with join, then raw)
+        // 3. Direct REST fallback (with join, then raw)
         if (!products) {
             try {
                 const res = await fetch(`${SUPABASE_REST_URL}/products?select=*,categories(*)&is_active=eq.true`, {
@@ -609,9 +578,13 @@ async function initCatalog() {
             }
         }
 
+        // 4. Fallback to static in-memory baseline if Supabase is offline/fails
+        if (!products && window.IMBERA_DATA && Array.isArray(window.IMBERA_DATA.products) && window.IMBERA_DATA.products.length > 0) {
+            products = window.IMBERA_DATA.products;
+        }
+
         if (Array.isArray(products) && products.length > 0) {
             window.__imberaAllProducts = products;
-            try { sessionStorage.setItem('imbera_all_prods_v3', JSON.stringify(products)); } catch(e) {}
             return products;
         }
 
