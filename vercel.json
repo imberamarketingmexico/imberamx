@@ -67,7 +67,7 @@
       ]
     },
     {
-      "source": "/(categoria\\.js|main\\.js|producto\\.js|catalog-data\\.js|admin\\.js|admin\\.css|chart\\.min\\.js)",
+      "source": "/(categoria\\.js|main\\.js|producto\\.js|catalog-data\\.js|admin\\.js|admin\\.css|chart\\.min\\.js|portal\\.js|portal\\.css|portals-data\\.js)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -120,6 +120,18 @@
     {
       "source": "/storage/:path*",
       "destination": "https://qezrauybkpzcenqilwcw.supabase.co/storage/v1/object/public/:path*"
+    },
+    {
+      "source": "/redbull",
+      "destination": "/redbull.html"
+    },
+    {
+      "source": "/portal/:slug",
+      "destination": "/portal.html?portal=:slug"
+    },
+    {
+      "source": "/portal",
+      "destination": "/portal.html"
     },
     {
       "source": "/admin",

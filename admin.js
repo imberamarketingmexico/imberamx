@@ -395,6 +395,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (trafficChartInstance) setTimeout(() => trafficChartInstance.resize(), 50);
                 if (leadsChartInstance) setTimeout(() => leadsChartInstance.resize(), 50);
             }
+            if (targetTab === 'tab-portals') {
+                renderPortalsCards(allPortals);
+                populatePortalDropdowns();
+                renderPortalProductsTable(allPortalProducts);
+            }
 
             // Title
             const titleSpan = item.querySelector('span');
@@ -421,7 +426,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             fetchProducts(),
             fetchLeads(),
             fetchAnalytics(),
-            fetchBanners()
+            fetchBanners(),
+            fetchPortals(),
+            fetchPortalProducts()
         ]);
         renderKPIs();
         initTrafficAnalytics();
@@ -2076,6 +2083,825 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
+
+    // --------------------------------------------------------------------------
+    // 10. PORTALES DE CLIENTES Y MICROSITIOS B2B (ej. /redbull)
+    // --------------------------------------------------------------------------
+    let allPortals = [];
+    let allPortalProducts = [];
+    let selectedPortalSlug = 'redbull';
+
+    // DOM Elements: Portales
+    const portalsCardsContainer = document.getElementById('portalsCardsContainer');
+    const portalsCountSummary = document.getElementById('portalsCountSummary');
+    const searchPortalsInput = document.getElementById('searchPortalsInput');
+    const btnRefreshPortals = document.getElementById('btnRefreshPortals');
+    const btnOpenNewPortalModal = document.getElementById('btnOpenNewPortalModal');
+    const btnOpenSqlModal = document.getElementById('btnOpenSqlModal');
+
+    // DOM Elements: Portal Equipment
+    const selectPortalFilter = document.getElementById('selectPortalFilter');
+    const searchPortalProductsInput = document.getElementById('searchPortalProductsInput');
+    const portalProductsCount = document.getElementById('portalProductsCount');
+    const portalProductsTableBody = document.getElementById('portalProductsTableBody');
+    const btnOpenNewPortalProductModal = document.getElementById('btnOpenNewPortalProductModal');
+
+    // DOM Elements: Portal Modal
+    const portalModal = document.getElementById('portalModal');
+    const btnClosePortalModal = document.getElementById('btnClosePortalModal');
+    const btnCancelPortalModal = document.getElementById('btnCancelPortalModal');
+    const portalForm = document.getElementById('portalForm');
+    const portalModalTitle = document.getElementById('portalModalTitle');
+    const editPortalId = document.getElementById('editPortalId');
+    const portalInputIsActive = document.getElementById('portalInputIsActive');
+    const portalInputName = document.getElementById('portalInputName');
+    const portalInputSlug = document.getElementById('portalInputSlug');
+    const portalUrlPreviewText = document.getElementById('portalUrlPreviewText');
+    const portalInputTitle = document.getElementById('portalInputTitle');
+    const portalInputSubtitle = document.getElementById('portalInputSubtitle');
+    const portalInputLogo = document.getElementById('portalInputLogo');
+    const portalInputBanner = document.getElementById('portalInputBanner');
+    const portalInputPrimaryColor = document.getElementById('portalInputPrimaryColor');
+    const portalTextPrimaryColor = document.getElementById('portalTextPrimaryColor');
+    const portalInputAccentColor = document.getElementById('portalInputAccentColor');
+    const portalTextAccentColor = document.getElementById('portalTextAccentColor');
+    const portalInputButtonColor = document.getElementById('portalInputButtonColor');
+    const portalTextButtonColor = document.getElementById('portalTextButtonColor');
+    const portalInputButtonTextColor = document.getElementById('portalInputButtonTextColor');
+    const imgPreviewPortalLogo = document.getElementById('imgPreviewPortalLogo');
+    const previewPortalLogoContainer = document.getElementById('previewPortalLogoContainer');
+    const imgPreviewPortalBanner = document.getElementById('imgPreviewPortalBanner');
+    const previewPortalBannerContainer = document.getElementById('previewPortalBannerContainer');
+
+    // DOM Elements: Portal Product Modal
+    const portalProductModal = document.getElementById('portalProductModal');
+    const btnClosePortalProductModal = document.getElementById('btnClosePortalProductModal');
+    const btnCancelPortalProductModal = document.getElementById('btnCancelPortalProductModal');
+    const portalProductForm = document.getElementById('portalProductForm');
+    const portalProductModalTitle = document.getElementById('portalProductModalTitle');
+    const editPortalProdId = document.getElementById('editPortalProdId');
+    const prodInputIsActive = document.getElementById('prodInputIsActive');
+    const prodInputPortalSlug = document.getElementById('prodInputPortalSlug');
+    const prodInputSku = document.getElementById('prodInputSku');
+    const prodInputTitle = document.getElementById('prodInputTitle');
+    const prodInputImage = document.getElementById('prodInputImage');
+    const prodInputDesc = document.getElementById('prodInputDesc');
+    const prodInputHeight = document.getElementById('prodInputHeight');
+    const prodInputDoors = document.getElementById('prodInputDoors');
+    const prodInputDoorStyle = document.getElementById('prodInputDoorStyle');
+    const prodInputPassThru = document.getElementById('prodInputPassThru');
+    const prodInputCubicFt = document.getElementById('prodInputCubicFt');
+    const prodInputWidth = document.getElementById('prodInputWidth');
+    const prodInputHeightIn = document.getElementById('prodInputHeightIn');
+    const prodInputDepthIn = document.getElementById('prodInputDepthIn');
+    const prodInputVoltage = document.getElementById('prodInputVoltage');
+    const prodInputAmps = document.getElementById('prodInputAmps');
+    const prodInputWeight = document.getElementById('prodInputWeight');
+    const prodInputElectrical = document.getElementById('prodInputElectrical');
+    const prodInputPdf = document.getElementById('prodInputPdf');
+    const prodInputOrder = document.getElementById('prodInputOrder');
+    const imgPreviewPortalProd = document.getElementById('imgPreviewPortalProd');
+    const previewPortalProdImgContainer = document.getElementById('previewPortalProdImgContainer');
+
+    // DOM Elements: SQL Modal
+    const sqlModal = document.getElementById('sqlModal');
+    const btnCloseSqlModal = document.getElementById('btnCloseSqlModal');
+    const btnDismissSqlModal = document.getElementById('btnDismissSqlModal');
+    const sqlScriptContent = document.getElementById('sqlScriptContent');
+    const btnCopySqlScript = document.getElementById('btnCopySqlScript');
+
+    const SQL_SETUP_SCRIPT = `-- ==============================================================================
+-- TABLAS PARA PORTALES DE CLIENTES Y MICROSITIOS B2B
+-- Copia y ejecuta en el Editor SQL de Supabase (SQL Editor)
+-- ==============================================================================
+
+CREATE TABLE IF NOT EXISTS public.client_portals (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    slug TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    title TEXT DEFAULT 'Merchandisers',
+    subtitle TEXT DEFAULT 'Catálogo Exclusivo B2B',
+    logo_url TEXT,
+    banner_url TEXT,
+    primary_color TEXT DEFAULT '#0C2340',
+    accent_color TEXT DEFAULT '#DB0A40',
+    button_color TEXT DEFAULT '#0C2340',
+    button_text_color TEXT DEFAULT '#FFFFFF',
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS public.portal_products (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portal_slug TEXT NOT NULL,
+    sku TEXT NOT NULL,
+    title TEXT NOT NULL,
+    image_url TEXT,
+    description TEXT,
+    height_type TEXT DEFAULT 'Full Height',
+    door_count TEXT DEFAULT 'Single Door',
+    door_style TEXT DEFAULT 'Hinge Door',
+    pass_through BOOLEAN DEFAULT false,
+    cubic_ft TEXT,
+    width_in TEXT,
+    height_in TEXT,
+    depth_in TEXT,
+    voltage TEXT,
+    amps TEXT,
+    weight_lbs TEXT,
+    electrical_req TEXT DEFAULT 'NEMA 5-15P',
+    spec_sheet_url TEXT,
+    display_order INTEGER DEFAULT 1,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.client_portals ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.portal_products ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public portals viewable" ON public.client_portals FOR SELECT USING (true);
+CREATE POLICY "Public portal products viewable" ON public.portal_products FOR SELECT USING (true);
+CREATE POLICY "Admin manage portals" ON public.client_portals FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Admin manage portal products" ON public.portal_products FOR ALL USING (true) WITH CHECK (true);
+`;
+
+    // A) Fetch Portals
+    async function fetchPortals() {
+        try {
+            const { data, error } = await sb.from('client_portals').select('*').order('created_at', { ascending: true });
+            if (data && !error && data.length > 0) {
+                allPortals = data;
+                localStorage.setItem('imbera_client_portals', JSON.stringify(data));
+            } else {
+                const cached = localStorage.getItem('imbera_client_portals');
+                if (cached) {
+                    allPortals = JSON.parse(cached);
+                } else if (window.IMBERA_PORTALS_DATA && Array.isArray(window.IMBERA_PORTALS_DATA.portals)) {
+                    allPortals = window.IMBERA_PORTALS_DATA.portals;
+                    localStorage.setItem('imbera_client_portals', JSON.stringify(allPortals));
+                }
+            }
+        } catch(e) {
+            console.warn('Supabase portals query error, using baseline:', e);
+            const cached = localStorage.getItem('imbera_client_portals');
+            allPortals = cached ? JSON.parse(cached) : (window.IMBERA_PORTALS_DATA ? window.IMBERA_PORTALS_DATA.portals : []);
+        }
+
+        renderPortalsCards(allPortals);
+        populatePortalDropdowns();
+    }
+
+    // B) Fetch Portal Products
+    async function fetchPortalProducts() {
+        try {
+            const { data, error } = await sb.from('portal_products').select('*').order('display_order', { ascending: true });
+            if (data && !error && data.length > 0) {
+                allPortalProducts = data;
+                localStorage.setItem('imbera_portal_products', JSON.stringify(data));
+            } else {
+                const cached = localStorage.getItem('imbera_portal_products');
+                if (cached) {
+                    allPortalProducts = JSON.parse(cached);
+                } else if (window.IMBERA_PORTALS_DATA && Array.isArray(window.IMBERA_PORTALS_DATA.products)) {
+                    allPortalProducts = window.IMBERA_PORTALS_DATA.products;
+                    localStorage.setItem('imbera_portal_products', JSON.stringify(allPortalProducts));
+                }
+            }
+        } catch(e) {
+            console.warn('Supabase portal products query error, using baseline:', e);
+            const cached = localStorage.getItem('imbera_portal_products');
+            allPortalProducts = cached ? JSON.parse(cached) : (window.IMBERA_PORTALS_DATA ? window.IMBERA_PORTALS_DATA.products : []);
+        }
+
+        renderPortalProductsTable(allPortalProducts);
+    }
+
+    // C) Render Portals Cards
+    function renderPortalsCards(portals) {
+        if (!portalsCardsContainer) return;
+        if (portalsCountSummary) {
+            portalsCountSummary.innerText = `${portals.length} portal${portals.length === 1 ? '' : 'es'} registrado${portals.length === 1 ? '' : 's'}`;
+        }
+
+        if (!portals || portals.length === 0) {
+            portalsCardsContainer.innerHTML = '<div style="grid-column: 1 / -1; padding: 30px; text-align: center; color: #64748b; background: #ffffff; border-radius: 8px;">No hay portales creados aún. Haz clic en "Crear Nuevo Portal".</div>';
+            return;
+        }
+
+        portalsCardsContainer.innerHTML = portals.map(p => {
+            const isVisible = p.is_active !== false;
+            const prodsInPortal = allPortalProducts.filter(x => x.portal_slug === p.slug);
+            const heroBg = p.banner_url || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80';
+            const portalUrl = `${window.location.origin}/${p.slug}`;
+
+            return `
+                <div class="portal-admin-card" data-slug="${p.slug}">
+                    <div class="portal-admin-card-hero" style="background-image: url('${heroBg}'); background-color: ${p.primary_color || '#0C2340'};">
+                        ${p.logo_url ? `<img src="${p.logo_url}" class="portal-admin-card-logo" alt="${p.name}">` : `<strong style="position: relative; z-index: 2; color: #fff; font-size: 18px; text-transform: uppercase;">${p.name}</strong>`}
+                        <span class="badge-status ${isVisible ? 'status-cerrado' : 'status-descartado'}" style="position: relative; z-index: 2;">
+                            <i class="fa-solid ${isVisible ? 'fa-circle-check' : 'fa-eye-slash'}"></i>
+                            ${isVisible ? 'Activo' : 'Oculto'}
+                        </span>
+                    </div>
+
+                    <div class="portal-admin-card-body">
+                        <div>
+                            <h4 class="portal-admin-card-title">${p.name}</h4>
+                            <small class="text-muted">${p.title || 'Merchandisers'} &bull; ${prodsInPortal.length} equipos</small>
+                        </div>
+
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                            <a href="/${p.slug}" target="_blank" class="portal-admin-card-url" title="Abrir en pestaña nueva">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> /${p.slug}
+                            </a>
+                            <button type="button" class="btn-outline-small btn-copy-portal-link" data-url="${portalUrl}" style="padding: 3px 8px; font-size: 11px;">
+                                <i class="fa-solid fa-copy"></i> Copiar Link
+                            </button>
+                        </div>
+
+                        <div class="portal-color-swatches">
+                            <span class="portal-swatch-item" title="Color Primario">
+                                <span class="swatch-dot" style="background: ${p.primary_color || '#0C2340'};"></span>
+                                <span>${p.primary_color || '#0C2340'}</span>
+                            </span>
+                            <span class="portal-swatch-item" title="Color de Acento">
+                                <span class="swatch-dot" style="background: ${p.accent_color || '#DB0A40'};"></span>
+                                <span>${p.accent_color || '#DB0A40'}</span>
+                            </span>
+                            <span class="portal-swatch-item" title="Color de Botones">
+                                <span class="swatch-dot" style="background: ${p.button_color || '#0C2340'};"></span>
+                                <span>${p.button_color || '#0C2340'}</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="portal-admin-card-footer">
+                        <button type="button" class="btn-outline-small btn-view-portal-prods" data-slug="${p.slug}" style="font-size: 12px; font-weight: 600;">
+                            <i class="fa-solid fa-boxes-stacked"></i> Ver Equipos (${prodsInPortal.length})
+                        </button>
+                        <div style="display: flex; gap: 6px;">
+                            <button type="button" class="btn-table-action btn-edit-portal" data-slug="${p.slug}" title="Editar configuración y branding">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button type="button" class="btn-table-action delete btn-delete-portal" data-slug="${p.slug}" title="Eliminar portal">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // D) Render Portal Products Table
+    function renderPortalProductsTable(products) {
+        if (!portalProductsTableBody) return;
+
+        // Filtrar por el portal seleccionado actualmente
+        let items = products.filter(p => p.portal_slug === selectedPortalSlug);
+
+        // Filtro de búsqueda por texto
+        const query = (searchPortalProductsInput?.value || '').trim().toLowerCase();
+        if (query) {
+            items = items.filter(p => {
+                const s = (p.sku || '').toLowerCase();
+                const t = (p.title || '').toLowerCase();
+                const d = (p.description || '').toLowerCase();
+                return s.includes(query) || t.includes(query) || d.includes(query);
+            });
+        }
+
+        if (portalProductsCount) {
+            portalProductsCount.innerText = `${items.length} equipo${items.length === 1 ? '' : 's'} encontrado${items.length === 1 ? '' : 's'}`;
+        }
+
+        if (items.length === 0) {
+            portalProductsTableBody.innerHTML = `<tr><td colspan="8" class="text-center py-4">No hay equipos en este portal. Haz clic en "Agregar Equipo al Portal".</td></tr>`;
+            return;
+        }
+
+        portalProductsTableBody.innerHTML = items.map(p => {
+            const isVisible = p.is_active !== false;
+            const imgSrc = p.image_url || 'images/Enfriador_VR17.jpg';
+            const dims = [
+                p.width_in ? `${p.width_in}" (w)` : '',
+                p.height_in ? `${p.height_in}" (h)` : '',
+                p.depth_in ? `${p.depth_in}" (d)` : ''
+            ].filter(Boolean).join(' x ') || '-';
+
+            return `
+                <tr>
+                    <td>
+                        <img src="${imgSrc}" class="table-thumb" style="width: 44px; height: 44px; object-fit: contain;" onerror="this.src='images/Enfriador_VR17.jpg'">
+                    </td>
+                    <td>
+                        <strong style="color: #0b4372; font-size: 13px;">${p.sku || '-'}</strong>
+                    </td>
+                    <td>
+                        <strong>${p.title || 'Cooler'}</strong>
+                    </td>
+                    <td>
+                        <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                            <span class="badge-status status-en_negociacion" style="font-size: 10px;">${p.height_type || 'Full Height'}</span>
+                            <span class="badge-status status-nuevo" style="font-size: 10px;">${p.door_count || '1 Puerta'}</span>
+                            <span class="badge-status status-cerrado" style="font-size: 10px;">${p.door_style || 'Hinge'}</span>
+                            ${p.pass_through ? '<span class="badge-status" style="background: #fef08a; color: #854d0e; font-size: 10px;">Pass Thru</span>' : ''}
+                        </div>
+                    </td>
+                    <td>
+                        <span style="font-size: 12px; color: #475569;">${dims}</span>
+                    </td>
+                    <td>
+                        <span style="font-weight: 600; font-size: 13px;">${p.cubic_ft || '-'} ft³</span>
+                    </td>
+                    <td>
+                        <span class="badge-status ${isVisible ? 'status-cerrado' : 'status-descartado'}">
+                            <i class="fa-solid ${isVisible ? 'fa-circle-check' : 'fa-eye-slash'}"></i>
+                            ${isVisible ? 'Visible' : 'Oculto'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <button type="button" class="btn-table-action btn-toggle-portal-prod ${isVisible ? 'visible' : 'hidden'}" data-id="${p.id}" title="${isVisible ? 'Ocultar equipo' : 'Mostrar equipo'}">
+                                <i class="fa-solid ${isVisible ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                            </button>
+                            <button type="button" class="btn-table-action btn-edit-portal-prod" data-id="${p.id}" title="Editar equipo">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button type="button" class="btn-table-action delete btn-delete-portal-prod" data-id="${p.id}" title="Eliminar equipo">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // E) Populate Portals Dropdowns
+    function populatePortalDropdowns() {
+        if (!allPortals || allPortals.length === 0) return;
+
+        const optionsHtml = allPortals.map(p => {
+            const count = allPortalProducts.filter(x => x.portal_slug === p.slug).length;
+            return `<option value="${p.slug}" ${p.slug === selectedPortalSlug ? 'selected' : ''}>${p.name} (/${p.slug}) - ${count} equipos</option>`;
+        }).join('');
+
+        if (selectPortalFilter) {
+            selectPortalFilter.innerHTML = optionsHtml;
+        }
+        if (prodInputPortalSlug) {
+            prodInputPortalSlug.innerHTML = allPortals.map(p => `<option value="${p.slug}">${p.name} (/${p.slug})</option>`).join('');
+        }
+    }
+
+    // Event listener: cambio de portal en el dropdown
+    if (selectPortalFilter) {
+        selectPortalFilter.addEventListener('change', (e) => {
+            selectedPortalSlug = e.target.value;
+            renderPortalProductsTable(allPortalProducts);
+        });
+    }
+
+    // Buscador de portales
+    if (searchPortalsInput) {
+        searchPortalsInput.addEventListener('input', (e) => {
+            const q = e.target.value.toLowerCase().trim();
+            const filtered = allPortals.filter(p => (p.name || '').toLowerCase().includes(q) || (p.slug || '').toLowerCase().includes(q));
+            renderPortalsCards(filtered);
+        });
+    }
+
+    // Buscador de equipos del portal
+    if (searchPortalProductsInput) {
+        searchPortalProductsInput.addEventListener('input', () => {
+            renderPortalProductsTable(allPortalProducts);
+        });
+    }
+
+    // Botón refrescar
+    if (btnRefreshPortals) {
+        btnRefreshPortals.addEventListener('click', async () => {
+            btnRefreshPortals.querySelector('i').classList.add('fa-spin');
+            await Promise.all([fetchPortals(), fetchPortalProducts()]);
+            btnRefreshPortals.querySelector('i').classList.remove('fa-spin');
+        });
+    }
+
+    // Delegación de eventos en las tarjetas de portales
+    if (portalsCardsContainer) {
+        portalsCardsContainer.addEventListener('click', (e) => {
+            // Copiar link
+            const copyBtn = e.target.closest('.btn-copy-portal-link');
+            if (copyBtn) {
+                const url = copyBtn.getAttribute('data-url');
+                navigator.clipboard.writeText(url);
+                copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado!';
+                setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i> Copiar Link', 1500);
+                return;
+            }
+
+            // Ver equipos de ese portal
+            const viewProdsBtn = e.target.closest('.btn-view-portal-prods');
+            if (viewProdsBtn) {
+                const slug = viewProdsBtn.getAttribute('data-slug');
+                selectedPortalSlug = slug;
+                if (selectPortalFilter) selectPortalFilter.value = slug;
+                renderPortalProductsTable(allPortalProducts);
+                document.querySelector('.portal-equipment-manager-box')?.scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
+            // Editar portal
+            const editBtn = e.target.closest('.btn-edit-portal');
+            if (editBtn) {
+                const slug = editBtn.getAttribute('data-slug');
+                openEditPortalModal(slug);
+                return;
+            }
+
+            // Eliminar portal
+            const deleteBtn = e.target.closest('.btn-delete-portal');
+            if (deleteBtn) {
+                const slug = deleteBtn.getAttribute('data-slug');
+                deletePortal(slug);
+                return;
+            }
+        });
+    }
+
+    // Delegación de eventos en la tabla de equipos del portal
+    if (portalProductsTableBody) {
+        portalProductsTableBody.addEventListener('click', async (e) => {
+            // Toggle visibilidad
+            const toggleBtn = e.target.closest('.btn-toggle-portal-prod');
+            if (toggleBtn) {
+                const id = toggleBtn.getAttribute('data-id');
+                const prod = allPortalProducts.find(x => String(x.id) === String(id));
+                if (prod) {
+                    prod.is_active = prod.is_active === false ? true : false;
+                    try {
+                        await sb.from('portal_products').update({ is_active: prod.is_active }).eq('id', id);
+                    } catch(err) {}
+                    localStorage.setItem('imbera_portal_products', JSON.stringify(allPortalProducts));
+                    renderPortalProductsTable(allPortalProducts);
+                }
+                return;
+            }
+
+            // Editar equipo
+            const editBtn = e.target.closest('.btn-edit-portal-prod');
+            if (editBtn) {
+                const id = editBtn.getAttribute('data-id');
+                openEditPortalProductModal(id);
+                return;
+            }
+
+            // Eliminar equipo
+            const deleteBtn = e.target.closest('.btn-delete-portal-prod');
+            if (deleteBtn) {
+                const id = deleteBtn.getAttribute('data-id');
+                deletePortalProduct(id);
+                return;
+            }
+        });
+    }
+
+    // F) Abrir Modal Crear Portal
+    function openNewPortalModal() {
+        if (!portalForm || !portalModal) return;
+        portalForm.reset();
+        editPortalId.value = '';
+        portalModalTitle.innerText = 'Crear Nuevo Portal de Marca';
+        portalInputIsActive.checked = true;
+        portalInputSlug.readOnly = false;
+        portalInputTitle.value = 'Merchandisers';
+        portalInputPrimaryColor.value = '#0C2340';
+        portalTextPrimaryColor.value = '#0C2340';
+        portalInputAccentColor.value = '#DB0A40';
+        portalTextAccentColor.value = '#DB0A40';
+        portalInputButtonColor.value = '#0C2340';
+        portalTextButtonColor.value = '#0C2340';
+        portalInputButtonTextColor.value = '#FFFFFF';
+        previewPortalLogoContainer.style.display = 'none';
+        previewPortalBannerContainer.style.display = 'none';
+        portalUrlPreviewText.innerText = '/...';
+
+        portalModal.classList.add('active');
+    }
+
+    // G) Abrir Modal Editar Portal
+    function openEditPortalModal(slug) {
+        const portal = allPortals.find(p => p.slug === slug);
+        if (!portal || !portalModal) return;
+
+        portalModalTitle.innerText = `Editar Portal: ${portal.name}`;
+        editPortalId.value = portal.id || '';
+        portalInputName.value = portal.name || '';
+        portalInputSlug.value = portal.slug || '';
+        portalInputSlug.readOnly = true; // El slug es identificador
+        portalUrlPreviewText.innerText = `/${portal.slug}`;
+        portalInputTitle.value = portal.title || 'Merchandisers';
+        portalInputSubtitle.value = portal.subtitle || '';
+        portalInputLogo.value = portal.logo_url || '';
+        portalInputBanner.value = portal.banner_url || '';
+        portalInputPrimaryColor.value = portal.primary_color || '#0C2340';
+        portalTextPrimaryColor.value = portal.primary_color || '#0C2340';
+        portalInputAccentColor.value = portal.accent_color || '#DB0A40';
+        portalTextAccentColor.value = portal.accent_color || '#DB0A40';
+        portalInputButtonColor.value = portal.button_color || '#0C2340';
+        portalTextButtonColor.value = portal.button_color || '#0C2340';
+        portalInputButtonTextColor.value = portal.button_text_color || '#FFFFFF';
+        portalInputIsActive.checked = portal.is_active !== false;
+
+        if (portal.logo_url) {
+            imgPreviewPortalLogo.src = portal.logo_url;
+            previewPortalLogoContainer.style.display = 'block';
+        } else {
+            previewPortalLogoContainer.style.display = 'none';
+        }
+
+        if (portal.banner_url) {
+            imgPreviewPortalBanner.src = portal.banner_url;
+            previewPortalBannerContainer.style.display = 'block';
+        } else {
+            previewPortalBannerContainer.style.display = 'none';
+        }
+
+        portalModal.classList.add('active');
+    }
+
+    // Previews de slug en tiempo real
+    if (portalInputSlug) {
+        portalInputSlug.addEventListener('input', (e) => {
+            const clean = e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '');
+            e.target.value = clean;
+            portalUrlPreviewText.innerText = `/${clean || '...'}`;
+        });
+    }
+
+    // Sincronización bidireccional de colores
+    function syncColorInputs(colorEl, textEl) {
+        if (!colorEl || !textEl) return;
+        colorEl.addEventListener('input', () => textEl.value = colorEl.value.toUpperCase());
+        textEl.addEventListener('input', () => {
+            if (/^#[0-9A-Fa-f]{6}$/.test(textEl.value)) {
+                colorEl.value = textEl.value;
+            }
+        });
+    }
+    syncColorInputs(portalInputPrimaryColor, portalTextPrimaryColor);
+    syncColorInputs(portalInputAccentColor, portalTextAccentColor);
+    syncColorInputs(portalInputButtonColor, portalTextButtonColor);
+
+    // Guardar Portal (Form Submit)
+    if (portalForm) {
+        portalForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btnSave = document.getElementById('btnSavePortal');
+            btnSave.disabled = true;
+            btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+
+            const pId = editPortalId.value.trim();
+            const slug = portalInputSlug.value.trim().toLowerCase();
+            const payload = {
+                name: portalInputName.value.trim(),
+                slug: slug,
+                title: portalInputTitle.value.trim() || 'Merchandisers',
+                subtitle: portalInputSubtitle.value.trim() || '',
+                logo_url: portalInputLogo.value.trim() || null,
+                banner_url: portalInputBanner.value.trim() || null,
+                primary_color: portalTextPrimaryColor.value.trim() || '#0C2340',
+                accent_color: portalTextAccentColor.value.trim() || '#DB0A40',
+                button_color: portalTextButtonColor.value.trim() || '#0C2340',
+                button_text_color: portalInputButtonTextColor.value || '#FFFFFF',
+                is_active: portalInputIsActive.checked,
+                updated_at: new Date().toISOString()
+            };
+
+            try {
+                if (pId) {
+                    try {
+                        await sb.from('client_portals').update(payload).eq('id', pId);
+                    } catch(err) {}
+                    const idx = allPortals.findIndex(x => String(x.id) === String(pId) || x.slug === slug);
+                    if (idx !== -1) allPortals[idx] = { ...allPortals[idx], ...payload };
+                } else {
+                    payload.id = 'portal-' + Date.now();
+                    payload.created_at = new Date().toISOString();
+                    try {
+                        const { data } = await sb.from('client_portals').insert([payload]).select();
+                        if (data && data[0]) payload.id = data[0].id;
+                    } catch(err) {}
+                    allPortals.push(payload);
+                }
+
+                localStorage.setItem('imbera_client_portals', JSON.stringify(allPortals));
+                renderPortalsCards(allPortals);
+                populatePortalDropdowns();
+                portalModal.classList.remove('active');
+                alert(`¡Portal "${payload.name}" guardado exitosamente!`);
+            } catch(err) {
+                alert('Error al guardar el portal: ' + err.message);
+            } finally {
+                btnSave.disabled = false;
+                btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Portal';
+            }
+        });
+    }
+
+    async function deletePortal(slug) {
+        if (!confirm(`¿Estás seguro de eliminar el portal "/${slug}"? Esta acción no se puede deshacer.`)) return;
+
+        try {
+            await sb.from('client_portals').delete().eq('slug', slug);
+        } catch(e) {}
+
+        allPortals = allPortals.filter(p => p.slug !== slug);
+        localStorage.setItem('imbera_client_portals', JSON.stringify(allPortals));
+
+        if (selectedPortalSlug === slug) {
+            selectedPortalSlug = allPortals[0]?.slug || 'redbull';
+        }
+
+        renderPortalsCards(allPortals);
+        populatePortalDropdowns();
+        renderPortalProductsTable(allPortalProducts);
+    }
+
+    // H) Abrir Modal Crear Equipo del Portal
+    function openNewPortalProductModal() {
+        if (!portalProductForm || !portalProductModal) return;
+        portalProductForm.reset();
+        editPortalProdId.value = '';
+        portalProductModalTitle.innerText = `Agregar Equipo al Portal: ${selectedPortalSlug}`;
+        prodInputIsActive.checked = true;
+        prodInputPortalSlug.value = selectedPortalSlug;
+        prodInputVoltage.value = '115 / 60 / 1';
+        prodInputElectrical.value = 'NEMA 5-15P';
+        prodInputOrder.value = allPortalProducts.filter(x => x.portal_slug === selectedPortalSlug).length + 1;
+        previewPortalProdImgContainer.style.display = 'none';
+
+        portalProductModal.classList.add('active');
+    }
+
+    // I) Abrir Modal Editar Equipo del Portal
+    function openEditPortalProductModal(id) {
+        const prod = allPortalProducts.find(x => String(x.id) === String(id));
+        if (!prod || !portalProductModal) return;
+
+        portalProductModalTitle.innerText = `Editar Equipo: ${prod.sku}`;
+        editPortalProdId.value = prod.id || '';
+        prodInputIsActive.checked = prod.is_active !== false;
+        prodInputPortalSlug.value = prod.portal_slug || selectedPortalSlug;
+        prodInputSku.value = prod.sku || '';
+        prodInputTitle.value = prod.title || '';
+        prodInputImage.value = prod.image_url || '';
+        prodInputDesc.value = prod.description || '';
+        prodInputHeight.value = prod.height_type || 'Full Height';
+        prodInputDoors.value = prod.door_count || 'Single Door';
+        prodInputDoorStyle.value = prod.door_style || 'Hinge Door';
+        prodInputPassThru.checked = prod.pass_through === true || prod.pass_through === 'true';
+
+        // Casillas Técnicas (Screenshot del Usuario)
+        prodInputCubicFt.value = prod.cubic_ft || '';
+        prodInputWidth.value = prod.width_in || '';
+        prodInputHeightIn.value = prod.height_in || '';
+        prodInputDepthIn.value = prod.depth_in || '';
+        prodInputVoltage.value = prod.voltage || '115 / 60 / 1';
+        prodInputAmps.value = prod.amps || '';
+        prodInputWeight.value = prod.weight_lbs || '';
+        prodInputElectrical.value = prod.electrical_req || 'NEMA 5-15P';
+
+        prodInputPdf.value = prod.spec_sheet_url || '';
+        prodInputOrder.value = prod.display_order || 1;
+
+        if (prod.image_url) {
+            imgPreviewPortalProd.src = prod.image_url;
+            previewPortalProdImgContainer.style.display = 'block';
+        } else {
+            previewPortalProdImgContainer.style.display = 'none';
+        }
+
+        portalProductModal.classList.add('active');
+    }
+
+    // Guardar Equipo del Portal (Form Submit)
+    if (portalProductForm) {
+        portalProductForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btnSave = document.getElementById('btnSavePortalProduct');
+            btnSave.disabled = true;
+            btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+
+            const prodId = editPortalProdId.value.trim();
+            const targetPortal = prodInputPortalSlug.value;
+
+            const payload = {
+                portal_slug: targetPortal,
+                sku: prodInputSku.value.trim(),
+                title: prodInputTitle.value.trim(),
+                image_url: prodInputImage.value.trim() || null,
+                description: prodInputDesc.value.trim() || '',
+                height_type: prodInputHeight.value,
+                door_count: prodInputDoors.value,
+                door_style: prodInputDoorStyle.value,
+                pass_through: prodInputPassThru.checked,
+                cubic_ft: prodInputCubicFt.value.trim(),
+                width_in: prodInputWidth.value.trim(),
+                height_in: prodInputHeightIn.value.trim(),
+                depth_in: prodInputDepthIn.value.trim(),
+                voltage: prodInputVoltage.value.trim(),
+                amps: prodInputAmps.value.trim(),
+                weight_lbs: prodInputWeight.value.trim(),
+                electrical_req: prodInputElectrical.value.trim(),
+                spec_sheet_url: prodInputPdf.value.trim() || null,
+                display_order: parseInt(prodInputOrder.value, 10) || 1,
+                is_active: prodInputIsActive.checked,
+                updated_at: new Date().toISOString()
+            };
+
+            try {
+                if (prodId) {
+                    try {
+                        await sb.from('portal_products').update(payload).eq('id', prodId);
+                    } catch(err) {}
+                    const idx = allPortalProducts.findIndex(x => String(x.id) === String(prodId));
+                    if (idx !== -1) allPortalProducts[idx] = { ...allPortalProducts[idx], ...payload };
+                } else {
+                    payload.id = 'prod-rb-' + Date.now();
+                    payload.created_at = new Date().toISOString();
+                    try {
+                        const { data } = await sb.from('portal_products').insert([payload]).select();
+                        if (data && data[0]) payload.id = data[0].id;
+                    } catch(err) {}
+                    allPortalProducts.push(payload);
+                }
+
+                allPortalProducts.sort((a,b) => (a.display_order || 0) - (b.display_order || 0));
+                localStorage.setItem('imbera_portal_products', JSON.stringify(allPortalProducts));
+
+                selectedPortalSlug = targetPortal;
+                if (selectPortalFilter) selectPortalFilter.value = targetPortal;
+
+                renderPortalProductsTable(allPortalProducts);
+                renderPortalsCards(allPortals);
+                portalProductModal.classList.remove('active');
+                alert(`¡Equipo "${payload.sku}" guardado exitosamente en el portal!`);
+            } catch(err) {
+                alert('Error al guardar el equipo: ' + err.message);
+            } finally {
+                btnSave.disabled = false;
+                btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Equipo en el Portal';
+            }
+        });
+    }
+
+    async function deletePortalProduct(id) {
+        if (!confirm('¿Estás seguro de eliminar este equipo del portal?')) return;
+
+        try {
+            await sb.from('portal_products').delete().eq('id', id);
+        } catch(e) {}
+
+        allPortalProducts = allPortalProducts.filter(x => String(x.id) !== String(id));
+        localStorage.setItem('imbera_portal_products', JSON.stringify(allPortalProducts));
+        renderPortalProductsTable(allPortalProducts);
+        renderPortalsCards(allPortals);
+    }
+
+    // Modal Control Events
+    if (btnOpenNewPortalModal) btnOpenNewPortalModal.addEventListener('click', openNewPortalModal);
+    if (btnClosePortalModal) btnClosePortalModal.addEventListener('click', () => portalModal.classList.remove('active'));
+    if (btnCancelPortalModal) btnCancelPortalModal.addEventListener('click', () => portalModal.classList.remove('active'));
+
+    if (btnOpenNewPortalProductModal) btnOpenNewPortalProductModal.addEventListener('click', openNewPortalProductModal);
+    if (btnClosePortalProductModal) btnClosePortalProductModal.addEventListener('click', () => portalProductModal.classList.remove('active'));
+    if (btnCancelPortalProductModal) btnCancelPortalProductModal.addEventListener('click', () => portalProductModal.classList.remove('active'));
+
+    // SQL Modal Events
+    if (btnOpenSqlModal && sqlModal && sqlScriptContent) {
+        btnOpenSqlModal.addEventListener('click', () => {
+            sqlScriptContent.value = SQL_SETUP_SCRIPT;
+            sqlModal.classList.add('active');
+        });
+    }
+    if (btnCloseSqlModal) btnCloseSqlModal.addEventListener('click', () => sqlModal.classList.remove('active'));
+    if (btnDismissSqlModal) btnDismissSqlModal.addEventListener('click', () => sqlModal.classList.remove('active'));
+    if (btnCopySqlScript && sqlScriptContent) {
+        btnCopySqlScript.addEventListener('click', () => {
+            navigator.clipboard.writeText(sqlScriptContent.value);
+            btnCopySqlScript.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado!';
+            setTimeout(() => btnCopySqlScript.innerHTML = '<i class="fa-solid fa-copy"></i> Copiar SQL', 2000);
+        });
+    }
+
+    // Configurar Dropzones para Portales (Logos, Banners, Renders, Fichas PDF)
+    setupModalDropzone('dropzonePortalLogo', 'filePortalLogo', 'portalInputLogo', 'product-images', 'Logo subido con éxito');
+    setupModalDropzone('dropzonePortalBanner', 'filePortalBanner', 'portalInputBanner', 'product-images', 'Banner subido con éxito');
+    setupModalDropzone('dropzonePortalProdImage', 'filePortalProdImage', 'prodInputImage', 'product-images', 'Render subido con éxito');
+    setupModalDropzone('dropzonePortalProdPdf', 'filePortalProdPdf', 'prodInputPdf', 'product-docs', 'Ficha Técnica subida');
 
     // CHECK INITIAL SESSION
     checkAuthSession();
