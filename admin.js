@@ -2230,7 +2230,7 @@ CREATE POLICY "Admin manage portal products" ON public.portal_products FOR ALL U
     async function fetchPortals() {
         try {
             const { data, error } = await sb.from('client_portals').select('*').order('created_at', { ascending: true });
-            if (data && !error && data.length > 0) {
+            if (!error && Array.isArray(data)) {
                 allPortals = data;
                 localStorage.setItem('imbera_client_portals', JSON.stringify(data));
             } else {
@@ -2243,7 +2243,7 @@ CREATE POLICY "Admin manage portal products" ON public.portal_products FOR ALL U
                 }
             }
         } catch(e) {
-            console.warn('Supabase portals query error, using baseline:', e);
+            console.warn('Supabase portals query error, using contingency:', e);
             const cached = localStorage.getItem('imbera_client_portals');
             allPortals = cached ? JSON.parse(cached) : (window.IMBERA_PORTALS_DATA ? window.IMBERA_PORTALS_DATA.portals : []);
         }
@@ -2256,7 +2256,7 @@ CREATE POLICY "Admin manage portal products" ON public.portal_products FOR ALL U
     async function fetchPortalProducts() {
         try {
             const { data, error } = await sb.from('portal_products').select('*').order('display_order', { ascending: true });
-            if (data && !error && data.length > 0) {
+            if (!error && Array.isArray(data)) {
                 allPortalProducts = data;
                 localStorage.setItem('imbera_portal_products', JSON.stringify(data));
             } else {
@@ -2269,7 +2269,7 @@ CREATE POLICY "Admin manage portal products" ON public.portal_products FOR ALL U
                 }
             }
         } catch(e) {
-            console.warn('Supabase portal products query error, using baseline:', e);
+            console.warn('Supabase portal products query error, using contingency:', e);
             const cached = localStorage.getItem('imbera_portal_products');
             allPortalProducts = cached ? JSON.parse(cached) : (window.IMBERA_PORTALS_DATA ? window.IMBERA_PORTALS_DATA.products : []);
         }

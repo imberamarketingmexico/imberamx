@@ -83,25 +83,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function loadPortalData() {
         const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
 
-        // a) Buscar en Supabase (si existe la tabla)
+        // a) Buscar en Supabase directamente (100% Online)
+        let portalFoundOnline = false;
+        let productsFoundOnline = false;
+
         if (sb) {
             try {
                 const { data: pData, error: pErr } = await sb.from('client_portals').select('*').eq('slug', currentSlug).single();
                 if (pData && !pErr) {
                     currentPortal = pData;
+                    portalFoundOnline = true;
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.warn('Error fetching portal from Supabase:', e);
+            }
 
             try {
                 const { data: prodsData, error: prodsErr } = await sb.from('portal_products').select('*').eq('portal_slug', currentSlug).eq('is_active', true).order('display_order');
-                if (prodsData && !prodsErr && prodsData.length > 0) {
+                if (!prodsErr && Array.isArray(prodsData)) {
                     portalProducts = prodsData;
+                    productsFoundOnline = true;
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.warn('Error fetching portal products from Supabase:', e);
+            }
         }
 
-        // b) Si no se encontró en Supabase, buscar en localStorage (guardado por admin)
-        if (!currentPortal) {
+        // b) Fallback de contingencia ÚNICAMENTE si Supabase no estuvo disponible
+        if (!portalFoundOnline && !currentPortal) {
             try {
                 const localPortals = JSON.parse(localStorage.getItem('imbera_client_portals') || '[]');
                 const found = localPortals.find(p => p.slug === currentSlug);
@@ -109,7 +118,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             } catch(e) {}
         }
 
-        if (portalProducts.length === 0) {
+        if (!productsFoundOnline && portalProducts.length === 0) {
             try {
                 const localProds = JSON.parse(localStorage.getItem('imbera_portal_products') || '[]');
                 const found = localProds.filter(p => p.portal_slug === currentSlug && p.is_active !== false);
@@ -117,12 +126,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             } catch(e) {}
         }
 
-        // c) Fallback a baseline estático de portals-data.js
+        // c) Último recurso estático sólo si la base de datos estaba vacía o inaccesible
         if (!currentPortal && window.IMBERA_PORTALS_DATA && Array.isArray(window.IMBERA_PORTALS_DATA.portals)) {
             currentPortal = window.IMBERA_PORTALS_DATA.portals.find(p => p.slug === currentSlug) || window.IMBERA_PORTALS_DATA.portals[0];
         }
 
-        if (portalProducts.length === 0 && window.IMBERA_PORTALS_DATA && Array.isArray(window.IMBERA_PORTALS_DATA.products)) {
+        if (!productsFoundOnline && portalProducts.length === 0 && window.IMBERA_PORTALS_DATA && Array.isArray(window.IMBERA_PORTALS_DATA.products)) {
             portalProducts = window.IMBERA_PORTALS_DATA.products.filter(p => p.portal_slug === currentSlug && p.is_active !== false);
         }
 
