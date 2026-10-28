@@ -619,7 +619,8 @@ async function initCatalog() {
                     // Si se buscó un UUID directo y sólo hay 1 producto, redirigir a detalle
                     if (outcome.isUuid && outcome.items.length === 1) {
                         const p = outcome.items[0];
-                        window.location.replace(`/producto?sku=${encodeURIComponent(p.sku)}`);
+                        const cleanSlug = typeof window.generateProductSlug === 'function' ? window.generateProductSlug(p) : p.sku;
+                        window.location.replace(`/producto/${cleanSlug}`);
                         return;
                     }
 
@@ -808,7 +809,8 @@ async function initCatalog() {
         const cardsHtml = products.map(p => {
             // Short model name preferred, fallback to commercial name
             const displayName = p.model_code || p.commercial_name;
-            const targetUrl = `/producto?sku=${encodeURIComponent(p.sku)}`;
+            const cleanSlug = typeof window.generateProductSlug === 'function' ? window.generateProductSlug(p) : p.sku;
+            const targetUrl = `/producto/${cleanSlug}`;
 
             return `
                 <div class="catalog-item" data-href="${targetUrl}" role="link" tabindex="0" aria-label="Ver detalles de ${displayName}">

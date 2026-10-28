@@ -1158,7 +1158,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <button type="button" class="btn-table-action btn-toggle-visibility ${isVisible ? 'visible' : 'hidden'}" data-id="${p.id}" data-active="${isVisible ? 'true' : 'false'}" title="${isVisible ? 'Visible en el sitio (Clic para ocultar)' : 'Oculto del sitio (Clic para mostrar)'}">
                                 <i class="fa-solid ${isVisible ? 'fa-eye' : 'fa-eye-slash'}"></i>
                             </button>
-                            <a href="producto.html?sku=${encodeURIComponent(p.sku)}" target="_blank" class="btn-table-action" title="Ver en sitio web">
+                            <a href="/producto/${typeof window.generateProductSlug === 'function' ? window.generateProductSlug(p) : p.sku}" target="_blank" class="btn-table-action" title="Ver en sitio web">
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </a>
                             <button type="button" class="btn-table-action btn-edit-product" data-id="${p.id}" title="Editar">

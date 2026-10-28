@@ -503,8 +503,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     const itemsHtml = outcome.items.map(p => {
                         const displayName = p.model_code || p.commercial_name;
-                        const modelSlug = (p.model_code || p.sku).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-                        const targetUrl = `/producto?sku=${encodeURIComponent(p.sku)}`;
+                        const cleanSlug = typeof window.generateProductSlug === 'function' ? window.generateProductSlug(p) : (p.model_code || p.sku);
+                        const targetUrl = `/producto/${cleanSlug}`;
                         const img = p.main_image || 'images/Enfriador_G3D42_Especial.jpg';
 
                         return `
@@ -592,7 +592,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 prodSlider.innerHTML = shuffled.map(p => {
                     const displayName = p.model_code || p.commercial_name;
-                    const targetUrl = `/producto?sku=${encodeURIComponent(p.sku)}`;
+                    const cleanSlug = typeof window.generateProductSlug === 'function' ? window.generateProductSlug(p) : p.sku;
+                    const targetUrl = `/producto/${cleanSlug}`;
                     const imgUrl = p.main_image || 'images/Enfriador_G3D42_Especial.jpg';
                     const subtitle = p.subtitle ? `<p class="product-subtitle">${p.subtitle}</p>` : '';
                     return `

@@ -260,14 +260,65 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    function findProductMatch(productsList, identifier, idParam) {
+        if (!Array.isArray(productsList) || productsList.length === 0) return null;
+        const qRaw = (identifier || '').trim().toLowerCase();
+        const qClean = qRaw.replace(/[^a-z0-9]/g, '');
+        const idClean = (idParam || '').trim().toLowerCase();
+
+        if (idClean) {
+            const byId = productsList.find(p => String(p.id || '').toLowerCase() === idClean);
+            if (byId) return byId;
+        }
+
+        if (!qClean) return null;
+
+        // 1. Exact SKU match
+        const bySku = productsList.find(p => String(p.sku || '').toLowerCase() === qRaw);
+        if (bySku) return bySku;
+
+        // 2. Exact Model Code match (e.g. VR12, VR12-B)
+        const byModel = productsList.find(p => {
+            const mClean = String(p.model_code || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+            return mClean && mClean === qClean;
+        });
+        if (byModel) return byModel;
+
+        // 3. Exact generated slug match
+        const bySlug = productsList.find(p => {
+            const slug = typeof window.generateProductSlug === 'function' ? window.generateProductSlug(p) : '';
+            return slug && slug === qRaw;
+        });
+        if (bySlug) return bySlug;
+
+        // 4. Model code contained in slug (e.g. "vitrina-cremera-phs13-n" contains "phs13n")
+        const byModelInside = productsList.find(p => {
+            const mClean = String(p.model_code || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (mClean && mClean.length >= 3) {
+                return qClean.endsWith(mClean) || qClean.includes(mClean);
+            }
+            return false;
+        });
+        if (byModelInside) return byModelInside;
+
+        // 5. Commercial name partial match
+        const byName = productsList.find(p => {
+            const cClean = String(p.commercial_name || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+            return cClean && (cClean.includes(qClean) || qClean.includes(cClean));
+        });
+        if (byName) return byName;
+
+        return null;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
-    let skuParam = urlParams.get('sku');
+    let skuParam = urlParams.get('sku') || urlParams.get('p') || urlParams.get('model');
     let idParam = urlParams.get('id');
 
     if (!skuParam && !idParam) {
         const pathSegments = window.location.pathname.split('/').filter(p => p && !p.endsWith('.html') && p !== 'producto');
         if (pathSegments.length > 0) {
-            skuParam = pathSegments[pathSegments.length - 1];
+            skuParam = decodeURIComponent(pathSegments[pathSegments.length - 1]);
         }
     }
 
@@ -283,17 +334,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch(e) {}
 
     if (!cached && window.IMBERA_DATA && Array.isArray(window.IMBERA_DATA.products)) {
-        const skuNorm = (skuParam || '').trim().toLowerCase();
-        const idNorm = (idParam || '').trim().toLowerCase();
-        cached = window.IMBERA_DATA.products.find(p => {
-            if (skuNorm && (String(p.sku || '').toLowerCase() === skuNorm || String(p.model_code || '').toLowerCase() === skuNorm)) return true;
-            if (idNorm && String(p.id || '').toLowerCase() === idNorm) return true;
-            return false;
-        });
+        cached = findProductMatch(window.IMBERA_DATA.products, skuParam, idParam);
     }
 
     if (cached) {
         renderProductData(cached);
+        try {
+            const cleanSlug = typeof window.generateProductSlug === 'function' ? window.generateProductSlug(cached) : '';
+            if (cleanSlug && !window.location.pathname.includes(cleanSlug)) {
+                window.history.replaceState({ sku: cached.sku, slug: cleanSlug }, '', `/producto/${cleanSlug}`);
+            }
+        } catch(e) {}
     }
 
     // --- ASYNC NETWORK FETCH (Supabase verification & page view) ---
@@ -301,25 +352,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const sb = window.imberaSupabase.client();
             let query = sb.from('products').select('*, categories(*)');
-            if (skuParam) {
-                query = query.or(`sku.eq.${skuParam},model_code.ilike.%${skuParam}%`);
+            
+            // Si el parámetro es puramente numérico (SKU)
+            if (skuParam && /^\d+$/.test(skuParam.trim())) {
+                query = query.eq('sku', skuParam.trim());
             } else if (idParam) {
                 query = query.eq('id', idParam);
+            } else {
+                // Si es un slug o modelo alfanumérico
+                query = query.eq('is_active', true);
             }
 
-            const { data: rows, error } = await query.limit(1);
-            const data = (rows && rows.length > 0) ? rows[0] : null;
+            const { data: rows, error } = await query;
+            let data = null;
+            if (rows && rows.length > 0) {
+                data = rows.length === 1 && (/^\d+$/.test(skuParam || '') || idParam) 
+                    ? rows[0] 
+                    : findProductMatch(rows, skuParam, idParam);
+            }
 
             if (data && !error) {
                 renderProductData(data);
 
+                // Actualizar URL limpia en navegador silenciosamente si venía por SKU o link anterior
+                try {
+                    const cleanSlug = typeof window.generateProductSlug === 'function' ? window.generateProductSlug(data) : '';
+                    if (cleanSlug && !window.location.pathname.includes(cleanSlug)) {
+                        window.history.replaceState({ sku: data.sku, slug: cleanSlug }, '', `/producto/${cleanSlug}`);
+                    }
+                } catch(e) {}
+
                 // Cache in sessionStorage for subsequent instantaneous visits
                 try {
                     if (data.sku) sessionStorage.setItem('imbera_prod_sku_' + data.sku, JSON.stringify(data));
-                    if (data.model_code) {
-                        const mSlug = data.model_code.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-                        sessionStorage.setItem('imbera_prod_slug_' + mSlug, JSON.stringify(data));
-                    }
+                    const cleanSlug = typeof window.generateProductSlug === 'function' ? window.generateProductSlug(data) : '';
+                    if (cleanSlug) sessionStorage.setItem('imbera_prod_slug_' + cleanSlug, JSON.stringify(data));
                 } catch(e) {}
 
                 // Register page view metric

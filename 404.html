@@ -34,6 +34,62 @@
     <link rel="icon" type="image/jpeg" href="/images/favicon.jpg?v=20261028">
     <link rel="shortcut icon" href="/images/favicon.jpg?v=20261028">
     <link rel="apple-touch-icon" href="/images/favicon.jpg?v=20261028">
+
+    <!-- Auto-Recuperador Inteligente de URLs Viejas Indexadas en Google -->
+    <script src="/supabase-client.js"></script>
+    <script src="/catalog-data.js"></script>
+    <script>
+    (function() {
+        try {
+            const rawPath = window.location.pathname.toLowerCase();
+            if (rawPath === '/404' || rawPath === '/404.html' || rawPath === '/') return;
+
+            // 1. Detectar si la URL rota contiene algún modelo o SKU del catálogo
+            if (window.IMBERA_DATA && Array.isArray(window.IMBERA_DATA.products)) {
+                const prods = window.IMBERA_DATA.products;
+                const pathClean = rawPath.replace(/[^a-z0-9]/g, '');
+
+                const match = prods.find(p => {
+                    const mCode = (p.model_code || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+                    if (mCode && mCode.length >= 3 && pathClean.includes(mCode)) return true;
+                    if (p.sku && pathClean.includes(String(p.sku))) return true;
+                    return false;
+                });
+
+                if (match) {
+                    const cleanSlug = typeof window.generateProductSlug === 'function' ? window.generateProductSlug(match) : match.sku;
+                    window.location.replace('/producto/' + cleanSlug);
+                    return;
+                }
+            }
+
+            // 2. Detectar si coincide con categorías del catálogo anterior
+            const catMap = {
+                'enfriadores-verticales': '/categoria.html?cat=enfriadores&sub=enfriadores-verticales',
+                'enfriadores-cerveceros': '/categoria.html?cat=enfriadores&sub=enfriadores-cerveceros',
+                'enfriadores-especiales': '/categoria.html?cat=enfriadores&sub=enfriadores-verticales-especiales',
+                'congeladores-horizontales': '/categoria.html?cat=congeladores&sub=congeladores-horizontales',
+                'congeladores-verticales': '/categoria.html?cat=congeladores&sub=congeladores-verticales',
+                'vitrinas-cremeras': '/categoria.html?cat=vitrinas&sub=vitrinas-cremeras',
+                'vitrinas-carniceras': '/categoria.html?cat=vitrinas&sub=vitrinas-carniceras',
+                'enfriadores': '/categoria.html?cat=enfriadores',
+                'congeladores': '/categoria.html?cat=congeladores',
+                'vitrinas': '/categoria.html?cat=vitrinas',
+                'rebanadoras': '/categoria.html?cat=procesamiento-y-pesaje&sub=rebanadoras',
+                'molinos': '/categoria.html?cat=procesamiento-y-pesaje&sub=molinos',
+                'pesaje': '/categoria.html?cat=procesamiento-y-pesaje&sub=pesaje',
+                'sierras': '/categoria.html?cat=procesamiento-y-pesaje&sub=sierras'
+            };
+
+            for (const [key, dest] of Object.entries(catMap)) {
+                if (rawPath.includes(key)) {
+                    window.location.replace(dest);
+                    return;
+                }
+            }
+        } catch(e) {}
+    })();
+    </script>
 </head>
 <body>
 
