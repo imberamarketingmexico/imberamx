@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    ADMIN PANEL STYLES (admin.css)
    ========================================================================== */
 :root {
@@ -501,6 +501,13 @@ body.admin-body {
 .legend-mobile .legend-dot {
     background-color: #16a34a;
 }
+
+.legend-leads .legend-dot {
+    background-color: #0284c7;
+}
+
+.legend-quotes .legend-dot {
+    background-color: #f59e0b;}
 
 .visitors-chart-container {
     position: relative;
