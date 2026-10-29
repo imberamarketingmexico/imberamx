@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const commName = document.getElementById('pCommercialName');
         const skuCode = document.getElementById('pSkuCode');
         const commFullName = document.getElementById('pCommercialFullName');
-        const commFullNameTag = document.getElementById('pCommercialFullNameTag');
+        const commSubtitle = document.getElementById('pCommercialSubtitle');
         const breadcrumbName = document.getElementById('breadcrumb-product-name');
         const quoteModelField = document.getElementById('quoteModelField');
         const quoteProductTitle = document.querySelector('.quote-product-name');
@@ -91,12 +91,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             skuCode.style.minWidth = '';
         }
 
-        // Full descriptive commercial model name (preserves full description for all products)
+        // Full descriptive commercial model name (placed cleanly right above code tag)
         const fullCommercialName = data.commercial_name || data.model_code;
         if (commFullName && fullCommercialName) {
             commFullName.innerText = fullCommercialName;
-            if (commFullNameTag) {
-                commFullNameTag.style.display = 'inline-flex';
+            if (commSubtitle) {
+                commSubtitle.style.display = 'block';
             }
         }
 

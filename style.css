@@ -2230,7 +2230,7 @@ ul {
     font-weight: 800;
     color: var(--primary-color);
     line-height: 1.1;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
     letter-spacing: -1px;
 }
 
@@ -2238,7 +2238,19 @@ ul {
     .product-commercial-name {
         font-size: 36px;
         letter-spacing: -0.5px;
+        margin-bottom: 6px;
     }
+}
+
+.product-commercial-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #475569;
+    letter-spacing: 0.3px;
+    line-height: 1.45;
+    margin-bottom: 12px;
+    word-break: break-word;
 }
 
 .product-meta-row {
@@ -2263,25 +2275,6 @@ ul {
 .product-code-tag strong {
     color: var(--primary-color);
     letter-spacing: 0.5px;
-}
-
-.product-model-full-tag {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: #475569;
-    background: #f8fafc;
-    padding: 6px 14px;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    max-width: 100%;
-    word-break: break-word;
-}
-
-.product-model-full-tag strong {
-    color: #0f172a;
-    letter-spacing: 0.3px;
-    font-weight: 700;
 }
 
 .product-capacity-tag {
