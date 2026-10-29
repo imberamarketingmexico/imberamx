@@ -390,7 +390,7 @@
                                 <i class="fa-solid fa-gears"></i>
                                 <span>Manual de Refacciones (PDF)</span>
                             </a>
-                            <a href="#cotizar-equipo" class="btn-quote-now">
+                            <a href="#cotizar-equipo" class="btn-quote-now" id="btnScrollToQuote" onclick="event.preventDefault(); document.getElementById('cotizar-equipo')?.scrollIntoView({behavior:'smooth'}); setTimeout(function(){ document.getElementById('pq_name')?.focus(); }, 400);">
                                 <i class="fa-solid fa-paper-plane"></i>
                                 <span>Cotizar este equipo</span>
                             </a>

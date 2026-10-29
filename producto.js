@@ -470,4 +470,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
+
+    // Scroll suave al formulario de cotización evitando la redirección a la raíz
+    document.querySelectorAll('.btn-quote-now, a[href="#cotizar-equipo"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetSection = document.getElementById('cotizar-equipo');
+            if (targetSection) {
+                targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => {
+                    const nameField = document.getElementById('pq_name');
+                    if (nameField) nameField.focus();
+                }, 400);
+            }
+        });
+    });
 });
