@@ -290,12 +290,14 @@ ul {
     cursor: pointer;
     font-weight: 500;
     color: #555;
+    text-decoration: none;
     transition: var(--transition);
 }
 
 .region-btn:hover {
     background: var(--bg-light);
     border-color: #ccc;
+    color: var(--primary-color);
 }
 
 /* Navigation Menu */
@@ -3258,6 +3260,8 @@ ul {
         border-radius: 20px;
         background: rgba(255, 255, 255, 0.1);
         width: fit-content;
+        text-decoration: none;
+        transition: var(--transition);
     }
 
     .mobile-drawer-social {
