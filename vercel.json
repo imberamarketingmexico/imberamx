@@ -97,6 +97,16 @@
       "permanent": false
     },
     {
+      "source": "/page-1",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/page-2",
+      "destination": "/",
+      "permanent": true
+    },
+    {
       "source": "/(.*)\\.(sql|env|bak|conf|log)",
       "destination": "/",
       "permanent": false
