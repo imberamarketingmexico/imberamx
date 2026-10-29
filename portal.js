@@ -172,8 +172,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Logotipo de la marca
         if (brandLogoEl && brandFallbackEl) {
             if (portal.logo_url) {
-                brandLogoEl.src = toSafeUrl(portal.logo_url);
                 brandLogoEl.alt = portalName;
+                brandLogoEl.onerror = function() {
+                    if (currentSlug === 'redbull' && !this.dataset.fallbackTried) {
+                        this.dataset.fallbackTried = 'true';
+                        this.src = 'images/redbull-logo.svg';
+                        return;
+                    }
+                    brandLogoEl.style.display = 'none';
+                    brandFallbackEl.innerText = portalName;
+                    brandFallbackEl.style.display = 'block';
+                };
+                brandLogoEl.src = toSafeUrl(portal.logo_url);
                 brandLogoEl.style.display = 'block';
                 brandFallbackEl.style.display = 'none';
             } else {

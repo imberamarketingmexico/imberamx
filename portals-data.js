@@ -11,7 +11,7 @@ window.IMBERA_PORTALS_DATA = {
             name: 'Red Bull Merchandisers',
             title: 'Merchandisers',
             subtitle: 'Catálogo Oficial de Equipos de Frío Red Bull',
-            logo_url: 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f5/RedBullEnergyDrink.svg/640px-RedBullEnergyDrink.svg.png',
+            logo_url: 'https://qezrauybkpzcenqilwcw.supabase.co/storage/v1/object/public/product-images/1793217047380_redbullcom_logo_double_with_text_svg.svg',
             banner_url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1920&q=80',
             primary_color: '#0C2340',     // Red Bull Deep Navy
             accent_color: '#DB0A40',      // Red Bull Crimson Red
