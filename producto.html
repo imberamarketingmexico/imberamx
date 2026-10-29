@@ -293,6 +293,7 @@
                             <h1 class="product-commercial-name skeleton-shimmer" id="pCommercialName" style="max-width: 100%; min-height: 48px;">&nbsp;</h1>
                             <div class="product-meta-row">
                                 <span class="product-code-tag">Código: <strong id="pSkuCode" class="skeleton-shimmer" style="min-width: 70px; display: inline-block;">&nbsp;</strong></span>
+                                <span class="product-code-tag product-model-full-tag" id="pCommercialFullNameTag" style="display: none;">Modelo comercial: <strong id="pCommercialFullName">&nbsp;</strong></span>
                             </div>
                         </header>
 
@@ -378,6 +379,7 @@
 
                         <!-- Action Buttons: 3 PDFs Download & Quote -->
                         <div class="product-action-box" id="productActionBox">
+                            <div class="product-pdf-group" id="productPdfGroup">
                             <a href="#" class="btn-download-pdf" id="downloadPdfBtn" target="_blank" style="display: none;">
                                 <i class="fa-solid fa-file-pdf"></i>
                                 <span>Ficha Técnica (PDF)</span>
@@ -390,10 +392,13 @@
                                 <i class="fa-solid fa-gears"></i>
                                 <span>Manual de Refacciones (PDF)</span>
                             </a>
+                            </div>
+                            <div class="product-quote-row">
                             <a href="#cotizar-equipo" class="btn-quote-now" id="btnScrollToQuote" onclick="event.preventDefault(); document.getElementById('cotizar-equipo')?.scrollIntoView({behavior:'smooth'}); setTimeout(function(){ document.getElementById('pq_name')?.focus(); }, 400);">
                                 <i class="fa-solid fa-paper-plane"></i>
                                 <span>Cotizar este equipo</span>
                             </a>
+                            </div>
                         </div>
 
                     </div>

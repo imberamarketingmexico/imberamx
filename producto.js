@@ -69,9 +69,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const displayName = data.model_code || data.commercial_name;
 
-        // Commercial Name & SKU Code
+        // Commercial Name & SKU Code & Descriptive Full Name
         const commName = document.getElementById('pCommercialName');
         const skuCode = document.getElementById('pSkuCode');
+        const commFullName = document.getElementById('pCommercialFullName');
+        const commFullNameTag = document.getElementById('pCommercialFullNameTag');
         const breadcrumbName = document.getElementById('breadcrumb-product-name');
         const quoteModelField = document.getElementById('quoteModelField');
         const quoteProductTitle = document.querySelector('.quote-product-name');
@@ -89,12 +91,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             skuCode.style.minWidth = '';
         }
 
+        // Full descriptive commercial model name (preserves full description for all products)
+        const fullCommercialName = data.commercial_name || data.model_code;
+        if (commFullName && fullCommercialName) {
+            commFullName.innerText = fullCommercialName;
+            if (commFullNameTag) {
+                commFullNameTag.style.display = 'inline-flex';
+            }
+        }
+
         if (breadcrumbName) {
             breadcrumbName.innerText = displayName;
         }
 
+        const quoteDescription = (data.commercial_name && data.commercial_name !== displayName)
+            ? `${displayName} - ${data.commercial_name}`
+            : displayName;
+
         if (quoteModelField) {
-            quoteModelField.value = `${displayName} (Código: ${data.sku})`;
+            quoteModelField.value = `${quoteDescription} (Código: ${data.sku})`;
         }
 
         if (quoteProductTitle) {
@@ -102,7 +117,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Update Page Title & SEO Meta Tags
-        document.title = `${displayName} (Código: ${data.sku}) | Imbera México`;
+        const pageTitleDesc = (data.commercial_name && data.commercial_name !== displayName)
+            ? `${displayName} (${data.commercial_name})`
+            : displayName;
+        document.title = `${pageTitleDesc} (Código: ${data.sku}) | Imbera México`;
 
         const cleanBullets = parseDescriptionBullets(data.description);
         const descText = cleanBullets.length > 0 

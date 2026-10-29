@@ -2265,6 +2265,25 @@ ul {
     letter-spacing: 0.5px;
 }
 
+.product-model-full-tag {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    background: #f8fafc;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    max-width: 100%;
+    word-break: break-word;
+}
+
+.product-model-full-tag strong {
+    color: #0f172a;
+    letter-spacing: 0.3px;
+    font-weight: 700;
+}
+
 .product-capacity-tag {
     font-family: 'Montserrat', sans-serif;
     font-size: 13px;
@@ -2443,12 +2462,22 @@ ul {
 /* Action Box */
 .product-action-box {
     display: flex;
-    gap: 15px;
+    flex-direction: column;
+    gap: 14px;
     margin-top: 30px;
+    width: 100%;
+}
+
+.product-pdf-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    width: 100%;
 }
 
 .btn-download-pdf {
-    flex: 1;
+    flex: 1 1 calc(33.333% - 12px);
+    min-width: 160px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -2456,34 +2485,41 @@ ul {
     background: #ffffff;
     color: var(--primary-color);
     border: 2px solid var(--primary-color);
-    padding: 14px 20px;
+    padding: 13px 18px;
     border-radius: 30px;
     font-weight: 700;
     font-family: 'Montserrat', sans-serif;
-    font-size: 14px;
+    font-size: 13.5px;
     transition: var(--transition);
     text-decoration: none;
+    text-align: center;
 }
 
 .btn-download-pdf:hover {
     background: var(--primary-color);
     color: #ffffff;
     box-shadow: 0 4px 15px rgba(11, 67, 114, 0.25);
+    transform: translateY(-2px);
+}
+
+.product-quote-row {
+    width: 100%;
 }
 
 .btn-quote-now {
-    flex: 1;
+    width: 100%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     background: var(--primary-color);
     color: #ffffff;
-    padding: 14px 20px;
+    padding: 15px 24px;
     border-radius: 30px;
     font-weight: 700;
     font-family: 'Montserrat', sans-serif;
-    font-size: 14px;
+    font-size: 15px;
+    letter-spacing: 0.3px;
     transition: var(--transition);
     text-decoration: none;
     box-shadow: 0 4px 15px rgba(11, 67, 114, 0.25);
@@ -2492,7 +2528,8 @@ ul {
 .btn-quote-now:hover {
     background: #00a651;
     color: #ffffff;
-    box-shadow: 0 4px 15px rgba(0, 166, 81, 0.3);
+    box-shadow: 0 6px 20px rgba(0, 166, 81, 0.35);
+    transform: translateY(-2px);
 }
 
 /* Product Quote Form Section */
@@ -2620,6 +2657,12 @@ ul {
     .product-action-box {
         flex-direction: column;
         gap: 12px;
+        width: 100%;
+    }
+
+    .product-pdf-group {
+        flex-direction: column;
+        gap: 10px;
         width: 100%;
     }
 
