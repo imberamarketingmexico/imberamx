@@ -199,6 +199,16 @@
       "permanent": true
     },
     {
+      "source": "/pdf/HFS25_1_1015712_318_FT_HFS25_FS_1PS_V7_ET_C_BMAD_R404a_115V-60Hz_IMBERA_IMBERA_MX_ESP_21032025.pdf",
+      "destination": "/categoria?cat=congeladores",
+      "permanent": true
+    },
+    {
+      "source": "/pdf/HFS25:path*",
+      "destination": "/categoria?cat=congeladores",
+      "permanent": true
+    },
+    {
       "source": "/(.*)\\.(sql|env|bak|conf|log)",
       "destination": "/",
       "permanent": false
