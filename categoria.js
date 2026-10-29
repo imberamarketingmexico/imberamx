@@ -83,6 +83,9 @@ async function initCatalog() {
     const searchQuery = (urlParams.get('q') || '').trim();
     let selectedCatSlug = urlParams.get('cat') || '';
     let selectedSubSlug = urlParams.get('sub') || '';
+    if (selectedCatSlug === 'salud-y-laboratorio') {
+        selectedCatSlug = 'enfriadores';
+    }
 
     function escapeHtml(str) {
         if (!str) return '';

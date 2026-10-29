@@ -157,6 +157,48 @@
       "permanent": true
     },
     {
+      "source": "/consultorios-y-farmacias-c-92-97",
+      "destination": "/categoria?cat=healthcare",
+      "permanent": true
+    },
+    {
+      "source": "/consultorios-y-farmacias-c-92-97/:path*",
+      "destination": "/categoria?cat=healthcare",
+      "permanent": true
+    },
+    {
+      "source": "/camaras-paquete-c-87-110",
+      "destination": "/categoria?cat=camaras-de-conservacion",
+      "permanent": true
+    },
+    {
+      "source": "/camaras-paquete-c-87-110/:path*",
+      "destination": "/categoria?cat=camaras-de-conservacion",
+      "permanent": true
+    },
+    {
+      "source": "/categoria",
+      "has": [
+        {
+          "type": "query",
+          "key": "cat",
+          "value": "salud-y-laboratorio"
+        }
+      ],
+      "destination": "/categoria?cat=enfriadores",
+      "permanent": true
+    },
+    {
+      "source": "/sostenibilidad-ezp-23",
+      "destination": "/sostenibilidad",
+      "permanent": true
+    },
+    {
+      "source": "/procesamiento-c-87-102/microondas-mitk09-p-1411",
+      "destination": "/producto/coccion-mitk-0-9",
+      "permanent": true
+    },
+    {
       "source": "/(.*)\\.(sql|env|bak|conf|log)",
       "destination": "/",
       "permanent": false
