@@ -107,6 +107,56 @@
       "permanent": true
     },
     {
+      "source": "/page-5",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/page-6",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/page-7",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/imbera-market",
+      "destination": "/distribuidores",
+      "permanent": true
+    },
+    {
+      "source": "/-p-314",
+      "destination": "/producto/vitrina-cremera-phs13-n",
+      "permanent": true
+    },
+    {
+      "source": "/-p-1287",
+      "destination": "/producto/congelador-vertical-vf1-5",
+      "permanent": true
+    },
+    {
+      "source": "/-p-1278",
+      "destination": "/producto/enfriador-vertical-vr1-5",
+      "permanent": true
+    },
+    {
+      "source": "/-p-1286",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/-p-1280",
+      "destination": "/producto/pesaje-bm-20kg",
+      "permanent": true
+    },
+    {
+      "source": "/-p-1386",
+      "destination": "/",
+      "permanent": true
+    },
+    {
       "source": "/(.*)\\.(sql|env|bak|conf|log)",
       "destination": "/",
       "permanent": false
