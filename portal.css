@@ -522,14 +522,39 @@ body.portal-body {
 
 .portal-specs-table td:first-child {
     font-weight: 500;
-    color: #334155;
-    width: 60%;
+    color: #475569;
+    width: 45%;
+    vertical-align: middle;
 }
 
 .portal-specs-table td:last-child {
     text-align: right;
     font-weight: 600;
     color: #0f172a;
+    vertical-align: middle;
+    word-break: break-word;
+}
+
+.portal-certs-row {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.portal-cert-badge {
+    height: 28px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    background: #ffffff;
+    transition: transform 0.15s ease;
+}
+
+.portal-cert-badge:hover {
+    transform: scale(1.08);
 }
 
 /* ==========================================

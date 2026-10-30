@@ -55,15 +55,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalDesc = document.getElementById('modalDesc');
     const btnModalSpecSheet = document.getElementById('btnModalSpecSheet');
     
-    // Spec table cells
-    const specCubicFt = document.getElementById('specCubicFt');
+    // Spec table cells (Exact 10 English fields)
+    const specSku = document.getElementById('specSku');
+    const specMaterialDesc = document.getElementById('specMaterialDesc');
     const specWidth = document.getElementById('specWidth');
     const specHeight = document.getElementById('specHeight');
     const specDepth = document.getElementById('specDepth');
+    const specCubicFt = document.getElementById('specCubicFt');
     const specVoltage = document.getElementById('specVoltage');
-    const specAmps = document.getElementById('specAmps');
-    const specWeight = document.getElementById('specWeight');
-    const specElectrical = document.getElementById('specElectrical');
+    const specRefrigerant = document.getElementById('specRefrigerant');
+    const specCanCapacity = document.getElementById('specCanCapacity');
+    const specCertsRow = document.getElementById('specCertsRow');
+
+    // Filter "Select All"
+    const filterSelectAll = document.getElementById('filterSelectAll');
+    const filterSelectAllDrawer = document.getElementById('filterSelectAllDrawer');
 
     // Data State
     let currentPortal = null;
@@ -211,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="portal-empty-state">
                     <i class="fa-solid fa-filter-circle-xmark"></i>
                     <h3>No matching merchandisers</h3>
-                    <p>Try clearing your filters to see more results.</p>
+                    <p>Try selecting categories above to see more results.</p>
                 </div>
             `;
             return;
@@ -220,14 +226,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         productsGridEl.innerHTML = items.map(p => {
             const dims = formatDimensions(p);
             const imgSrc = toSafeUrl(p.image_url) || 'images/Enfriador_VR17.jpg';
+            const modelName = p.title || p.sku || 'Merchandiser';
+            const categoryName = p.category || p.door_count || 'Single door';
 
             return `
                 <div class="portal-card" data-sku="${escapeHtml(p.sku)}">
                     <div class="portal-card-thumb-wrap">
-                        <img src="${imgSrc}" alt="${escapeHtml(p.title)}" class="portal-card-thumb" loading="lazy" onerror="this.src='images/Enfriador_VR17.jpg'">
+                        <img src="${imgSrc}" alt="${escapeHtml(modelName)}" class="portal-card-thumb" loading="lazy" onerror="this.src='images/Enfriador_VR17.jpg'">
                     </div>
-                    <span class="portal-card-sku">${escapeHtml(p.sku)}</span>
-                    <h3 class="portal-card-title">${escapeHtml(p.title)}</h3>
+                    <span class="portal-card-sku">${escapeHtml(modelName)}</span>
+                    <h3 class="portal-card-title">${escapeHtml(categoryName)}</h3>
                     <span class="portal-card-dims">${dims}</span>
                 </div>
             `;
@@ -252,62 +260,44 @@ document.addEventListener('DOMContentLoaded', async () => {
         return parts.length > 0 ? parts.join(' x ') : '';
     }
 
-    // 5. Filtros Dinámicos
-    function getSelectedFilters() {
-        const checkedBoxes = document.querySelectorAll('.portal-filter-checkbox:checked');
-        const selected = {
-            height: [],
-            doors: [],
-            doorStyle: [],
-            passThru: false
-        };
-
-        checkedBoxes.forEach(cb => {
-            const group = cb.getAttribute('data-group');
-            const val = cb.value;
-            if (group === 'height') selected.height.push(val);
-            if (group === 'doors') selected.doors.push(val);
-            if (group === 'doorStyle') selected.doorStyle.push(val);
-            if (group === 'passThru') selected.passThru = true;
-        });
-
-        return selected;
+    // 5. Filtros Dinámicos (Solo 5 categorías exactas)
+    function getSelectedCategories() {
+        const checkedBoxes = document.querySelectorAll('.portal-filter-checkbox[data-group="category"]:checked');
+        return Array.from(checkedBoxes).map(cb => cb.value.trim().toLowerCase());
     }
 
     function applyFilters() {
-        const filters = getSelectedFilters();
+        const selectedCats = getSelectedCategories();
+        const allCategoryCheckboxes = document.querySelectorAll('.portal-filter-checkbox[data-group="category"]');
+        
+        // Sync "Select all" state
+        const allChecked = selectedCats.length === allCategoryCheckboxes.length && allCategoryCheckboxes.length > 0;
+        if (filterSelectAll) filterSelectAll.checked = allChecked;
+        if (filterSelectAllDrawer) filterSelectAllDrawer.checked = allChecked;
 
-        filteredProducts = portalProducts.filter(p => {
-            // Filtro Altura
-            if (filters.height.length > 0) {
-                if (!filters.height.includes(p.height_type)) return false;
-            }
-
-            // Filtro Puertas
-            if (filters.doors.length > 0) {
-                if (!filters.doors.includes(p.door_count)) return false;
-            }
-
-            // Filtro Estilo de Puerta
-            if (filters.doorStyle.length > 0) {
-                if (!filters.doorStyle.includes(p.door_style)) return false;
-            }
-
-            // Filtro Pass Thru
-            if (filters.passThru) {
-                if (p.pass_through !== true && p.pass_through !== 'true') return false;
-            }
-
-            return true;
-        });
+        if (selectedCats.length === 0) {
+            filteredProducts = [];
+        } else {
+            filteredProducts = portalProducts.filter(p => {
+                const cat = (p.category || p.door_count || '').trim().toLowerCase();
+                return selectedCats.includes(cat);
+            });
+        }
 
         renderProducts(filteredProducts);
     }
 
+    function toggleSelectAll(checked) {
+        document.querySelectorAll('.portal-filter-checkbox[data-group="category"]').forEach(cb => {
+            cb.checked = checked;
+        });
+        if (filterSelectAll) filterSelectAll.checked = checked;
+        if (filterSelectAllDrawer) filterSelectAllDrawer.checked = checked;
+        applyFilters();
+    }
+
     function clearFilters() {
-        document.querySelectorAll('.portal-filter-checkbox').forEach(cb => cb.checked = false);
-        filteredProducts = [...portalProducts];
-        renderProducts(filteredProducts);
+        toggleSelectAll(true);
     }
 
     // Sincronizar checkboxes entre desktop y drawer móvil
@@ -315,11 +305,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (e.target.classList.contains('portal-filter-checkbox')) {
             const val = e.target.value;
             const checked = e.target.checked;
-            // Si el mismo checkbox está en sidebar y drawer, sincronizar
             document.querySelectorAll(`.portal-filter-checkbox[value="${val}"]`).forEach(cb => {
                 cb.checked = checked;
             });
             applyFilters();
+        } else if (e.target.id === 'filterSelectAll' || e.target.id === 'filterSelectAllDrawer') {
+            toggleSelectAll(e.target.checked);
         }
     });
 
@@ -345,7 +336,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // 6. Modal de Especificaciones Técnicas (Fiel al Screenshot del Usuario)
+    // 6. Certificaciones SVG Helper
+    function renderCertBadges(certStr) {
+        if (!certStr) return '-';
+        const str = String(certStr).toLowerCase();
+        const badges = [];
+
+        // Energy Star 4.0
+        if (str.includes('energy') || str.includes('star')) {
+            badges.push(`<img src="images/certs/energy-star.svg" alt="Energy Star 4.0" title="Energy Star 4.0" class="portal-cert-badge">`);
+        }
+        // UL NSF 7
+        if (str.includes('nsf') || str.includes('ul')) {
+            badges.push(`<img src="images/certs/ul-nsf.svg" alt="UL Classified NSF 7" title="UL Classified NSF 7" class="portal-cert-badge">`);
+        }
+        // DOE 17
+        if (str.includes('doe')) {
+            badges.push(`<img src="images/certs/doe-17.svg" alt="DOE 17 Compliant" title="DOE 17 Compliant" class="portal-cert-badge">`);
+        }
+
+        if (badges.length === 0) {
+            badges.push(`<img src="images/certs/energy-star.svg" alt="Energy Star 4.0" title="Energy Star 4.0" class="portal-cert-badge">`);
+            badges.push(`<img src="images/certs/ul-nsf.svg" alt="UL Classified NSF 7" title="UL Classified NSF 7" class="portal-cert-badge">`);
+            badges.push(`<img src="images/certs/doe-17.svg" alt="DOE 17" title="DOE 17" class="portal-cert-badge">`);
+        }
+
+        let extraNote = '';
+        if (str.includes('proceso') || str.includes('process')) {
+            extraNote = '<span style="font-size: 11px; color: #d97706; font-weight: 600; margin-left: 4px;">(en proceso)</span>';
+        } else if (str.includes('tbc')) {
+            extraNote = '<span style="font-size: 11px; color: #64748b; font-weight: 600; margin-left: 4px;">(TBC)</span>';
+        }
+
+        return badges.join('') + extraNote;
+    }
+
+    // 7. Modal de Especificaciones Técnicas (Exact 10 English fields)
     function openProductModal(p) {
         if (!modalOverlay) return;
 
@@ -353,17 +379,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (modalImg) modalImg.src = imgSrc;
         if (modalSku) modalSku.innerText = p.sku || '';
         if (modalTitle) modalTitle.innerText = p.title || '';
-        if (modalDesc) modalDesc.innerText = p.description || 'Cooler designed for high performance and visual impact.';
+        if (modalDesc) modalDesc.innerText = p.material_description || p.description || 'Commercial cooler designed for high performance and visual impact.';
 
-        // Especificaciones Técnicas (Screenshot Casillas)
+        // Technical Specifications (10 exact fields)
+        if (specSku) specSku.innerText = p.sku || '-';
+        if (specMaterialDesc) specMaterialDesc.innerText = p.material_description || p.description || '-';
+        if (specWidth) specWidth.innerText = p.width_in ? `${p.width_in}` : '-';
+        if (specHeight) specHeight.innerText = p.height_in ? `${p.height_in}` : '-';
+        if (specDepth) specDepth.innerText = p.depth_in ? `${p.depth_in}` : '-';
         if (specCubicFt) specCubicFt.innerText = p.cubic_ft || '-';
-        if (specWidth) specWidth.innerText = p.width_in || '-';
-        if (specHeight) specHeight.innerText = p.height_in || '-';
-        if (specDepth) specDepth.innerText = p.depth_in || '-';
         if (specVoltage) specVoltage.innerText = p.voltage || '-';
-        if (specAmps) specAmps.innerText = p.amps || '-';
-        if (specWeight) specWeight.innerText = p.weight_lbs || '-';
-        if (specElectrical) specElectrical.innerText = p.electrical_req || 'NEMA 5-15P';
+        if (specRefrigerant) specRefrigerant.innerText = p.refrigerant || p.weight_lbs || '-';
+        if (specCanCapacity) specCanCapacity.innerText = p.can_capacity || p.amps || '-';
+
+        const certsVal = p.certifications || p.electrical_req || 'Energy Star 4.0, UL NSF 7, DOE 17';
+        if (specCertsRow) {
+            specCertsRow.innerHTML = renderCertBadges(certsVal);
+        }
 
         // Botón Ficha Técnica PDF
         if (btnModalSpecSheet) {

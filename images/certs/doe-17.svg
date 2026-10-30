@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="48" height="48" title="DOE 17 Compliant">
+  <rect width="94" height="94" x="3" y="3" rx="10" fill="#0b3c5d" stroke="#062238" stroke-width="2"/>
+  <rect width="86" height="86" x="7" y="7" rx="8" fill="none" stroke="#328cc1" stroke-width="1.5"/>
+  <g fill="#ffffff">
+    <!-- Shield / Seal -->
+    <path d="M50 16 L68 23 V40 C68 53 50 63 50 63 C50 63 32 53 32 40 V23 Z" fill="#1d6fa5" stroke="#ffffff" stroke-width="1.5"/>
+    <!-- Leaf / Energy symbol inside shield -->
+    <path d="M50 25 C45 32 45 42 50 51 C55 42 55 32 50 25 Z" fill="#a4c639"/>
+    <!-- Text -->
+    <text x="50" y="76" font-family="'Montserrat', Arial, sans-serif" font-size="11" font-weight="900" text-anchor="middle" letter-spacing="1">DOE 17</text>
+    <text x="50" y="87" font-family="'Montserrat', Arial, sans-serif" font-size="6.5" font-weight="700" text-anchor="middle" letter-spacing="0.5" fill="#d9e2ec">COMPLIANT</text>
+  </g>
+</svg>

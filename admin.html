@@ -1040,88 +1040,68 @@
                     <textarea id="prodInputDesc" rows="3" placeholder="Descriptivo del equipo, beneficios de exhibición y retención térmica..."></textarea>
                 </div>
 
-                <!-- 2. Filtros de Categorización (Idéntico a Aeritek) -->
-                <div class="form-section-title full-col">2. Filtros de Categorización</div>
+                <!-- 2. Categoría (Only 5 allowed categories) -->
+                <div class="form-section-title full-col">2. Categoría del Equipo</div>
 
-                <div class="form-group">
-                    <label for="prodInputHeight">Altura (Height)</label>
-                    <select id="prodInputHeight">
-                        <option value="Full Height" selected>Full Height (Altura Completa)</option>
-                        <option value="Low Profile">Low Profile (Perfil Bajo)</option>
-                        <option value="Countertop">Countertop (Sobre Mostrador)</option>
+                <div class="form-group full-col">
+                    <label for="prodInputCategory">Category / Categoría *</label>
+                    <select id="prodInputCategory" required>
+                        <option value="Countertop">Countertop</option>
+                        <option value="Double door">Double door</option>
+                        <option value="Multidoor">Multidoor</option>
+                        <option value="Pass Thru">Pass Thru</option>
+                        <option value="Single door" selected>Single door</option>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="prodInputDoors">Número de Puertas (Number of Doors)</label>
-                    <select id="prodInputDoors">
-                        <option value="Single Door" selected>Single Door (1 Puerta)</option>
-                        <option value="Double Door">Double Door (2 Puertas)</option>
-                        <option value="Triple Door">Triple Door (3 Puertas)</option>
-                        <option value="Open Air">Open Air (Abierto / Sin Puerta)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="prodInputDoorStyle">Estilo de Puerta (Door Style)</label>
-                    <select id="prodInputDoorStyle">
-                        <option value="Hinge Door" selected>Hinge Door (Batiente / Abatible)</option>
-                        <option value="Sliding Door">Sliding Door (Corrediza)</option>
-                        <option value="Open Air">Open Air (Cortina de Aire / Abierto)</option>
-                    </select>
-                </div>
-
-                <div class="form-group" style="display: flex; flex-direction: column; justify-content: center;">
-                    <label style="margin-bottom: 8px;">Pass Thru (Doble Acceso)</label>
-                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer;">
-                        <input type="checkbox" id="prodInputPassThru" style="width: 18px; height: 18px;">
-                        <span>Acceso frontal y posterior (Pass Thru)</span>
-                    </label>
-                </div>
-
-                <!-- 3. DATOS TÉCNICOS ESPECÍFICOS (Screenshot Exacto del Usuario) -->
+                <!-- 3. Technical Specifications (Exact 10 user fields in English) -->
                 <div class="form-section-title full-col" style="background: #f1f5f9; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 700; color: #0f172a; margin-top: 10px;">
-                    <i class="fa-solid fa-table-list text-primary"></i> 3. Datos Técnicos (Casillas de la Ficha Técnica)
+                    <i class="fa-solid fa-table-list text-primary"></i> 3. Technical Specifications (English)
                 </div>
 
-                <div class="form-group">
-                    <label for="prodInputCubicFt">Cubic ft. *</label>
-                    <input type="text" id="prodInputCubicFt" placeholder="Ej: 9.67" required>
+                <div class="form-group full-col">
+                    <label for="prodInputMaterialDesc">Material Product description *</label>
+                    <input type="text" id="prodInputMaterialDesc" placeholder="e.g. GDC VR10 LED US/115V/60Hz/USpl R290/RB" required>
                 </div>
 
                 <div class="form-group">
                     <label for="prodInputWidth">Width (in) *</label>
-                    <input type="text" id="prodInputWidth" placeholder="Ej: 19.625" required>
+                    <input type="text" id="prodInputWidth" placeholder="e.g. 20.9" required>
                 </div>
 
                 <div class="form-group">
                     <label for="prodInputHeightIn">Height (in) *</label>
-                    <input type="text" id="prodInputHeightIn" placeholder="Ej: 74.25" required>
+                    <input type="text" id="prodInputHeightIn" placeholder="e.g. 54.5" required>
                 </div>
 
                 <div class="form-group">
                     <label for="prodInputDepthIn">Depth (in) *</label>
-                    <input type="text" id="prodInputDepthIn" placeholder="Ej: 24.625" required>
+                    <input type="text" id="prodInputDepthIn" placeholder="e.g. 18.6" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="prodInputCubicFt">Cubic ft. *</label>
+                    <input type="text" id="prodInputCubicFt" placeholder="e.g. 10" required>
                 </div>
 
                 <div class="form-group">
                     <label for="prodInputVoltage">Voltage *</label>
-                    <input type="text" id="prodInputVoltage" placeholder="Ej: 115 / 60 / 1" value="115 / 60 / 1" required>
+                    <input type="text" id="prodInputVoltage" placeholder="e.g. 115V / 60Hz" value="115V / 60Hz" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="prodInputAmps">Amps *</label>
-                    <input type="text" id="prodInputAmps" placeholder="Ej: 2.1" required>
+                    <label for="prodInputRefrigerant">Refrigerant *</label>
+                    <input type="text" id="prodInputRefrigerant" placeholder="e.g. R290, R600, R600a" value="R290" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="prodInputWeight">Weight (lbs) *</label>
-                    <input type="text" id="prodInputWeight" placeholder="Ej: 294" required>
+                    <label for="prodInputCanCapacity">8.6oz (250ml) Can capacity *</label>
+                    <input type="text" id="prodInputCanCapacity" placeholder="e.g. 360" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="prodInputElectrical">Electrical Requirements *</label>
-                    <input type="text" id="prodInputElectrical" placeholder="Ej: NEMA 5-15P" value="NEMA 5-15P" required>
+                <div class="form-group full-col">
+                    <label for="prodInputCertifications">Certifications *</label>
+                    <input type="text" id="prodInputCertifications" placeholder="e.g. Energy Star 4.0, UL NSF 7, DOE 17" value="Energy Star 4.0, UL NSF 7, DOE 17" required>
                 </div>
 
                 <!-- 4. Ficha Técnica PDF y Orden -->

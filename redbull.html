@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="portal.css?v=20261028_v1">
+    <link rel="stylesheet" href="portal.css?v=20261029_v2">
     
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="/images/favicon.jpg?v=20261028">
@@ -67,95 +67,43 @@
                 <form id="desktopFiltersForm" onsubmit="return false;">
                     <button type="button" class="btn-clear-filters" id="btnClearFilters">Clear Filters</button>
 
-                    <!-- Group 1: Height -->
                     <div class="portal-filter-group">
-                        <h3 class="portal-filter-title">Height</h3>
+                        <h3 class="portal-filter-title">Categories</h3>
                         <ul class="portal-filter-options">
                             <li>
-                                <label class="portal-filter-label">
-                                    <input type="checkbox" class="portal-filter-checkbox" data-group="height" value="Full Height">
-                                    <span>Full Height</span>
+                                <label class="portal-filter-label" style="font-weight: 700;">
+                                    <input type="checkbox" id="filterSelectAll" class="portal-filter-select-all" checked>
+                                    <span>Select all</span>
                                 </label>
                             </li>
                             <li>
                                 <label class="portal-filter-label">
-                                    <input type="checkbox" class="portal-filter-checkbox" data-group="height" value="Low Profile">
-                                    <span>Low Profile</span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="portal-filter-label">
-                                    <input type="checkbox" class="portal-filter-checkbox" data-group="height" value="Countertop">
+                                    <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Countertop" checked>
                                     <span>Countertop</span>
                                 </label>
                             </li>
-                        </ul>
-                    </div>
-
-                    <!-- Group 2: Number of Doors -->
-                    <div class="portal-filter-group">
-                        <h3 class="portal-filter-title">Number of Doors</h3>
-                        <ul class="portal-filter-options">
                             <li>
                                 <label class="portal-filter-label">
-                                    <input type="checkbox" class="portal-filter-checkbox" data-group="doors" value="Single Door">
-                                    <span>Single Door</span>
+                                    <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Double door" checked>
+                                    <span>Double door</span>
                                 </label>
                             </li>
                             <li>
                                 <label class="portal-filter-label">
-                                    <input type="checkbox" class="portal-filter-checkbox" data-group="doors" value="Double Door">
-                                    <span>Double Door</span>
+                                    <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Multidoor" checked>
+                                    <span>Multidoor</span>
                                 </label>
                             </li>
                             <li>
                                 <label class="portal-filter-label">
-                                    <input type="checkbox" class="portal-filter-checkbox" data-group="doors" value="Triple Door">
-                                    <span>Triple Door</span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="portal-filter-label">
-                                    <input type="checkbox" class="portal-filter-checkbox" data-group="doors" value="Open Air">
-                                    <span>Open Air</span>
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Group 3: Door Style -->
-                    <div class="portal-filter-group">
-                        <h3 class="portal-filter-title">Door Style</h3>
-                        <ul class="portal-filter-options">
-                            <li>
-                                <label class="portal-filter-label">
-                                    <input type="checkbox" class="portal-filter-checkbox" data-group="doorStyle" value="Hinge Door">
-                                    <span>Hinge Door</span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="portal-filter-label">
-                                    <input type="checkbox" class="portal-filter-checkbox" data-group="doorStyle" value="Sliding Door">
-                                    <span>Sliding Door</span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="portal-filter-label">
-                                    <input type="checkbox" class="portal-filter-checkbox" data-group="doorStyle" value="Open Air">
-                                    <span>Open Air</span>
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Group 4: Pass Thru -->
-                    <div class="portal-filter-group">
-                        <h3 class="portal-filter-title">Pass Thru</h3>
-                        <ul class="portal-filter-options">
-                            <li>
-                                <label class="portal-filter-label">
-                                    <input type="checkbox" class="portal-filter-checkbox" data-group="passThru" value="Pass Through">
+                                    <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Pass Thru" checked>
                                     <span>Pass Thru</span>
+                                </label>
+                            </li>
+                            <li>
+                                <label class="portal-filter-label">
+                                    <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Single door" checked>
+                                    <span>Single door</span>
                                 </label>
                             </li>
                         </ul>
@@ -185,37 +133,44 @@
                 <button type="button" class="btn-clear-filters" id="btnDrawerClearFilters">Clear Filters</button>
 
                 <div class="portal-filter-group">
-                    <h3 class="portal-filter-title">Height</h3>
+                    <h3 class="portal-filter-title">Categories</h3>
                     <ul class="portal-filter-options">
-                        <li><label class="portal-filter-label"><input type="checkbox" class="portal-filter-checkbox" data-group="height" value="Full Height"><span>Full Height</span></label></li>
-                        <li><label class="portal-filter-label"><input type="checkbox" class="portal-filter-checkbox" data-group="height" value="Low Profile"><span>Low Profile</span></label></li>
-                        <li><label class="portal-filter-label"><input type="checkbox" class="portal-filter-checkbox" data-group="height" value="Countertop"><span>Countertop</span></label></li>
-                    </ul>
-                </div>
-
-                <div class="portal-filter-group">
-                    <h3 class="portal-filter-title">Number of Doors</h3>
-                    <ul class="portal-filter-options">
-                        <li><label class="portal-filter-label"><input type="checkbox" class="portal-filter-checkbox" data-group="doors" value="Single Door"><span>Single Door</span></label></li>
-                        <li><label class="portal-filter-label"><input type="checkbox" class="portal-filter-checkbox" data-group="doors" value="Double Door"><span>Double Door</span></label></li>
-                        <li><label class="portal-filter-label"><input type="checkbox" class="portal-filter-checkbox" data-group="doors" value="Triple Door"><span>Triple Door</span></label></li>
-                        <li><label class="portal-filter-label"><input type="checkbox" class="portal-filter-checkbox" data-group="doors" value="Open Air"><span>Open Air</span></label></li>
-                    </ul>
-                </div>
-
-                <div class="portal-filter-group">
-                    <h3 class="portal-filter-title">Door Style</h3>
-                    <ul class="portal-filter-options">
-                        <li><label class="portal-filter-label"><input type="checkbox" class="portal-filter-checkbox" data-group="doorStyle" value="Hinge Door"><span>Hinge Door</span></label></li>
-                        <li><label class="portal-filter-label"><input type="checkbox" class="portal-filter-checkbox" data-group="doorStyle" value="Sliding Door"><span>Sliding Door</span></label></li>
-                        <li><label class="portal-filter-label"><input type="checkbox" class="portal-filter-checkbox" data-group="doorStyle" value="Open Air"><span>Open Air</span></label></li>
-                    </ul>
-                </div>
-
-                <div class="portal-filter-group">
-                    <h3 class="portal-filter-title">Pass Thru</h3>
-                    <ul class="portal-filter-options">
-                        <li><label class="portal-filter-label"><input type="checkbox" class="portal-filter-checkbox" data-group="passThru" value="Pass Through"><span>Pass Thru</span></label></li>
+                        <li>
+                            <label class="portal-filter-label" style="font-weight: 700;">
+                                <input type="checkbox" id="filterSelectAllDrawer" class="portal-filter-select-all" checked>
+                                <span>Select all</span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="portal-filter-label">
+                                <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Countertop" checked>
+                                <span>Countertop</span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="portal-filter-label">
+                                <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Double door" checked>
+                                <span>Double door</span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="portal-filter-label">
+                                <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Multidoor" checked>
+                                <span>Multidoor</span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="portal-filter-label">
+                                <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Pass Thru" checked>
+                                <span>Pass Thru</span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="portal-filter-label">
+                                <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Single door" checked>
+                                <span>Single door</span>
+                            </label>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -244,42 +199,52 @@
                     <h2 class="portal-modal-title" id="modalTitle">Cooler Commercial Name</h2>
                     <p class="portal-modal-desc" id="modalDesc">Detailed description of this merchandiser cooler.</p>
 
-                    <!-- Specifications Card (Identical to User's Screenshot) -->
+                    <!-- Technical Specifications Card (Exact User Spec) -->
                     <div class="portal-specs-card">
-                        <h4 class="portal-specs-title">Specifications</h4>
+                        <h4 class="portal-specs-title">Technical Specifications</h4>
                         <table class="portal-specs-table">
                             <tbody>
                                 <tr>
-                                    <td>Cubic ft.</td>
-                                    <td id="specCubicFt">9.67</td>
+                                    <td>SKU</td>
+                                    <td id="specSku">-</td>
+                                </tr>
+                                <tr>
+                                    <td>Material Product description</td>
+                                    <td id="specMaterialDesc">-</td>
                                 </tr>
                                 <tr>
                                     <td>Width (in)</td>
-                                    <td id="specWidth">19.625</td>
+                                    <td id="specWidth">-</td>
                                 </tr>
                                 <tr>
                                     <td>Height (in)</td>
-                                    <td id="specHeight">74.25</td>
+                                    <td id="specHeight">-</td>
                                 </tr>
                                 <tr>
                                     <td>Depth (in)</td>
-                                    <td id="specDepth">24.625</td>
+                                    <td id="specDepth">-</td>
+                                </tr>
+                                <tr>
+                                    <td>Cubic ft.</td>
+                                    <td id="specCubicFt">-</td>
                                 </tr>
                                 <tr>
                                     <td>Voltage</td>
-                                    <td id="specVoltage">115 / 60 / 1</td>
+                                    <td id="specVoltage">-</td>
                                 </tr>
                                 <tr>
-                                    <td>Amps</td>
-                                    <td id="specAmps">2.1</td>
+                                    <td>Refrigerant</td>
+                                    <td id="specRefrigerant">-</td>
                                 </tr>
                                 <tr>
-                                    <td>Weight (lbs)</td>
-                                    <td id="specWeight">294</td>
+                                    <td>8.6oz (250ml) Can capacity</td>
+                                    <td id="specCanCapacity">-</td>
                                 </tr>
                                 <tr>
-                                    <td>Electrical Requirements</td>
-                                    <td id="specElectrical">NEMA 5-15P</td>
+                                    <td>Certifications</td>
+                                    <td id="specCertifications">
+                                        <div class="portal-certs-row" id="specCertsRow">-</div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -304,9 +269,9 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="portals-data.js?v=20261028_v1"></script>
+    <script src="portals-data.js?v=20261029_v2"></script>
     <script src="supabase.js"></script>
     <script src="supabase-client.js"></script>
-    <script src="portal.js?v=20261028_v1"></script>
+    <script src="portal.js?v=20261029_v2"></script>
 </body>
 </html>

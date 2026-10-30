@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="48" height="48" title="UL Classified NSF 7 Certified">
+  <circle cx="50" cy="50" r="46" fill="#ffffff" stroke="#1e293b" stroke-width="3"/>
+  <circle cx="50" cy="50" r="39" fill="none" stroke="#1e293b" stroke-width="1.5" stroke-dasharray="2,2"/>
+  <g fill="#0f172a">
+    <!-- CLASSIFIED text arc or top -->
+    <text x="50" y="24" font-family="'Montserrat', Arial, sans-serif" font-size="7.5" font-weight="800" text-anchor="middle" letter-spacing="1">CLASSIFIED</text>
+    <!-- UL Icon -->
+    <text x="44" y="52" font-family="'Arial Black', Impact, sans-serif" font-size="28" font-weight="900" text-anchor="middle">UL</text>
+    <text x="70" y="44" font-family="'Montserrat', Arial, sans-serif" font-size="6" font-weight="700">®</text>
+    <!-- EPH / NSF 7 text -->
+    <text x="50" y="68" font-family="'Montserrat', Arial, sans-serif" font-size="8.5" font-weight="900" text-anchor="middle" letter-spacing="0.5">EPH</text>
+    <rect x="22" y="72" width="56" height="15" rx="3" fill="#0f172a"/>
+    <text x="50" y="83" font-family="'Montserrat', Arial, sans-serif" font-size="7" font-weight="800" text-anchor="middle" fill="#ffffff" letter-spacing="0.5">NSF/ANSI 7</text>
+  </g>
+</svg>

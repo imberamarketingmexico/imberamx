@@ -2146,18 +2146,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const prodInputTitle = document.getElementById('prodInputTitle');
     const prodInputImage = document.getElementById('prodInputImage');
     const prodInputDesc = document.getElementById('prodInputDesc');
-    const prodInputHeight = document.getElementById('prodInputHeight');
-    const prodInputDoors = document.getElementById('prodInputDoors');
-    const prodInputDoorStyle = document.getElementById('prodInputDoorStyle');
-    const prodInputPassThru = document.getElementById('prodInputPassThru');
-    const prodInputCubicFt = document.getElementById('prodInputCubicFt');
+    const prodInputCategory = document.getElementById('prodInputCategory');
+    const prodInputMaterialDesc = document.getElementById('prodInputMaterialDesc');
     const prodInputWidth = document.getElementById('prodInputWidth');
     const prodInputHeightIn = document.getElementById('prodInputHeightIn');
     const prodInputDepthIn = document.getElementById('prodInputDepthIn');
+    const prodInputCubicFt = document.getElementById('prodInputCubicFt');
     const prodInputVoltage = document.getElementById('prodInputVoltage');
-    const prodInputAmps = document.getElementById('prodInputAmps');
-    const prodInputWeight = document.getElementById('prodInputWeight');
-    const prodInputElectrical = document.getElementById('prodInputElectrical');
+    const prodInputRefrigerant = document.getElementById('prodInputRefrigerant');
+    const prodInputCanCapacity = document.getElementById('prodInputCanCapacity');
+    const prodInputCertifications = document.getElementById('prodInputCertifications');
     const prodInputPdf = document.getElementById('prodInputPdf');
     const prodInputOrder = document.getElementById('prodInputOrder');
     const imgPreviewPortalProd = document.getElementById('imgPreviewPortalProd');
@@ -2402,12 +2400,7 @@ CREATE POLICY "Admin manage portal products" ON public.portal_products FOR ALL U
                         <strong>${p.title || 'Cooler'}</strong>
                     </td>
                     <td>
-                        <div style="display: flex; flex-wrap: wrap; gap: 4px;">
-                            <span class="badge-status status-en_negociacion" style="font-size: 10px;">${p.height_type || 'Full Height'}</span>
-                            <span class="badge-status status-nuevo" style="font-size: 10px;">${p.door_count || '1 Puerta'}</span>
-                            <span class="badge-status status-cerrado" style="font-size: 10px;">${p.door_style || 'Hinge'}</span>
-                            ${p.pass_through ? '<span class="badge-status" style="background: #fef08a; color: #854d0e; font-size: 10px;">Pass Thru</span>' : ''}
-                        </div>
+                        <span class="badge-status status-en_negociacion" style="font-size: 11px; font-weight: 600;">${p.category || p.door_count || 'Single door'}</span>
                     </td>
                     <td>
                         <span style="font-size: 12px; color: #475569;">${dims}</span>
@@ -2738,8 +2731,12 @@ CREATE POLICY "Admin manage portal products" ON public.portal_products FOR ALL U
         portalProductModalTitle.innerText = `Agregar Equipo al Portal: ${selectedPortalSlug}`;
         prodInputIsActive.checked = true;
         prodInputPortalSlug.value = selectedPortalSlug;
-        prodInputVoltage.value = '115 / 60 / 1';
-        prodInputElectrical.value = 'NEMA 5-15P';
+        if (prodInputCategory) prodInputCategory.value = 'Single door';
+        if (prodInputMaterialDesc) prodInputMaterialDesc.value = '';
+        if (prodInputVoltage) prodInputVoltage.value = '115V / 60Hz';
+        if (prodInputRefrigerant) prodInputRefrigerant.value = 'R290';
+        if (prodInputCanCapacity) prodInputCanCapacity.value = '';
+        if (prodInputCertifications) prodInputCertifications.value = 'Energy Star 4.0, UL NSF 7, DOE 17';
         prodInputOrder.value = allPortalProducts.filter(x => x.portal_slug === selectedPortalSlug).length + 1;
         previewPortalProdImgContainer.style.display = 'none';
 
@@ -2759,20 +2756,18 @@ CREATE POLICY "Admin manage portal products" ON public.portal_products FOR ALL U
         prodInputTitle.value = prod.title || '';
         prodInputImage.value = prod.image_url || '';
         prodInputDesc.value = prod.description || '';
-        prodInputHeight.value = prod.height_type || 'Full Height';
-        prodInputDoors.value = prod.door_count || 'Single Door';
-        prodInputDoorStyle.value = prod.door_style || 'Hinge Door';
-        prodInputPassThru.checked = prod.pass_through === true || prod.pass_through === 'true';
+        if (prodInputCategory) prodInputCategory.value = prod.category || prod.door_count || 'Single door';
+        if (prodInputMaterialDesc) prodInputMaterialDesc.value = prod.material_description || prod.description || '';
 
-        // Casillas Técnicas (Screenshot del Usuario)
-        prodInputCubicFt.value = prod.cubic_ft || '';
-        prodInputWidth.value = prod.width_in || '';
-        prodInputHeightIn.value = prod.height_in || '';
-        prodInputDepthIn.value = prod.depth_in || '';
-        prodInputVoltage.value = prod.voltage || '115 / 60 / 1';
-        prodInputAmps.value = prod.amps || '';
-        prodInputWeight.value = prod.weight_lbs || '';
-        prodInputElectrical.value = prod.electrical_req || 'NEMA 5-15P';
+        // Technical Specifications (10 English Fields)
+        if (prodInputWidth) prodInputWidth.value = prod.width_in || '';
+        if (prodInputHeightIn) prodInputHeightIn.value = prod.height_in || '';
+        if (prodInputDepthIn) prodInputDepthIn.value = prod.depth_in || '';
+        if (prodInputCubicFt) prodInputCubicFt.value = prod.cubic_ft || '';
+        if (prodInputVoltage) prodInputVoltage.value = prod.voltage || '115V / 60Hz';
+        if (prodInputRefrigerant) prodInputRefrigerant.value = prod.refrigerant || prod.weight_lbs || 'R290';
+        if (prodInputCanCapacity) prodInputCanCapacity.value = prod.can_capacity || prod.amps || '';
+        if (prodInputCertifications) prodInputCertifications.value = prod.certifications || prod.electrical_req || 'Energy Star 4.0, UL NSF 7, DOE 17';
 
         prodInputPdf.value = prod.spec_sheet_url || '';
         prodInputOrder.value = prod.display_order || 1;
@@ -2798,24 +2793,32 @@ CREATE POLICY "Admin manage portal products" ON public.portal_products FOR ALL U
             const prodId = editPortalProdId.value.trim();
             const targetPortal = prodInputPortalSlug.value;
 
+            const categoryVal = prodInputCategory ? prodInputCategory.value : 'Single door';
+            const matDescVal = prodInputMaterialDesc ? prodInputMaterialDesc.value.trim() : '';
+            const refrigerantVal = prodInputRefrigerant ? prodInputRefrigerant.value.trim() : 'R290';
+            const canCapVal = prodInputCanCapacity ? prodInputCanCapacity.value.trim() : '';
+            const certsVal = prodInputCertifications ? prodInputCertifications.value.trim() : 'Energy Star 4.0, UL NSF 7, DOE 17';
+
             const payload = {
                 portal_slug: targetPortal,
                 sku: prodInputSku.value.trim(),
                 title: prodInputTitle.value.trim(),
                 image_url: prodInputImage.value.trim() || null,
-                description: prodInputDesc.value.trim() || '',
-                height_type: prodInputHeight.value,
-                door_count: prodInputDoors.value,
-                door_style: prodInputDoorStyle.value,
-                pass_through: prodInputPassThru.checked,
+                description: matDescVal || prodInputDesc.value.trim() || '',
+                material_description: matDescVal,
+                door_count: categoryVal, // Keep compatibility with door_count schema
+                category: categoryVal,
                 cubic_ft: prodInputCubicFt.value.trim(),
                 width_in: prodInputWidth.value.trim(),
                 height_in: prodInputHeightIn.value.trim(),
                 depth_in: prodInputDepthIn.value.trim(),
                 voltage: prodInputVoltage.value.trim(),
-                amps: prodInputAmps.value.trim(),
-                weight_lbs: prodInputWeight.value.trim(),
-                electrical_req: prodInputElectrical.value.trim(),
+                amps: canCapVal, // Store can capacity in amps column for DB schema compatibility
+                can_capacity: canCapVal,
+                weight_lbs: refrigerantVal, // Store refrigerant in weight_lbs column for DB schema compatibility
+                refrigerant: refrigerantVal,
+                electrical_req: certsVal, // Store certifications in electrical_req column for DB schema compatibility
+                certifications: certsVal,
                 spec_sheet_url: prodInputPdf.value.trim() || null,
                 display_order: parseInt(prodInputOrder.value, 10) || 1,
                 is_active: prodInputIsActive.checked,
