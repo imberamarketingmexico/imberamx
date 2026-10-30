@@ -228,6 +228,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const imgSrc = toSafeUrl(p.image_url) || 'images/Enfriador_VR17.jpg';
             const modelName = p.title || p.sku || 'Merchandiser';
             const categoryName = p.category || p.door_count || 'Single door';
+            const specSheetHref = p.spec_sheet_url ? toSafeUrl(p.spec_sheet_url) : '#';
+            const specSheetTarget = p.spec_sheet_url ? 'target="_blank"' : '';
 
             return `
                 <div class="portal-card" data-sku="${escapeHtml(p.sku)}">
@@ -237,13 +239,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <span class="portal-card-sku">${escapeHtml(modelName)}</span>
                     <h3 class="portal-card-title">${escapeHtml(categoryName)}</h3>
                     <span class="portal-card-dims">${dims}</span>
+                    <a href="${specSheetHref}" ${specSheetTarget} class="btn-card-specsheet" data-sku="${escapeHtml(p.sku)}" title="Download Spec Sheet">
+                        <i class="fa-solid fa-file-pdf"></i> Download Spec Sheet
+                    </a>
                 </div>
             `;
         }).join('');
 
-        // Event listener a cada tarjeta para abrir el modal
+        // Event listener a cada tarjeta para abrir el modal o descargar ficha técnica
         document.querySelectorAll('.portal-card').forEach(card => {
-            card.addEventListener('click', () => {
+            card.addEventListener('click', (e) => {
+                const specBtn = e.target.closest('.btn-card-specsheet');
+                if (specBtn) {
+                    const sku = specBtn.getAttribute('data-sku');
+                    const product = portalProducts.find(p => p.sku === sku);
+                    // Si no tiene URL directa de PDF cargada aún, abrir el modal con los 10 datos técnicos
+                    if (!product || !product.spec_sheet_url) {
+                        e.preventDefault();
+                        if (product) openProductModal(product);
+                    }
+                    return;
+                }
+
                 const sku = card.getAttribute('data-sku');
                 const product = portalProducts.find(p => p.sku === sku);
                 if (product) openProductModal(product);

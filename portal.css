@@ -337,6 +337,52 @@ body.portal-body {
     color: #64748b;
     line-height: 1.35;
     font-weight: 400;
+    margin-bottom: 12px;
+}
+
+/* Card Download Spec Sheet Button */
+.btn-card-specsheet {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    margin-top: auto;
+    padding: 8px 12px;
+    background-color: #f1f5f9;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-card-specsheet i {
+    color: #dc2626;
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.portal-card:hover .btn-card-specsheet {
+    background-color: var(--portal-button);
+    color: var(--portal-button-text);
+    border-color: var(--portal-button);
+}
+
+.portal-card:hover .btn-card-specsheet i {
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.btn-card-specsheet:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 /* Empty State */
