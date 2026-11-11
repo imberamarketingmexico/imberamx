@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <title>Optimizador Interno de Imágenes | Imbera</title>
+    <link rel="icon" type="image/jpeg" href="/images/favicon.jpg?v=20261028">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        :root {
+            --brand: #00457C;
+            --brand-dark: #0C2340;
+            --accent: #00AEEF;
+            --bg: #f1f5f9;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --muted: #64748b;
+            --success: #059669;
+            --success-bg: #ecfdf5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .opt-topbar {
+            background: var(--brand-dark);
+            color: #ffffff;
+            padding: 16px 24px;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .opt-topbar-inner {
+            max-width: 1240px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .opt-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .opt-brand img {
+            height: 30px;
+            filter: brightness(0) invert(1);
+        }
+
+        .opt-badge-internal {
+            background: rgba(0, 174, 239, 0.2);
+            border: 1px solid rgba(0, 174, 239, 0.5);
+            color: #bae6fd;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .opt-top-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .opt-link-btn {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.15s ease;
+        }
+
+        .opt-link-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+        }
+
+        .opt-container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 28px 24px 64px;
+        }
+
+        .opt-header {
+            margin-bottom: 24px;
+        }
+
+        .opt-header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--brand-dark);
+            margin-bottom: 6px;
+        }
+
+        .opt-header p {
+            color: var(--muted);
+            font-size: 14.5px;
+            max-width: 820px;
+        }
+
+        .opt-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+            margin-bottom: 22px;
+        }
+
+        .opt-presets {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .opt-preset-btn {
+            text-align: left;
+            background: #f8fafc;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-family: inherit;
+        }
+
+        .opt-preset-btn:hover {
+            border-color: #94a3b8;
+        }
+
+        .opt-preset-btn.active {
+            background: #eff6ff;
+            border-color: var(--brand);
+            box-shadow: 0 4px 12px rgba(0, 69, 124, 0.1);
+        }
+
+        .opt-preset-title {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--brand-dark);
+            margin-bottom: 3px;
+        }
+
+        .opt-preset-desc {
+            display: block;
+            font-size: 11.5px;
+            color: var(--muted);
+        }
+
+        .opt-controls-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .opt-control label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .opt-control select,
+        .opt-control input[type="range"] {
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .opt-control select {
+            padding: 9px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .opt-dropzone {
+            border: 2.5px dashed #93c5fd;
+            background: #f8fbff;
+            border-radius: 14px;
+            padding: 40px 24px;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            margin-bottom: 22px;
+        }
+
+        .opt-dropzone.dragover {
+            border-color: var(--brand);
+            background: #e0f2fe;
+            transform: scale(1.005);
+        }
+
+        .opt-dropzone i {
+            font-size: 38px;
+            color: var(--brand);
+            margin-bottom: 12px;
+        }
+
+        .opt-dropzone h2 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--brand-dark);
+            margin-bottom: 6px;
+        }
+
+        .opt-dropzone p {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 18px;
+        }
+
+        .opt-drop-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            border-radius: 9px;
+            padding: 10px 18px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-primary {
+            background: var(--brand);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: var(--brand-dark);
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: var(--brand-dark);
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: #ffffff;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .opt-summary-bar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            background: var(--brand-dark);
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+        }
+
+        .opt-summary-bar.visible {
+            display: flex;
+        }
+
+        .opt-summary-metrics {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+
+        .opt-metric span {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .opt-metric strong {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .opt-metric strong.accent {
+            color: #34d399;
+        }
+
+        .opt-summary-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .opt-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 16px;
+        }
+
+        .opt-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+        }
+
+        .opt-thumb-wrap {
+            height: 180px;
+            background-image: linear-gradient(45deg, #f1f5f9 25%, transparent 25%),
+                linear-gradient(-45deg, #f1f5f9 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #f1f5f9 75%),
+                linear-gradient(-45deg, transparent 75%, #f1f5f9 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .opt-thumb-wrap img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .opt-saving-pill {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--success-bg);
+            color: var(--success);
+            border: 1px solid #a7f3d0;
+            font-size: 11.5px;
+            font-weight: 800;
+            padding: 3px 9px;
+            border-radius: 999px;
+        }
+
+        .opt-card-body {
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .opt-filename {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--brand-dark);
+            word-break: break-word;
+        }
+
+        .opt-meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .opt-size-compare {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+            font-weight: 700;
+        }
+
+        .opt-size-old {
+            color: #94a3b8;
+            text-decoration: line-through;
+            font-weight: 600;
+        }
+
+        .opt-size-new {
+            color: var(--success);
+        }
+
+        .opt-card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+            padding-top: 8px;
+        }
+
+        .opt-card-actions .btn {
+            flex: 1;
+            padding: 8px 10px;
+            font-size: 12px;
+        }
+
+        /* Compare Modal */
+        .opt-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.78);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .opt-modal-overlay.open {
+            display: flex;
+        }
+
+        .opt-modal {
+            background: #ffffff;
+            border-radius: 14px;
+            max-width: 980px;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        .opt-modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .opt-modal-head h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--brand-dark);
+        }
+
+        .opt-modal-close {
+            background: var(--brand);
+            color: #ffffff;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .opt-compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .opt-compare-col {
+            background: #ffffff;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .opt-compare-col img {
+            max-height: 400px;
+            max-width: 100%;
+            object-fit: contain;
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .opt-compare-label {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            background: #f1f5f9;
+            color: var(--brand-dark);
+        }
+
+        @media (max-width: 900px) {
+            .opt-presets {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .opt-controls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .opt-compare-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .opt-presets {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="opt-topbar">
+        <div class="opt-topbar-inner">
+            <div class="opt-brand">
+                <img src="/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera">
+                <span class="opt-badge-internal">Herramienta Interna</span>
+            </div>
+            <div class="opt-top-actions">
+                <a href="/redbull" class="opt-link-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> Portal Red Bull</a>
+                <a href="/admin" class="opt-link-btn"><i class="fa-solid fa-sliders"></i> Admin</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="opt-container">
+        <div class="opt-header">
+            <h1>Optimizador de Imágenes para Catálogo y Web</h1>
+            <p>Reduce hasta <strong>80–92% el peso</strong> de renders PNG (conservando fondo transparente) y fotografías JPG directamente en tu navegador sin perder nitidez visual, listo para subir al sitio o reemplazar archivos pesados.</p>
+        </div>
+
+        <section class="opt-panel">
+            <div class="opt-presets" id="presetButtons">
+                <button type="button" class="opt-preset-btn active" data-format="image/webp" data-max="1600" data-quality="86">
+                    <span class="opt-preset-title">Renders de Equipos (Recomendado)</span>
+                    <span class="opt-preset-desc">WebP HD · Transparencia intacta · Máx 1600px · 86%</span>
+                </button>
+                <button type="button" class="opt-preset-btn" data-format="image/webp" data-max="1200" data-quality="80">
+                    <span class="opt-preset-title">Catálogo Ultra Ligero</span>
+                    <span class="opt-preset-desc">WebP · Carga instantánea · Máx 1200px · 80%</span>
+                </button>
+                <button type="button" class="opt-preset-btn" data-format="image/jpeg" data-max="1920" data-quality="84">
+                    <span class="opt-preset-title">Fotos de Planta / Banners</span>
+                    <span class="opt-preset-desc">JPG optimizado · Fondo blanco si es PNG · 1920px · 84%</span>
+                </button>
+                <button type="button" class="opt-preset-btn" data-format="image/png" data-max="1400" data-quality="90">
+                    <span class="opt-preset-title">Solo Redimensionar PNG</span>
+                    <span class="opt-preset-desc">Mantiene formato .png · Máx 1400px</span>
+                </button>
+            </div>
+
+            <div class="opt-controls-grid">
+                <div class="opt-control">
+                    <label for="optFormat">Formato de salida</label>
+                    <select id="optFormat">
+                        <option value="image/webp">WebP (Máxima compresión + Transparencia)</option>
+                        <option value="image/jpeg">JPEG (Ideal para fotos y banners)</option>
+                        <option value="image/png">PNG (Sin pérdida, mayor peso)</option>
+                    </select>
+                </div>
+                <div class="opt-control">
+                    <label for="optMaxDim">Dimensión máxima (lado mayor)</label>
+                    <select id="optMaxDim">
+                        <option value="0">Mantener tamaño original</option>
+                        <option value="1920">1920 px (Full HD)</option>
+                        <option value="1600" selected>1600 px (Renders HD)</option>
+                        <option value="1200">1200 px (Catálogo ligero)</option>
+                        <option value="800">800 px (Miniaturas / Cards)</option>
+                    </select>
+                </div>
+                <div class="opt-control">
+                    <label for="optQuality">
+                        <span>Calidad visual</span>
+                        <span id="optQualityVal">86%</span>
+                    </label>
+                    <input type="range" id="optQuality" min="60" max="96" value="86">
+                </div>
+            </div>
+        </section>
+
+        <div class="opt-dropzone" id="optDropzone">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <h2>Arrastra aquí tus imágenes PNG, JPG o WebP (o una carpeta completa)</h2>
+            <p>Todo el procesamiento ocurre localmente en tu equipo. Ningún archivo se envía a servidores externos.</p>
+            <div class="opt-drop-buttons">
+                <button type="button" class="btn btn-primary" id="btnPickFiles">
+                    <i class="fa-regular fa-images"></i> Seleccionar imágenes
+                </button>
+                <button type="button" class="btn btn-secondary" id="btnPickFolder">
+                    <i class="fa-regular fa-folder-open"></i> Seleccionar carpeta
+                </button>
+            </div>
+            <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" multiple hidden>
+            <input type="file" id="folderInput" webkitdirectory directory multiple hidden>
+        </div>
+
+        <div class="opt-summary-bar" id="optSummaryBar">
+            <div class="opt-summary-metrics">
+                <div class="opt-metric">
+                    <span>Archivos</span>
+                    <strong id="sumCount">0</strong>
+                </div>
+                <div class="opt-metric">
+                    <span>Peso original</span>
+                    <strong id="sumOriginal">0 KB</strong>
+                </div>
+                <div class="opt-metric">
+                    <span>Peso optimizado</span>
+                    <strong id="sumOptimized">0 KB</strong>
+                </div>
+                <div class="opt-metric">
+                    <span>Ahorro total</span>
+                    <strong class="accent" id="sumSaved">0%</strong>
+                </div>
+            </div>
+            <div class="opt-summary-actions">
+                <button type="button" class="btn btn-secondary" id="btnClearAll">
+                    <i class="fa-solid fa-trash"></i> Limpiar lista
+                </button>
+                <button type="button" class="btn btn-success" id="btnDownloadZip">
+                    <i class="fa-solid fa-file-zipper"></i> Descargar todo en ZIP
+                </button>
+            </div>
+        </div>
+
+        <section class="opt-grid" id="optGrid"></section>
+    </main>
+
+    <div class="opt-modal-overlay" id="compareModal">
+        <div class="opt-modal">
+            <div class="opt-modal-head">
+                <h3 id="compareTitle">Comparativa Visual</h3>
+                <button type="button" class="opt-modal-close" id="compareClose" aria-label="Cerrar">&times;</button>
+            </div>
+            <div class="opt-compare-grid">
+                <div class="opt-compare-col">
+                    <span class="opt-compare-label" id="compareOrigLabel">Original</span>
+                    <div><img id="compareOrigImg" alt="Original"></div>
+                </div>
+                <div class="opt-compare-col">
+                    <span class="opt-compare-label" id="compareOptLabel" style="background:#ecfdf5;color:#059669;">Optimizada</span>
+                    <div><img id="compareOptImg" alt="Optimizada"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const dropzone = document.getElementById('optDropzone');
+            const fileInput = document.getElementById('fileInput');
+            const folderInput = document.getElementById('folderInput');
+            const btnPickFiles = document.getElementById('btnPickFiles');
+            const btnPickFolder = document.getElementById('btnPickFolder');
+            const formatSelect = document.getElementById('optFormat');
+            const maxDimSelect = document.getElementById('optMaxDim');
+            const qualityRange = document.getElementById('optQuality');
+            const qualityVal = document.getElementById('optQualityVal');
+            const presetButtons = document.querySelectorAll('.opt-preset-btn');
+
+            const summaryBar = document.getElementById('optSummaryBar');
+            const sumCount = document.getElementById('sumCount');
+            const sumOriginal = document.getElementById('sumOriginal');
+            const sumOptimized = document.getElementById('sumOptimized');
+            const sumSaved = document.getElementById('sumSaved');
+            const optGrid = document.getElementById('optGrid');
+            const btnClearAll = document.getElementById('btnClearAll');
+            const btnDownloadZip = document.getElementById('btnDownloadZip');
+
+            const compareModal = document.getElementById('compareModal');
+            const compareClose = document.getElementById('compareClose');
+            const compareTitle = document.getElementById('compareTitle');
+            const compareOrigLabel = document.getElementById('compareOrigLabel');
+            const compareOptLabel = document.getElementById('compareOptLabel');
+            const compareOrigImg = document.getElementById('compareOrigImg');
+            const compareOptImg = document.getElementById('compareOptImg');
+
+            const items = [];
+
+            function formatBytes(bytes) {
+                if (!bytes) return '0 KB';
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+            }
+
+            function getOutputExtension(mime) {
+                if (mime === 'image/webp') return '.webp';
+                if (mime === 'image/jpeg') return '.jpg';
+                return '.png';
+            }
+
+            function buildOutputName(origPath, mime) {
+                const ext = getOutputExtension(mime);
+                return origPath.replace(/\.[^/.]+$/, '') + ext;
+            }
+
+            function loadImageFromFile(file) {
+                return new Promise((resolve, reject) => {
+                    const url = URL.createObjectURL(file);
+                    const img = new Image();
+                    img.onload = () => resolve({ img, url });
+                    img.onerror = (err) => {
+                        URL.revokeObjectURL(url);
+                        reject(err);
+                    };
+                    img.src = url;
+                });
+            }
+
+            async function compressItem(item) {
+                const mime = formatSelect.value;
+                const maxDim = parseInt(maxDimSelect.value, 10) || 0;
+                const quality = parseInt(qualityRange.value, 10) / 100;
+
+                let w = item.width;
+                let h = item.height;
+                if (maxDim > 0 && (w > maxDim || h > maxDim)) {
+                    if (w >= h) {
+                        h = Math.round(h * (maxDim / w));
+                        w = maxDim;
+                    } else {
+                        w = Math.round(w * (maxDim / h));
+                        h = maxDim;
+                    }
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+
+                if (mime === 'image/jpeg') {
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, w, h);
+                }
+
+                ctx.drawImage(item.imgElement, 0, 0, w, h);
+
+                const blob = await new Promise(resolve => {
+                    canvas.toBlob(resolve, mime, quality);
+                });
+
+                if (item.optUrl) URL.revokeObjectURL(item.optUrl);
+                item.optBlob = blob;
+                item.optUrl = URL.createObjectURL(blob);
+                item.optWidth = w;
+                item.optHeight = h;
+                item.optName = buildOutputName(item.relativePath || item.file.name, mime);
+            }
+
+            async function addFiles(fileList) {
+                const supported = Array.from(fileList).filter(f => /^image\/(png|jpeg|webp)$/i.test(f.type));
+                for (const file of supported) {
+                    try {
+                        const { img, url } = await loadImageFromFile(file);
+                        const item = {
+                            id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+                            file,
+                            relativePath: file.webkitRelativePath || file.name,
+                            imgElement: img,
+                            origUrl: url,
+                            width: img.naturalWidth,
+                            height: img.naturalHeight,
+                            optBlob: null,
+                            optUrl: null,
+                            optWidth: img.naturalWidth,
+                            optHeight: img.naturalHeight,
+                            optName: file.name
+                        };
+                        await compressItem(item);
+                        items.push(item);
+                    } catch (err) {
+                        console.warn('Error cargando imagen:', file.name, err);
+                    }
+                }
+                renderAll();
+            }
+
+            async function recompressAll() {
+                for (const item of items) {
+                    await compressItem(item);
+                }
+                renderAll();
+            }
+
+            function triggerDownload(url, filename) {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename.split('/').pop();
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            }
+
+            function renderAll() {
+                if (items.length === 0) {
+                    summaryBar.classList.remove('visible');
+                    optGrid.innerHTML = '';
+                    return;
+                }
+
+                summaryBar.classList.add('visible');
+                let totalOrig = 0;
+                let totalOpt = 0;
+
+                optGrid.innerHTML = items.map(item => {
+                    const origSize = item.file.size;
+                    const optSize = item.optBlob ? item.optBlob.size : origSize;
+                    totalOrig += origSize;
+                    totalOpt += optSize;
+                    const pct = origSize > 0 ? Math.round(((origSize - optSize) / origSize) * 100) : 0;
+                    const pctText = pct >= 0 ? `-${pct}%` : `+${Math.abs(pct)}%`;
+
+                    return `
+                        <article class="opt-card" data-id="${item.id}">
+                            <div class="opt-thumb-wrap">
+                                <img src="${item.optUrl}" alt="${item.optName}">
+                                <span class="opt-saving-pill">${pctText}</span>
+                            </div>
+                            <div class="opt-card-body">
+                                <div class="opt-filename" title="${item.relativePath}">${item.optName.split('/').pop()}</div>
+                                <div class="opt-meta-row">
+                                    <span>${item.width}×${item.height} &rarr; ${item.optWidth}×${item.optHeight}px</span>
+                                </div>
+                                <div class="opt-size-compare">
+                                    <span class="opt-size-old">${formatBytes(origSize)}</span>
+                                    <span>&rarr;</span>
+                                    <span class="opt-size-new">${formatBytes(optSize)}</span>
+                                </div>
+                                <div class="opt-card-actions">
+                                    <button type="button" class="btn btn-secondary btn-compare">
+                                        <i class="fa-regular fa-eye"></i> Comparar
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-dl">
+                                        <i class="fa-solid fa-download"></i> Descargar
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+
+                const totalPct = totalOrig > 0 ? Math.round(((totalOrig - totalOpt) / totalOrig) * 100) : 0;
+                sumCount.textContent = String(items.length);
+                sumOriginal.textContent = formatBytes(totalOrig);
+                sumOptimized.textContent = formatBytes(totalOpt);
+                sumSaved.textContent = `${totalPct}% (${formatBytes(Math.max(0, totalOrig - totalOpt))} menos)`;
+
+                optGrid.querySelectorAll('.opt-card').forEach(card => {
+                    const id = card.getAttribute('data-id');
+                    const item = items.find(i => i.id === id);
+                    if (!item) return;
+
+                    card.querySelector('.btn-dl').addEventListener('click', () => {
+                        triggerDownload(item.optUrl, item.optName);
+                    });
+
+                    card.querySelector('.btn-compare').addEventListener('click', () => {
+                        compareTitle.textContent = item.optName.split('/').pop();
+                        compareOrigLabel.textContent = `Original: ${formatBytes(item.file.size)} (${item.width}×${item.height})`;
+                        compareOptLabel.textContent = `Optimizada: ${formatBytes(item.optBlob.size)} (${item.optWidth}×${item.optHeight})`;
+                        compareOrigImg.src = item.origUrl;
+                        compareOptImg.src = item.optUrl;
+                        compareModal.classList.add('open');
+                    });
+                });
+            }
+
+            btnPickFiles.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileInput.click();
+            });
+
+            btnPickFolder.addEventListener('click', (e) => {
+                e.stopPropagation();
+                folderInput.click();
+            });
+
+            dropzone.addEventListener('click', () => fileInput.click());
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) addFiles(e.target.files);
+                fileInput.value = '';
+            });
+
+            folderInput.addEventListener('change', (e) => {
+                if (e.target.files.length) addFiles(e.target.files);
+                folderInput.value = '';
+            });
+
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            });
+
+            dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+                if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+            });
+
+            presetButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    presetButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    formatSelect.value = btn.getAttribute('data-format');
+                    maxDimSelect.value = btn.getAttribute('data-max');
+                    qualityRange.value = btn.getAttribute('data-quality');
+                    qualityVal.textContent = qualityRange.value + '%';
+                    recompressAll();
+                });
+            });
+
+            qualityRange.addEventListener('input', () => {
+                qualityVal.textContent = qualityRange.value + '%';
+            });
+
+            qualityRange.addEventListener('change', recompressAll);
+            formatSelect.addEventListener('change', recompressAll);
+            maxDimSelect.addEventListener('change', recompressAll);
+
+            btnClearAll.addEventListener('click', () => {
+                items.forEach(i => {
+                    if (i.origUrl) URL.revokeObjectURL(i.origUrl);
+                    if (i.optUrl) URL.revokeObjectURL(i.optUrl);
+                });
+                items.length = 0;
+                renderAll();
+            });
+
+            btnDownloadZip.addEventListener('click', async () => {
+                if (!items.length) return;
+                if (typeof JSZip === 'undefined') {
+                    items.forEach(i => triggerDownload(i.optUrl, i.optName));
+                    return;
+                }
+                btnDownloadZip.disabled = true;
+                btnDownloadZip.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando ZIP...';
+                try {
+                    const zip = new JSZip();
+                    for (const item of items) {
+                        zip.file(item.optName, item.optBlob);
+                    }
+                    const zipBlob = await zip.generateAsync({ type: 'blob' });
+                    const url = URL.createObjectURL(zipBlob);
+                    triggerDownload(url, 'imbera-imagenes-optimizadas.zip');
+                    setTimeout(() => URL.revokeObjectURL(url), 5000);
+                } finally {
+                    btnDownloadZip.disabled = false;
+                    btnDownloadZip.innerHTML = '<i class="fa-solid fa-file-zipper"></i> Descargar todo en ZIP';
+                }
+            });
+
+            compareClose.addEventListener('click', () => compareModal.classList.remove('open'));
+            compareModal.addEventListener('click', (e) => {
+                if (e.target === compareModal) compareModal.classList.remove('open');
+            });
+        })();
+    </script>
+</body>
+
+</html>

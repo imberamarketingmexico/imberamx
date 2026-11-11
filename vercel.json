@@ -288,6 +288,10 @@
       "destination": "/admin"
     },
     {
+      "source": "/optimizador",
+      "destination": "/optimizador.html"
+    },
+    {
       "source": "/distribuidores",
       "destination": "/distribuidores.html"
     },
