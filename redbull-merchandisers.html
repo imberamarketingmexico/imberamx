@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/jpeg" href="/images/favicon.jpg?v=20261028">
+    <link rel="shortcut icon" type="image/jpeg" href="/images/favicon.jpg?v=20261028">
+    <title>Merchandisers | Red Bull - Imbera Cooling</title>
+    <link rel="stylesheet" href="/portal.css?v=20261111_v2">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7KQ676H856"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-7KQ676H856');
+    </script>
+</head>
+
+<body class="portal-body" data-keep-title="true">
+
+    <header class="portal-hero" id="portalHero" data-keep-bg="true">
+        <div class="portal-hero-container">
+            <div class="portal-topbar">
+                <a href="/redbull" class="portal-brand-wrap" title="Imbera × Red Bull Home">
+                    <img src="/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera" class="portal-imbera-white-logo">
+                </a>
+                <ul class="portal-nav-links">
+                    <li><a href="/redbull">Home</a></li>
+                    <li><a href="/redbull/about">About</a></li>
+                    <li><a href="/redbull/merchandisers" class="active">Merchandisers</a></li>
+                    <li><a href="/redbull/contact">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="portal-hero-centered">
+                <div class="portal-redbull-badge">
+                    <img src="/images/redbull-logo.svg" alt="Red Bull" class="portal-redbull-logo" id="portalBrandLogo" data-keep-logo="true">
+                    <span class="portal-brand-fallback" id="portalBrandFallback" style="display: none;">RED BULL</span>
+                </div>
+                <h1 class="portal-hero-title" id="portalHeroTitle" data-keep-text="true">MERCHANDISERS</h1>
+                <p class="portal-hero-subtitle" id="portalHeroSubtitle" data-keep-text="true">Official Red Bull® Commercial Refrigeration Catalog</p>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="portal-container" id="merchandisers">
+            <div class="portal-mobile-filter-bar">
+                <button type="button" class="btn-mobile-filter" id="btnOpenFilterDrawer">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="4" y1="6" x2="20" y2="6"></line>
+                        <line x1="4" y1="12" x2="16" y2="12"></line>
+                        <line x1="4" y1="18" x2="12" y2="18"></line>
+                    </svg>
+                    Filter Models
+                </button>
+            </div>
+
+            <aside class="portal-filters-sidebar">
+                <div class="portal-filters-header">
+                    <h2>Filters</h2>
+                    <button type="button" class="btn-clear-filters" id="btnClearFilters">Clear</button>
+                </div>
+
+                <form id="desktopFiltersForm">
+                    <div class="portal-filter-group">
+                        <div class="portal-filter-group-title">Category</div>
+                        <label class="portal-filter-option">
+                            <input type="checkbox" id="filterSelectAll" value="ALL">
+                            <span>All Categories</span>
+                        </label>
+                        <label class="portal-filter-option">
+                            <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Countertop">
+                            <span>Countertop</span>
+                        </label>
+                        <label class="portal-filter-option">
+                            <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Double door">
+                            <span>Double door</span>
+                        </label>
+                        <label class="portal-filter-option">
+                            <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Multidoor">
+                            <span>Multidoor</span>
+                        </label>
+                        <label class="portal-filter-option">
+                            <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Pass Thru">
+                            <span>Pass Thru</span>
+                        </label>
+                        <label class="portal-filter-option">
+                            <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Single door">
+                            <span>Single door</span>
+                        </label>
+                    </div>
+                </form>
+            </aside>
+
+            <section class="portal-catalog-area">
+                <div class="portal-catalog-header">
+                    <div class="portal-results-count" id="portalResultsCount">Loading equipment...</div>
+                </div>
+                <div class="portal-products-grid" id="portalProductsGrid"></div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Mobile Filter Drawer -->
+    <div class="portal-drawer-overlay" id="portalDrawerOverlay">
+        <div class="portal-drawer">
+            <div class="portal-drawer-header">
+                <h3>Filters</h3>
+                <button type="button" class="btn-close-modal" id="btnCloseFilterDrawer" aria-label="Close filters">✕</button>
+            </div>
+            <div class="portal-drawer-body">
+                <div class="portal-filter-group">
+                    <div class="portal-filter-group-title">Category</div>
+                    <label class="portal-filter-option">
+                        <input type="checkbox" id="filterSelectAllDrawer" value="ALL">
+                        <span>All Categories</span>
+                    </label>
+                    <label class="portal-filter-option">
+                        <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Countertop">
+                        <span>Countertop</span>
+                    </label>
+                    <label class="portal-filter-option">
+                        <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Double door">
+                        <span>Double door</span>
+                    </label>
+                    <label class="portal-filter-option">
+                        <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Multidoor">
+                        <span>Multidoor</span>
+                    </label>
+                    <label class="portal-filter-option">
+                        <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Pass Thru">
+                        <span>Pass Thru</span>
+                    </label>
+                    <label class="portal-filter-option">
+                        <input type="checkbox" class="portal-filter-checkbox" data-group="category" value="Single door">
+                        <span>Single door</span>
+                    </label>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <button type="button" class="btn-clear-filters" id="btnDrawerClearFilters">Clear All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="portal-modal-overlay" id="portalModalOverlay">
+        <div class="portal-modal">
+            <button type="button" class="btn-close-modal" id="btnCloseModal" aria-label="Close modal">✕</button>
+            <div class="portal-modal-body">
+                <div class="portal-modal-left">
+                    <div class="portal-modal-img-wrap">
+                        <img src="" alt="" class="portal-modal-img" id="modalImg">
+                    </div>
+                    <a href="#" class="btn-modal-specsheet" id="btnModalSpecSheet" target="_blank" style="display: none;">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px; vertical-align: middle;">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download Spec Sheet
+                    </a>
+                    <div class="portal-modal-spec-notice" id="modalSpecNotice" style="display: none;">Spec sheet not available for this model.</div>
+                </div>
+                <div class="portal-modal-right">
+                    <div class="portal-modal-sku" id="modalSku">SKU</div>
+                    <h2 class="portal-modal-title" id="modalTitle">Model</h2>
+                    <p class="portal-modal-desc" id="modalDesc"></p>
+
+                    <div class="portal-specs-table">
+                        <div class="portal-spec-row">
+                            <span class="portal-spec-label">SKU</span>
+                            <span class="portal-spec-val" id="specSku">-</span>
+                        </div>
+                        <div class="portal-spec-row">
+                            <span class="portal-spec-label">Material Product description</span>
+                            <span class="portal-spec-val" id="specMaterialDesc">-</span>
+                        </div>
+                        <div class="portal-spec-row">
+                            <span class="portal-spec-label">Width (in)</span>
+                            <span class="portal-spec-val" id="specWidth">-</span>
+                        </div>
+                        <div class="portal-spec-row">
+                            <span class="portal-spec-label">Height (in)</span>
+                            <span class="portal-spec-val" id="specHeight">-</span>
+                        </div>
+                        <div class="portal-spec-row">
+                            <span class="portal-spec-label">Depth (in)</span>
+                            <span class="portal-spec-val" id="specDepth">-</span>
+                        </div>
+                        <div class="portal-spec-row">
+                            <span class="portal-spec-label">Cubic ft.</span>
+                            <span class="portal-spec-val" id="specCubicFt">-</span>
+                        </div>
+                        <div class="portal-spec-row">
+                            <span class="portal-spec-label">Voltage</span>
+                            <span class="portal-spec-val" id="specVoltage">-</span>
+                        </div>
+                        <div class="portal-spec-row">
+                            <span class="portal-spec-label">Refrigerant</span>
+                            <span class="portal-spec-val" id="specRefrigerant">-</span>
+                        </div>
+                        <div class="portal-spec-row">
+                            <span class="portal-spec-label">8.6oz (250ml) Can capacity</span>
+                            <span class="portal-spec-val" id="specCanCapacity">-</span>
+                        </div>
+                        <div class="portal-spec-row portal-spec-certs-row">
+                            <span class="portal-spec-label">Certifications</span>
+                            <div class="portal-certs-badges" id="specCertsRow"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="portal-footer">
+        <div class="portal-footer-inner">
+            <div>
+                <ul class="portal-footer-nav">
+                    <li><a href="/redbull">Home</a></li>
+                    <li><a href="/redbull/about">About</a></li>
+                    <li><a href="/redbull/merchandisers">Merchandisers</a></li>
+                    <li><a href="/redbull/contact">Contact</a></li>
+                </ul>
+                <p class="portal-footer-left">© 2026 Imbera Cooling. Official Commercial Refrigeration Portal for Red Bull.</p>
+            </div>
+            <div class="portal-footer-right">
+                <a href="https://www.imberacooling.com/" target="_blank" title="Imbera Cooling">
+                    <img src="/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera Cooling">
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/portals-data.js?v=20261111_v2"></script>
+    <script src="/supabase.js"></script>
+    <script src="/supabase-client.js"></script>
+    <script src="/portal.js?v=20261111_v2"></script>
+</body>
+
+</html>

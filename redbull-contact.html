@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/jpeg" href="/images/favicon.jpg?v=20261028">
+    <link rel="shortcut icon" type="image/jpeg" href="/images/favicon.jpg?v=20261028">
+    <title>Contact | Red Bull - Imbera Cooling</title>
+    <link rel="stylesheet" href="/portal.css?v=20261111_v2">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7KQ676H856"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-7KQ676H856');
+    </script>
+</head>
+
+<body class="portal-body" data-keep-title="true">
+
+    <header class="portal-hero" id="portalHero" data-keep-bg="true">
+        <div class="portal-hero-container">
+            <div class="portal-topbar">
+                <a href="/redbull" class="portal-brand-wrap" title="Imbera × Red Bull Home">
+                    <img src="/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera" class="portal-imbera-white-logo">
+                </a>
+                <ul class="portal-nav-links">
+                    <li><a href="/redbull">Home</a></li>
+                    <li><a href="/redbull/about">About</a></li>
+                    <li><a href="/redbull/merchandisers">Merchandisers</a></li>
+                    <li><a href="/redbull/contact" class="active">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="portal-hero-centered">
+                <div class="portal-redbull-badge">
+                    <img src="/images/redbull-logo.svg" alt="Red Bull" class="portal-redbull-logo" id="portalBrandLogo" data-keep-logo="true">
+                    <span class="portal-brand-fallback" id="portalBrandFallback" style="display: none;">RED BULL</span>
+                </div>
+                <h1 class="portal-hero-title" id="portalHeroTitle" data-keep-text="true">CONTACT</h1>
+                <p class="portal-hero-subtitle" id="portalHeroSubtitle" data-keep-text="true">Red Bull® Merchandiser Inquiries &amp; Support</p>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="portal-contact-form-only">
+            <div class="portal-contact-form-card">
+                <div style="text-align: center; margin-bottom: 1.75rem;">
+                    <h2>SEND US A MESSAGE</h2>
+                    <p>Whether you are a new distributor or an existing Red Bull® partner, submit the form below to request equipment quotes, technical guidance, or fleet support.</p>
+                </div>
+                <form class="portal-contact-form" id="portalContactPageForm">
+                    <div class="portal-contact-row-2">
+                        <div class="portal-form-group">
+                            <label for="contactPageName">Full Name *</label>
+                            <input type="text" id="contactPageName" name="name" placeholder="Your full name" required>
+                        </div>
+                        <div class="portal-form-group">
+                            <label for="contactPageCompany">Company / Distributor</label>
+                            <input type="text" id="contactPageCompany" name="company" placeholder="Company name">
+                        </div>
+                    </div>
+                    <div class="portal-contact-row-2">
+                        <div class="portal-form-group">
+                            <label for="contactPageEmail">Corporate Email *</label>
+                            <input type="email" id="contactPageEmail" name="email" placeholder="name@company.com" required>
+                        </div>
+                        <div class="portal-form-group">
+                            <label for="contactPageModel">Cooler Model / Subject</label>
+                            <input type="text" id="contactPageModel" name="subject" placeholder="e.g. VR10 Red Bull, VRS05, Technical Support">
+                        </div>
+                    </div>
+                    <div class="portal-form-group">
+                        <label for="contactPageMessage">Message *</label>
+                        <textarea id="contactPageMessage" name="message" rows="5" placeholder="Share your equipment requirements, delivery region, or questions..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-portal-submit">Send Inquiry</button>
+                    <p id="contactPageFeedback" style="display: none; margin-top: 1rem; color: #00457C; font-weight: 600; text-align: center;">Thank you. Your message has been received and our team will reach out shortly.</p>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="portal-footer">
+        <div class="portal-footer-inner">
+            <div>
+                <ul class="portal-footer-nav">
+                    <li><a href="/redbull">Home</a></li>
+                    <li><a href="/redbull/about">About</a></li>
+                    <li><a href="/redbull/merchandisers">Merchandisers</a></li>
+                    <li><a href="/redbull/contact">Contact</a></li>
+                </ul>
+                <p class="portal-footer-left">© 2026 Imbera Cooling. Official Commercial Refrigeration Portal for Red Bull.</p>
+            </div>
+            <div class="portal-footer-right">
+                <a href="https://www.imberacooling.com/" target="_blank" title="Imbera Cooling">
+                    <img src="/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera Cooling">
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function () {
+            const form = document.getElementById('portalContactPageForm');
+            const feedback = document.getElementById('contactPageFeedback');
+            if (form && feedback) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    feedback.style.display = 'block';
+                    form.reset();
+                });
+            }
+        })();
+    </script>
+    <script src="/portals-data.js?v=20261111_v2"></script>
+    <script src="/supabase.js"></script>
+    <script src="/supabase-client.js"></script>
+    <script src="/portal.js?v=20261111_v2"></script>
+</body>
+
+</html>

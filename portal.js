@@ -76,13 +76,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     let portalProducts = [];
     let filteredProducts = [];
 
-    // Helper universal para proxies de imágenes
+    // Helper universal para proxies de imágenes (soporta rutas anidadas como /redbull/merchandisers)
     const toSafeUrl = (url) => {
         if (!url) return '';
+        let resolved = url;
         if (typeof window.toProxiedStorageUrl === 'function') {
-            return window.toProxiedStorageUrl(url);
+            resolved = window.toProxiedStorageUrl(url);
         }
-        return url;
+        if (resolved && !resolved.startsWith('http://') && !resolved.startsWith('https://') && !resolved.startsWith('data:') && !resolved.startsWith('blob:') && !resolved.startsWith('/')) {
+            resolved = '/' + resolved;
+        }
+        return resolved;
     };
 
     // 2. Cargar Datos del Portal y sus Productos
@@ -144,7 +148,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Aplicar configuraciones de diseño
         applyPortalBranding(currentPortal);
 
-        // Renderizar productos
+        // Renderizar productos (con soporte para pre-filtro ?category= en URL)
+        const initialCat = new URLSearchParams(window.location.search).get('category');
+        if (initialCat && productsGridEl) {
+            const target = initialCat.trim().toLowerCase();
+            const catBoxes = document.querySelectorAll('.portal-filter-checkbox[data-group="category"]');
+            if (catBoxes.length > 0) {
+                catBoxes.forEach(cb => {
+                    cb.checked = (cb.value.trim().toLowerCase() === target);
+                });
+                applyFilters();
+                return;
+            }
+        }
+
         filteredProducts = [...portalProducts];
         renderProducts(filteredProducts);
     }
@@ -163,10 +180,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         // SEO y Título de pestaña
         const portalName = portal.name || 'Portal B2B';
         const pageTitle = portal.title || 'Merchandisers';
-        document.title = `${pageTitle} | ${portalName} - Imbera México`;
+        if (!document.body.dataset.keepTitle) {
+            document.title = `${pageTitle} | ${portalName} - Imbera Cooling`;
+        }
 
         // Banner Hero
-        if (heroEl) {
+        if (heroEl && !heroEl.dataset.keepBg) {
             if (portal.banner_url) {
                 heroEl.style.backgroundImage = `url('${toSafeUrl(portal.banner_url)}')`;
             } else {
@@ -176,13 +195,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Logotipo de la marca
-        if (brandLogoEl && brandFallbackEl) {
+        if (brandLogoEl && brandFallbackEl && !brandLogoEl.dataset.keepLogo) {
             if (portal.logo_url) {
                 brandLogoEl.alt = portalName;
                 brandLogoEl.onerror = function() {
                     if (currentSlug === 'redbull' && !this.dataset.fallbackTried) {
                         this.dataset.fallbackTried = 'true';
-                        this.src = 'images/redbull-logo.svg';
+                        this.src = '/images/redbull-logo.svg';
                         return;
                     }
                     brandLogoEl.style.display = 'none';
@@ -229,14 +248,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         productsGridEl.innerHTML = items.map(p => {
             const dims = formatDimensions(p);
-            const imgSrc = toSafeUrl(p.image_url) || 'images/Enfriador_VR17.jpg';
+            const imgSrc = toSafeUrl(p.image_url) || '/images/Enfriador_VR17.jpg';
             const modelName = p.title || p.sku || 'Merchandiser';
             const categoryName = p.category || p.door_count || 'Single door';
 
             return `
                 <div class="portal-card" data-sku="${escapeHtml(p.sku)}">
                     <div class="portal-card-thumb-wrap">
-                        <img src="${imgSrc}" alt="${escapeHtml(modelName)}" class="portal-card-thumb" loading="lazy" onerror="this.src='images/Enfriador_VR17.jpg'">
+                        <img src="${imgSrc}" alt="${escapeHtml(modelName)}" class="portal-card-thumb" loading="lazy" onerror="this.src='/images/Enfriador_VR17.jpg'">
                     </div>
                     <span class="portal-card-sku">${escapeHtml(modelName)}</span>
                     <h3 class="portal-card-title">${escapeHtml(categoryName)}</h3>
@@ -348,26 +367,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Energy Star 4.0
         if (str.includes('energy') || str.includes('star')) {
-            badges.push(`<img src="images/certs/energy-star.svg" alt="Energy Star 4.0" title="Energy Star 4.0" class="portal-cert-badge">`);
+            badges.push(`<img src="/images/certs/energy-star.svg" alt="Energy Star 4.0" title="Energy Star 4.0" class="portal-cert-badge">`);
         }
         // UL NSF 7
         if (str.includes('nsf') || str.includes('ul')) {
-            badges.push(`<img src="images/certs/ul-nsf.svg" alt="UL Classified NSF 7" title="UL Classified NSF 7" class="portal-cert-badge">`);
+            badges.push(`<img src="/images/certs/ul-nsf.svg" alt="UL Classified NSF 7" title="UL Classified NSF 7" class="portal-cert-badge">`);
         }
         // DOE 17
         if (str.includes('doe')) {
-            badges.push(`<img src="images/certs/doe-17.svg" alt="DOE 17 Compliant" title="DOE 17 Compliant" class="portal-cert-badge">`);
+            badges.push(`<img src="/images/certs/doe-17.svg" alt="DOE 17 Compliant" title="DOE 17 Compliant" class="portal-cert-badge">`);
         }
 
         if (badges.length === 0) {
-            badges.push(`<img src="images/certs/energy-star.svg" alt="Energy Star 4.0" title="Energy Star 4.0" class="portal-cert-badge">`);
-            badges.push(`<img src="images/certs/ul-nsf.svg" alt="UL Classified NSF 7" title="UL Classified NSF 7" class="portal-cert-badge">`);
-            badges.push(`<img src="images/certs/doe-17.svg" alt="DOE 17" title="DOE 17" class="portal-cert-badge">`);
+            badges.push(`<img src="/images/certs/energy-star.svg" alt="Energy Star 4.0" title="Energy Star 4.0" class="portal-cert-badge">`);
+            badges.push(`<img src="/images/certs/ul-nsf.svg" alt="UL Classified NSF 7" title="UL Classified NSF 7" class="portal-cert-badge">`);
+            badges.push(`<img src="/images/certs/doe-17.svg" alt="DOE 17" title="DOE 17" class="portal-cert-badge">`);
         }
 
         let extraNote = '';
         if (str.includes('proceso') || str.includes('process')) {
-            extraNote = '<span style="font-size: 11px; color: #d97706; font-weight: 600; margin-left: 4px;">(en proceso)</span>';
+            extraNote = '<span style="font-size: 11px; color: #d97706; font-weight: 600; margin-left: 4px;">(in process)</span>';
         } else if (str.includes('tbc')) {
             extraNote = '<span style="font-size: 11px; color: #64748b; font-weight: 600; margin-left: 4px;">(TBC)</span>';
         }
@@ -379,7 +398,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function openProductModal(p) {
         if (!modalOverlay) return;
 
-        const imgSrc = toSafeUrl(p.image_url) || 'images/Enfriador_VR17.jpg';
+        const imgSrc = toSafeUrl(p.image_url) || '/images/Enfriador_VR17.jpg';
         if (modalImg) modalImg.src = imgSrc;
         if (modalSku) modalSku.innerText = p.sku || '';
         if (modalTitle) modalTitle.innerText = p.title || '';

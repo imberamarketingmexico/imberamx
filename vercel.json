@@ -244,7 +244,35 @@
       "destination": "https://qezrauybkpzcenqilwcw.supabase.co/storage/v1/object/public/:path*"
     },
     {
+      "source": "/redbull/about",
+      "destination": "/redbull-about.html"
+    },
+    {
+      "source": "/redbull/about/",
+      "destination": "/redbull-about.html"
+    },
+    {
+      "source": "/redbull/merchandisers",
+      "destination": "/redbull-merchandisers.html"
+    },
+    {
+      "source": "/redbull/merchandisers/",
+      "destination": "/redbull-merchandisers.html"
+    },
+    {
+      "source": "/redbull/contact",
+      "destination": "/redbull-contact.html"
+    },
+    {
+      "source": "/redbull/contact/",
+      "destination": "/redbull-contact.html"
+    },
+    {
       "source": "/redbull",
+      "destination": "/redbull.html"
+    },
+    {
+      "source": "/redbull/",
       "destination": "/redbull.html"
     },
     {
