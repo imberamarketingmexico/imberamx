@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="portal.css?v=20261030_v1">
+    <link rel="stylesheet" href="portal.css?v=20261111_v1">
     
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="/images/favicon.jpg?v=20261028">
@@ -31,34 +31,53 @@
 <body class="portal-body">
 
     <!-- HERO SECTION WITH DYNAMIC BRANDING -->
-    <header class="portal-hero" id="portalHero">
-        <div class="portal-hero-container">
-            <div class="portal-topbar">
-                <a href="index.html" class="portal-brand-wrap" title="Volver al sitio principal">
-                    <img src="" alt="Brand Logo" class="portal-brand-logo" id="portalBrandLogo" style="display: none;">
-                    <span class="portal-brand-fallback" id="portalBrandFallback">BRAND</span>
-                </a>
-                <ul class="portal-nav-links">
-                    <li><a href="index.html">Imbera México</a></li>
-                    <li><a href="categoria.html">Catálogo Público</a></li>
-                    <li><a href="contacto.html">Contacto</a></li>
-                </ul>
-            </div>
+    <section id="home">
+        <header class="portal-hero" id="portalHero">
+            <div class="portal-hero-container">
+                <div class="portal-topbar">
+                    <a href="#home" class="portal-brand-wrap" title="Home">
+                        <img src="" alt="Brand Logo" class="portal-brand-logo" id="portalBrandLogo" style="display: none;">
+                        <span class="portal-brand-fallback" id="portalBrandFallback">BRAND</span>
+                    </a>
+                    <ul class="portal-nav-links">
+                        <li><a href="#home" class="active">Home</a></li>
+                        <li><a href="#merchandisers">Merchandisers</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
 
-            <div class="portal-hero-title-wrap">
-                <h1 class="portal-hero-title" id="portalHeroTitle">MERCHANDISERS</h1>
-                <p class="portal-hero-subtitle" id="portalHeroSubtitle">Catálogo Exclusivo B2B</p>
+                <div class="portal-hero-intro">
+                    <span class="portal-hero-tag">Official Partner Portal</span>
+                    <h1 class="portal-hero-title" id="portalHeroTitle">MERCHANDISERS</h1>
+                    <p class="portal-hero-subtitle" id="portalHeroSubtitle">Official Commercial Refrigeration Catalog</p>
+                    <div class="portal-hero-actions">
+                        <a href="#merchandisers" class="btn-hero-primary">
+                            <i class="fa-solid fa-arrow-down"></i> View Merchandisers
+                        </a>
+                        <a href="#about" class="btn-hero-secondary">
+                            About Program
+                        </a>
+                    </div>
+                </div>
             </div>
-        </div>
-    </header>
+        </header>
+    </section>
 
     <!-- MAIN CONTAINER -->
-    <main class="portal-container">
-        
-        <!-- Mobile Filter Button Trigger -->
-        <button type="button" class="portal-mobile-filter-btn" id="btnOpenFilterDrawer">
-            <i class="fa-solid fa-sliders"></i> Filters
-        </button>
+    <section id="merchandisers">
+        <main class="portal-container">
+            
+            <div class="portal-merchandisers-header">
+                <span class="portal-section-eyebrow">EQUIPMENT PORTFOLIO</span>
+                <h2 class="portal-section-title">Merchandisers</h2>
+                <p class="portal-section-desc">Browse by door configuration and select any cooler to view full technical specifications and download its spec sheet.</p>
+            </div>
+
+            <!-- Mobile Filter Button Trigger -->
+            <button type="button" class="portal-mobile-filter-btn" id="btnOpenFilterDrawer">
+                <i class="fa-solid fa-sliders"></i> Filters
+            </button>
 
         <div class="portal-layout-grid">
             
@@ -120,10 +139,127 @@
                 <div class="portal-products-grid" id="portalProductsGrid">
                     <!-- Cards will be populated by portal.js -->
                 </div>
-            </section>
+            </div>
 
         </div>
-    </main>
+        </main>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="portal-section portal-about-section" id="about">
+        <div class="portal-section-container">
+            <div class="portal-section-header">
+                <span class="portal-section-eyebrow">ABOUT THE PROGRAM</span>
+                <h2 class="portal-section-title">Engineered for Cold Impact</h2>
+                <p class="portal-section-desc">Imbera delivers high-reliability commercial refrigeration technology designed for retail, convenience, and foodservice environments.</p>
+            </div>
+
+            <div class="portal-about-grid">
+                <div class="portal-about-card">
+                    <div class="portal-about-icon">
+                        <i class="fa-solid fa-temperature-arrow-down"></i>
+                    </div>
+                    <h3>Precision Cooling</h3>
+                    <p>Rapid thermal pull-down performance keeps beverages chilled at optimal serving temperatures even under demanding retail traffic.</p>
+                </div>
+                <div class="portal-about-card">
+                    <div class="portal-about-icon">
+                        <i class="fa-solid fa-leaf"></i>
+                    </div>
+                    <h3>Eco-Friendly Efficiency</h3>
+                    <p>Powered by natural hydrocarbon refrigerants (R290 & R600a) and compliant with Energy Star 4.0 and DOE 17 standards.</p>
+                </div>
+                <div class="portal-about-card">
+                    <div class="portal-about-icon">
+                        <i class="fa-solid fa-eye"></i>
+                    </div>
+                    <h3>Maximum Visibility</h3>
+                    <p>Uniform LED interior illumination paired with crystal-clear glass maximizes product visibility and impulse sales.</p>
+                </div>
+                <div class="portal-about-card">
+                    <div class="portal-about-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3>Certified Reliability</h3>
+                    <p>UL NSF 7 food-safety listed and engineered with low-maintenance commercial components built for 24/7 operation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="portal-section portal-contact-section" id="contact">
+        <div class="portal-section-container">
+            <div class="portal-section-header">
+                <span class="portal-section-eyebrow">GET IN TOUCH</span>
+                <h2 class="portal-section-title">Contact & Dedicated Support</h2>
+                <p class="portal-section-desc">Need assistance selecting a cooler, requesting technical spec sheets, or coordinating fleet orders? Reach out to our team.</p>
+            </div>
+
+            <div class="portal-contact-grid">
+                <div class="portal-contact-info-card">
+                    <h3>Corporate Account Support</h3>
+                    <p class="portal-contact-lead">Direct communication channel for account managers, retail partners, and authorized distributors.</p>
+                    
+                    <ul class="portal-contact-list">
+                        <li>
+                            <i class="fa-solid fa-envelope"></i>
+                            <div>
+                                <strong>Email Inquiries</strong>
+                                <a href="mailto:ventasmexico@imberacooling.com">ventasmexico@imberacooling.com</a>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-phone"></i>
+                            <div>
+                                <strong>Direct Phone Line</strong>
+                                <a href="tel:8000046237">800 00 IMBERA (800 004 6237)</a>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-clock"></i>
+                            <div>
+                                <strong>Support Hours</strong>
+                                <span>Monday to Friday: 8:00 AM - 6:00 PM (CST)</span>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-globe"></i>
+                            <div>
+                                <strong>Corporate Website</strong>
+                                <a href="https://www.imberacooling.com/" target="_blank">www.imberacooling.com</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="portal-contact-form-card">
+                    <h3>Send an Inquiry</h3>
+                    <form class="portal-contact-form" onsubmit="event.preventDefault(); alert('Thank you! Your inquiry has been received by our corporate team.'); this.reset();">
+                        <div class="portal-form-group">
+                            <label for="contactName">Full Name</label>
+                            <input type="text" id="contactName" placeholder="Your Name" required>
+                        </div>
+                        <div class="portal-form-group">
+                            <label for="contactEmail">Corporate Email</label>
+                            <input type="email" id="contactEmail" placeholder="name@company.com" required>
+                        </div>
+                        <div class="portal-form-group">
+                            <label for="contactSubject">Subject / Cooler Model</label>
+                            <input type="text" id="contactSubject" placeholder="e.g. Cooler Model Inquiry">
+                        </div>
+                        <div class="portal-form-group">
+                            <label for="contactMessage">Message</label>
+                            <textarea id="contactMessage" rows="4" placeholder="How can we assist you with your merchandiser requirements?" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-portal-submit">
+                            <i class="fa-solid fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- MOBILE FILTER DRAWER -->
     <div class="portal-drawer-overlay" id="portalDrawerOverlay">
@@ -189,9 +325,10 @@
                     <div class="portal-modal-img-wrap">
                         <img src="" alt="" class="portal-modal-img" id="modalImg">
                     </div>
-                    <a href="#" target="_blank" class="btn-modal-specsheet" id="btnModalSpecSheet" style="display: none;">
+                    <a href="#" target="_blank" class="btn-modal-specsheet" id="btnModalSpecSheet">
                         <i class="fa-solid fa-file-pdf"></i> Download Spec Sheet
                     </a>
+                    <p class="modal-spec-notice" id="modalSpecNotice" style="display: none;"></p>
                 </div>
 
                 <!-- Right: Information & Technical Specifications -->
@@ -259,20 +396,20 @@
     <footer class="portal-footer">
         <div class="portal-footer-inner">
             <div class="portal-footer-left">
-                <p>© 2026 Imbera México. Catálogo Privado de Refrigeración Comercial para Clientes B2B.</p>
+                <p>© 2026 Imbera Cooling. Private Commercial Refrigeration Portal.</p>
             </div>
             <div class="portal-footer-right">
-                <a href="index.html" target="_blank" title="Imbera Cooling">
-                    <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera México">
+                <a href="https://www.imberacooling.com/" target="_blank" title="Imbera Cooling">
+                    <img src="images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera Cooling">
                 </a>
             </div>
         </div>
     </footer>
 
     <!-- Scripts -->
-    <script src="portals-data.js?v=20261030_v1"></script>
+    <script src="portals-data.js?v=20261111_v1"></script>
     <script src="supabase.js"></script>
     <script src="supabase-client.js"></script>
-    <script src="portal.js?v=20261030_v1"></script>
+    <script src="portal.js?v=20261111_v1"></script>
 </body>
 </html>

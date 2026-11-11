@@ -200,8 +200,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Títulos en hero
-        if (heroTitleEl) heroTitleEl.innerText = portal.title || 'Merchandisers';
-        if (heroSubtitleEl) heroSubtitleEl.innerText = portal.subtitle || '';
+        if (heroTitleEl && !heroTitleEl.dataset.keepText) {
+            heroTitleEl.innerText = portal.title || 'Merchandisers';
+        }
+        if (heroSubtitleEl && !heroSubtitleEl.dataset.keepText) {
+            heroSubtitleEl.innerText = portal.subtitle || '';
+        }
     }
 
     // 4. Renderizar cuadrícula de productos
@@ -228,8 +232,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const imgSrc = toSafeUrl(p.image_url) || 'images/Enfriador_VR17.jpg';
             const modelName = p.title || p.sku || 'Merchandiser';
             const categoryName = p.category || p.door_count || 'Single door';
-            const specSheetHref = p.spec_sheet_url ? toSafeUrl(p.spec_sheet_url) : '#';
-            const specSheetTarget = p.spec_sheet_url ? 'target="_blank"' : '';
 
             return `
                 <div class="portal-card" data-sku="${escapeHtml(p.sku)}">
@@ -239,28 +241,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <span class="portal-card-sku">${escapeHtml(modelName)}</span>
                     <h3 class="portal-card-title">${escapeHtml(categoryName)}</h3>
                     <span class="portal-card-dims">${dims}</span>
-                    <a href="${specSheetHref}" ${specSheetTarget} class="btn-card-specsheet" data-sku="${escapeHtml(p.sku)}" title="Download Spec Sheet">
-                        <i class="fa-solid fa-file-pdf"></i> Download Spec Sheet
-                    </a>
                 </div>
             `;
         }).join('');
 
-        // Event listener a cada tarjeta para abrir el modal o descargar ficha técnica
+        // Event listener a cada tarjeta para abrir el modal
         document.querySelectorAll('.portal-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                const specBtn = e.target.closest('.btn-card-specsheet');
-                if (specBtn) {
-                    const sku = specBtn.getAttribute('data-sku');
-                    const product = portalProducts.find(p => p.sku === sku);
-                    // Si no tiene URL directa de PDF cargada aún, abrir el modal con los 10 datos técnicos
-                    if (!product || !product.spec_sheet_url) {
-                        e.preventDefault();
-                        if (product) openProductModal(product);
-                    }
-                    return;
-                }
-
+            card.addEventListener('click', () => {
                 const sku = card.getAttribute('data-sku');
                 const product = portalProducts.find(p => p.sku === sku);
                 if (product) openProductModal(product);
@@ -414,13 +401,29 @@ document.addEventListener('DOMContentLoaded', async () => {
             specCertsRow.innerHTML = renderCertBadges(certsVal);
         }
 
-        // Botón Ficha Técnica PDF
+        // Botón Ficha Técnica PDF (siempre visible debajo de la fotografía)
+        const modalSpecNotice = document.getElementById('modalSpecNotice');
+        if (modalSpecNotice) {
+            modalSpecNotice.style.display = 'none';
+            modalSpecNotice.innerText = '';
+        }
+
         if (btnModalSpecSheet) {
+            btnModalSpecSheet.style.display = 'inline-flex';
             if (p.spec_sheet_url) {
                 btnModalSpecSheet.href = toSafeUrl(p.spec_sheet_url);
-                btnModalSpecSheet.style.display = 'inline-flex';
+                btnModalSpecSheet.setAttribute('target', '_blank');
+                btnModalSpecSheet.onclick = null;
             } else {
-                btnModalSpecSheet.style.display = 'none';
+                btnModalSpecSheet.href = '#';
+                btnModalSpecSheet.removeAttribute('target');
+                btnModalSpecSheet.onclick = (e) => {
+                    e.preventDefault();
+                    if (modalSpecNotice) {
+                        modalSpecNotice.innerText = `Spec sheet PDF for ${p.title || p.sku} will be available soon.`;
+                        modalSpecNotice.style.display = 'block';
+                    }
+                };
             }
         }
 
@@ -445,6 +448,41 @@ document.addEventListener('DOMContentLoaded', async () => {
             closeModal();
         }
     });
+
+    // Navegación suave y estado activo para secciones (#home, #merchandisers, #about, #contact)
+    const navLinks = document.querySelectorAll('.portal-nav-links a[href^="#"]');
+    if (navLinks.length > 0) {
+        const sectionIds = Array.from(navLinks).map(a => a.getAttribute('href').slice(1));
+        const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const targetId = link.getAttribute('href').slice(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    e.preventDefault();
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        if (sections.length > 0 && 'IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.id;
+                        navLinks.forEach(l => {
+                            l.classList.toggle('active', l.getAttribute('href') === `#${id}`);
+                        });
+                    }
+                });
+            }, { rootMargin: '-30% 0px -55% 0px' });
+
+            sections.forEach(sec => observer.observe(sec));
+        }
+    }
 
     function escapeHtml(str) {
         if (!str) return '';
