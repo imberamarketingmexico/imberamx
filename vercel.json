@@ -245,35 +245,35 @@
     },
     {
       "source": "/redbull/about",
-      "destination": "/redbull-about.html"
+      "destination": "/redbull/about/index.html"
     },
     {
       "source": "/redbull/about/",
-      "destination": "/redbull-about.html"
+      "destination": "/redbull/about/index.html"
     },
     {
       "source": "/redbull/merchandisers",
-      "destination": "/redbull-merchandisers.html"
+      "destination": "/redbull/merchandisers/index.html"
     },
     {
       "source": "/redbull/merchandisers/",
-      "destination": "/redbull-merchandisers.html"
+      "destination": "/redbull/merchandisers/index.html"
     },
     {
       "source": "/redbull/contact",
-      "destination": "/redbull-contact.html"
+      "destination": "/redbull/contact/index.html"
     },
     {
       "source": "/redbull/contact/",
-      "destination": "/redbull-contact.html"
+      "destination": "/redbull/contact/index.html"
     },
     {
       "source": "/redbull",
-      "destination": "/redbull.html"
+      "destination": "/redbull/index.html"
     },
     {
       "source": "/redbull/",
-      "destination": "/redbull.html"
+      "destination": "/redbull/index.html"
     },
     {
       "source": "/portal/:slug",
