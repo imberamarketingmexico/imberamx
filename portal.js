@@ -143,6 +143,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (!productsFoundOnline && portalProducts.length === 0 && window.IMBERA_PORTALS_DATA && Array.isArray(window.IMBERA_PORTALS_DATA.products)) {
             portalProducts = window.IMBERA_PORTALS_DATA.products.filter(p => p.portal_slug === currentSlug && p.is_active !== false);
+        } else if (portalProducts.length > 0 && window.IMBERA_PORTALS_DATA && Array.isArray(window.IMBERA_PORTALS_DATA.products)) {
+            const localBySku = new Map();
+            window.IMBERA_PORTALS_DATA.products
+                .filter(p => p.portal_slug === currentSlug)
+                .forEach(p => {
+                    if (p.sku) localBySku.set(String(p.sku).trim().toLowerCase(), p);
+                });
+
+            portalProducts = portalProducts.map(p => {
+                const key = p.sku ? String(p.sku).trim().toLowerCase() : '';
+                const local = key ? localBySku.get(key) : null;
+                if (!local) return p;
+
+                const isPlaceholderImg = !p.image_url || p.image_url.includes('Enfriador_VR17.jpg');
+                return {
+                    ...p,
+                    image_url: (isPlaceholderImg && local.image_url) ? local.image_url : p.image_url,
+                    spec_sheet_url: (!p.spec_sheet_url && local.spec_sheet_url) ? local.spec_sheet_url : p.spec_sheet_url,
+                    material_description: p.material_description || local.material_description,
+                    can_capacity: p.can_capacity || local.can_capacity,
+                    refrigerant: p.refrigerant || local.refrigerant,
+                    certifications: p.certifications || local.certifications
+                };
+            });
         }
 
         // Aplicar configuraciones de diseño
@@ -367,21 +391,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Energy Star 4.0
         if (str.includes('energy') || str.includes('star')) {
-            badges.push(`<img src="/images/certs/energy-star.svg" alt="Energy Star 4.0" title="Energy Star 4.0" class="portal-cert-badge">`);
+            badges.push(`<img src="/redbull/equipos/Energy_Star_logo.svg" alt="Energy Star 4.0" title="Energy Star 4.0" class="portal-cert-badge">`);
         }
-        // UL NSF 7
-        if (str.includes('nsf') || str.includes('ul')) {
-            badges.push(`<img src="/images/certs/ul-nsf.svg" alt="UL Classified NSF 7" title="UL Classified NSF 7" class="portal-cert-badge">`);
+        // NSF 7
+        if (str.includes('nsf')) {
+            badges.push(`<img src="/redbull/equipos/NFS.webp" alt="NSF 7" title="NSF 7" class="portal-cert-badge">`);
+        }
+        // UL
+        if (str.includes('ul')) {
+            badges.push(`<img src="/redbull/equipos/UL.webp" alt="UL Listed / Classified" title="UL" class="portal-cert-badge">`);
         }
         // DOE 17
         if (str.includes('doe')) {
-            badges.push(`<img src="/images/certs/doe-17.svg" alt="DOE 17 Compliant" title="DOE 17 Compliant" class="portal-cert-badge">`);
+            badges.push(`<img src="/redbull/equipos/DOE.svg" alt="DOE 17 Compliant" title="DOE 17 Compliant" class="portal-cert-badge">`);
         }
 
         if (badges.length === 0) {
-            badges.push(`<img src="/images/certs/energy-star.svg" alt="Energy Star 4.0" title="Energy Star 4.0" class="portal-cert-badge">`);
-            badges.push(`<img src="/images/certs/ul-nsf.svg" alt="UL Classified NSF 7" title="UL Classified NSF 7" class="portal-cert-badge">`);
-            badges.push(`<img src="/images/certs/doe-17.svg" alt="DOE 17" title="DOE 17" class="portal-cert-badge">`);
+            badges.push(`<img src="/redbull/equipos/Energy_Star_logo.svg" alt="Energy Star 4.0" title="Energy Star 4.0" class="portal-cert-badge">`);
+            badges.push(`<img src="/redbull/equipos/NFS.webp" alt="NSF 7" title="NSF 7" class="portal-cert-badge">`);
+            badges.push(`<img src="/redbull/equipos/UL.webp" alt="UL" title="UL" class="portal-cert-badge">`);
+            badges.push(`<img src="/redbull/equipos/DOE.svg" alt="DOE 17" title="DOE 17" class="portal-cert-badge">`);
         }
 
         let extraNote = '';
