@@ -1642,3 +1642,190 @@ body.portal-body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ==========================================
+   RED BULL PORTAL ACCESS GATE (ONE-TIME PER DEVICE)
+   ========================================== */
+html.rb-locked body {
+    background: linear-gradient(135deg, #091a30 0%, #0C2340 55%, #112d52 100%) !important;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+html.rb-locked body > :not(#rbAccessGate) {
+    display: none !important;
+}
+
+.rb-gate-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    background: linear-gradient(135deg, rgba(9, 26, 48, 0.98) 0%, rgba(12, 35, 64, 0.96) 60%, rgba(17, 45, 82, 0.98) 100%);
+    animation: portalFadeIn 0.25s ease-out;
+}
+
+.rb-gate-top-logo {
+    margin-bottom: 24px;
+}
+
+.rb-gate-top-logo img {
+    height: 36px;
+    width: auto;
+    filter: brightness(0) invert(1);
+    display: block;
+}
+
+.rb-gate-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 430px;
+    border-radius: 16px;
+    padding: 36px 32px 32px;
+    box-shadow: 0 24px 56px rgba(0, 0, 0, 0.35);
+    text-align: center;
+    animation: portalScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rb-gate-brand-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.rb-gate-brand-badge img {
+    height: 44px;
+    width: auto;
+    max-width: 220px;
+    object-fit: contain;
+}
+
+.rb-gate-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+}
+
+.rb-gate-subtitle {
+    font-size: 13.5px;
+    color: #475569;
+    line-height: 1.55;
+    margin-bottom: 24px;
+}
+
+.rb-gate-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    text-align: left;
+}
+
+.rb-gate-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.rb-gate-input {
+    width: 100%;
+    padding: 13px 46px 13px 15px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    color: #0f172a;
+    background: #f8fafc;
+    transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.rb-gate-input:focus {
+    outline: none;
+    border-color: #00457C;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(0, 69, 124, 0.14);
+}
+
+.rb-gate-toggle-vis {
+    position: absolute;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: color 0.15s, background-color 0.15s;
+}
+
+.rb-gate-toggle-vis:hover {
+    color: #0f172a;
+    background-color: #e2e8f0;
+}
+
+.rb-gate-error {
+    display: none;
+    font-size: 13px;
+    font-weight: 600;
+    color: #DB0A40;
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    border-radius: 6px;
+    padding: 9px 12px;
+    text-align: center;
+}
+
+.rb-gate-submit {
+    width: 100%;
+    padding: 13px 20px;
+    background-color: #00457C;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0, 69, 124, 0.25);
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.rb-gate-submit:hover:not(:disabled) {
+    background-color: #002b49;
+    transform: translateY(-1px);
+}
+
+.rb-gate-submit:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.rb-gate-note {
+    margin-top: 16px;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.45;
+}
+
+@media (max-width: 480px) {
+    .rb-gate-card {
+        padding: 28px 20px 24px;
+    }
+    .rb-gate-title {
+        font-size: 19px;
+    }
+}
+

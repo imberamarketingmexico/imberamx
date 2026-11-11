@@ -513,6 +513,168 @@ document.addEventListener('DOMContentLoaded', async () => {
             .replace(/'/g, '&#39;');
     }
 
+    const RB_ACCESS_KEY = 'imbera_redbull_unlocked';
+    const RB_ACCESS_VAL = 'granted';
+    const RB_FALLBACK_HASH = '5d82836a18b4b0d6d81e79df5e65a46eaafe36f1fc580b4789e08bb49960eb3d';
+
+    function isRedBullUnlocked() {
+        try {
+            if (window.localStorage && localStorage.getItem(RB_ACCESS_KEY) === RB_ACCESS_VAL) {
+                return true;
+            }
+        } catch (e) {}
+        try {
+            if (window.sessionStorage && sessionStorage.getItem(RB_ACCESS_KEY) === RB_ACCESS_VAL) {
+                return true;
+            }
+        } catch (e) {}
+        return false;
+    }
+
+    function markRedBullUnlocked() {
+        try {
+            if (window.localStorage) localStorage.setItem(RB_ACCESS_KEY, RB_ACCESS_VAL);
+        } catch (e) {}
+        try {
+            if (window.sessionStorage) sessionStorage.setItem(RB_ACCESS_KEY, RB_ACCESS_VAL);
+        } catch (e) {}
+        document.documentElement.classList.remove('rb-locked');
+    }
+
+    async function verifyRedBullPassword(password) {
+        const cleanPwd = (password || '').trim();
+        if (!cleanPwd) return false;
+
+        try {
+            const resp = await fetch('/api/redbull-auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: cleanPwd })
+            });
+            if (resp.ok) {
+                const json = await resp.json();
+                return Boolean(json && json.ok);
+            }
+            if (resp.status === 401 || resp.status === 400) {
+                return false;
+            }
+        } catch (e) {
+            // Fall through to SubtleCrypto check only if serverless endpoint is unavailable locally
+        }
+
+        if (window.crypto && window.crypto.subtle) {
+            const data = new TextEncoder().encode(cleanPwd);
+            const hashBuf = await window.crypto.subtle.digest('SHA-256', data);
+            const hex = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+            return hex === RB_FALLBACK_HASH;
+        }
+
+        return false;
+    }
+
+    function ensureRedBullAccess() {
+        if (isRedBullUnlocked()) {
+            document.documentElement.classList.remove('rb-locked');
+            return Promise.resolve(true);
+        }
+
+        document.documentElement.classList.add('rb-locked');
+
+        return new Promise((resolve) => {
+            const existing = document.getElementById('rbAccessGate');
+            if (existing) existing.remove();
+
+            const gate = document.createElement('div');
+            gate.id = 'rbAccessGate';
+            gate.className = 'rb-gate-overlay';
+            gate.setAttribute('role', 'dialog');
+            gate.setAttribute('aria-modal', 'true');
+            gate.setAttribute('aria-labelledby', 'rbGateTitle');
+
+            gate.innerHTML = `
+                <div class="rb-gate-top-logo">
+                    <img src="/images/IMBERA_LOGOTIPO_FULL_COLOR_HORIZONTAL.png" alt="Imbera Cooling">
+                </div>
+                <div class="rb-gate-card">
+                    <div class="rb-gate-brand-badge">
+                        <img src="/images/redbull-logo.svg" alt="Red Bull" onerror="this.style.display='none'">
+                    </div>
+                    <h2 class="rb-gate-title" id="rbGateTitle">Authorized Access</h2>
+                    <p class="rb-gate-subtitle">Enter the portal access password to view the Imbera × Red Bull® Merchandisers catalog.</p>
+                    <form class="rb-gate-form" id="rbGateForm" autocomplete="off">
+                        <div class="rb-gate-input-wrap">
+                            <input type="password" id="rbGatePassword" class="rb-gate-input" placeholder="Enter password" required autofocus>
+                            <button type="button" id="rbGateToggleVis" class="rb-gate-toggle-vis" aria-label="Show or hide password">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="rb-gate-error" id="rbGateError">Invalid password. Please verify and try again.</div>
+                        <button type="submit" id="rbGateSubmit" class="rb-gate-submit">Enter Portal</button>
+                    </form>
+                    <p class="rb-gate-note">Access is remembered on this device so you will only need to enter it once.</p>
+                </div>
+            `;
+
+            document.body.appendChild(gate);
+
+            const form = document.getElementById('rbGateForm');
+            const input = document.getElementById('rbGatePassword');
+            const toggleBtn = document.getElementById('rbGateToggleVis');
+            const errorEl = document.getElementById('rbGateError');
+            const submitBtn = document.getElementById('rbGateSubmit');
+
+            if (toggleBtn && input) {
+                toggleBtn.addEventListener('click', () => {
+                    const isPwd = input.type === 'password';
+                    input.type = isPwd ? 'text' : 'password';
+                    const icon = toggleBtn.querySelector('i');
+                    if (icon) {
+                        icon.className = isPwd ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+                    }
+                    input.focus();
+                });
+            }
+
+            if (input) {
+                setTimeout(() => input.focus(), 50);
+            }
+
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    if (errorEl) errorEl.style.display = 'none';
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerText = 'Verifying...';
+                    }
+
+                    const ok = await verifyRedBullPassword(input ? input.value : '');
+
+                    if (ok) {
+                        markRedBullUnlocked();
+                        gate.remove();
+                        resolve(true);
+                    } else {
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.innerText = 'Enter Portal';
+                        }
+                        if (errorEl) errorEl.style.display = 'block';
+                        if (input) {
+                            input.value = '';
+                            input.focus();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
     // Inicializar
+    if (currentSlug === 'redbull') {
+        const unlocked = await ensureRedBullAccess();
+        if (!unlocked) return;
+    }
+
     await loadPortalData();
 });
