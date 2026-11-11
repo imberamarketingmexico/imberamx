@@ -1275,16 +1275,18 @@ body.portal-body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #ffffff;
+    background: #0f172a;
     border-radius: 12px;
-    padding: 24px;
+    overflow: hidden;
     border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
 }
 
 .portal-about-highlight-media img {
-    max-height: 300px;
-    width: auto;
-    object-fit: contain;
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
 }
 
 .portal-stats-band {
