@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentPortal = null;
     let portalProducts = [];
     let filteredProducts = [];
+    let searchQuery = '';
 
     // Helper universal para proxies de imágenes (soporta rutas anidadas como /redbull/merchandisers)
     const toSafeUrl = (url) => {
@@ -264,7 +265,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="portal-empty-state">
                     <i class="fa-solid fa-filter-circle-xmark"></i>
                     <h3>No matching merchandisers</h3>
-                    <p>Try selecting categories above to see more results.</p>
+                    <p>${searchQuery ? 'Try adjusting your search or category filters to see more results.' : 'Try selecting categories above to see more results.'}</p>
                 </div>
             `;
             return;
@@ -307,10 +308,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         return parts.length > 0 ? parts.join(' x ') : '';
     }
 
-    // 5. Filtros Dinámicos (Solo 5 categorías exactas)
+    // 5. Filtros Dinámicos (Categorías + Buscador en vivo por modelo)
     function getSelectedCategories() {
         const checkedBoxes = document.querySelectorAll('.portal-filter-checkbox[data-group="category"]:checked');
         return Array.from(checkedBoxes).map(cb => cb.value.trim().toLowerCase());
+    }
+
+    function syncSearchInputs(val) {
+        searchQuery = String(val || '').trim().toLowerCase();
+        document.querySelectorAll('.portal-search-input').forEach(inp => {
+            if (inp.value !== val) inp.value = val;
+            const clearBtn = inp.parentElement ? inp.parentElement.querySelector('.portal-search-clear') : null;
+            if (clearBtn) clearBtn.classList.toggle('visible', Boolean(val));
+        });
     }
 
     function applyFilters() {
@@ -327,7 +337,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             filteredProducts = portalProducts.filter(p => {
                 const cat = (p.category || p.door_count || '').trim().toLowerCase();
-                return selectedCats.includes(cat);
+                if (!selectedCats.includes(cat)) return false;
+
+                if (searchQuery) {
+                    const haystack = [
+                        p.title,
+                        p.sku,
+                        p.material_description,
+                        p.category,
+                        p.description
+                    ].filter(Boolean).join(' ').toLowerCase();
+                    if (!haystack.includes(searchQuery)) return false;
+                }
+                return true;
             });
         }
 
@@ -344,8 +366,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function clearFilters() {
+        syncSearchInputs('');
         toggleSelectAll(true);
     }
+
+    document.addEventListener('input', (e) => {
+        if (e.target.classList.contains('portal-search-input')) {
+            syncSearchInputs(e.target.value);
+            applyFilters();
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        const clearBtn = e.target.closest('.portal-search-clear');
+        if (clearBtn) {
+            syncSearchInputs('');
+            applyFilters();
+            const wrap = clearBtn.parentElement;
+            const inp = wrap ? wrap.querySelector('.portal-search-input') : null;
+            if (inp) inp.focus();
+        }
+    });
 
     // Sincronizar checkboxes entre desktop y drawer móvil
     document.addEventListener('change', (e) => {

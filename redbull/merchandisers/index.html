@@ -19,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
-    <link rel="stylesheet" href="/portal.css?v=20261111_v6">
+    <link rel="stylesheet" href="/portal.css?v=20261111_v9">
     <link rel="icon" type="image/jpeg" href="/images/favicon.jpg?v=20261028">
     <link rel="shortcut icon" type="image/jpeg" href="/images/favicon.jpg?v=20261028">
     <script>
@@ -71,7 +71,14 @@
                 <p class="portal-section-desc">Filter by category to explore models, specifications, capacities, and downloadable technical spec sheets.</p>
             </div>
 
-            <!-- Mobile Filter Button Trigger -->
+            <!-- Mobile Search + Filter Button Trigger -->
+            <div class="portal-mobile-search-bar">
+                <div class="portal-search-input-wrap">
+                    <i class="fa-solid fa-magnifying-glass portal-search-icon"></i>
+                    <input type="search" id="portalSearchInputMobile" class="portal-search-input" placeholder="Search model (e.g. VR10, EVC)..." autocomplete="off">
+                    <button type="button" class="portal-search-clear" aria-label="Clear search">&times;</button>
+                </div>
+            </div>
             <button type="button" class="portal-mobile-filter-btn" id="btnOpenFilterDrawer">
                 <i class="fa-solid fa-sliders"></i> Filters
             </button>
@@ -81,6 +88,15 @@
                 <!-- DESKTOP SIDEBAR FILTERS (Left Column) -->
                 <aside class="portal-sidebar-filters">
                     <form id="desktopFiltersForm" onsubmit="return false;">
+                        <div class="portal-search-box">
+                            <label for="portalSearchInput" class="portal-search-label">Search Model</label>
+                            <div class="portal-search-input-wrap">
+                                <i class="fa-solid fa-magnifying-glass portal-search-icon"></i>
+                                <input type="search" id="portalSearchInput" class="portal-search-input" placeholder="e.g. VR10, VRS05, EVC..." autocomplete="off">
+                                <button type="button" class="portal-search-clear" aria-label="Clear search">&times;</button>
+                            </div>
+                        </div>
+
                         <button type="button" class="btn-clear-filters" id="btnClearFilters">Clear Filters</button>
 
                         <div class="portal-filter-group">
@@ -296,7 +312,7 @@
     <script src="/portals-data.js?v=20261111_v7"></script>
     <script src="/supabase.js"></script>
     <script src="/supabase-client.js"></script>
-    <script src="/portal.js?v=20261111_v6"></script>
+    <script src="/portal.js?v=20261111_v9"></script>
 </body>
 
 </html>
