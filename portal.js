@@ -160,6 +160,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const isPlaceholderImg = !p.image_url || p.image_url.includes('Enfriador_VR17.jpg');
                 return {
                     ...p,
+                    is_active: local.is_active === false ? false : p.is_active,
                     image_url: (isPlaceholderImg && local.image_url) ? local.image_url : p.image_url,
                     spec_sheet_url: (!p.spec_sheet_url && local.spec_sheet_url) ? local.spec_sheet_url : p.spec_sheet_url,
                     material_description: p.material_description || local.material_description,
@@ -167,7 +168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     refrigerant: p.refrigerant || local.refrigerant,
                     certifications: p.certifications || local.certifications
                 };
-            });
+            }).filter(p => p.is_active !== false);
         }
 
         // Aplicar configuraciones de diseño
@@ -740,11 +741,120 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    function initPortalContactForms() {
+        const webhookUrl = 'https://default8059ac4314d440839d010804d7a579.80.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/f9f2be7048b2446b9fa90c0cf8864a97/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WeBE8A3U7gpiXqEYiKhPB9V3UzWhXqCUzVXkdrDxUvg';
+
+        const forms = [
+            { formId: 'portalHomeContactForm', feedbackId: 'homeFormFeedback', sourceSuffix: 'home' },
+            { formId: 'portalContactPageForm', feedbackId: 'contactPageFeedback', sourceSuffix: 'contact' }
+        ];
+
+        forms.forEach(({ formId, feedbackId, sourceSuffix }) => {
+            const form = document.getElementById(formId);
+            const feedback = document.getElementById(feedbackId);
+            if (!form) return;
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalBtnHtml = submitBtn ? submitBtn.innerHTML : 'Send Inquiry';
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+                }
+                if (feedback) feedback.style.display = 'none';
+
+                const name = form.querySelector('[name="name"]')?.value?.trim() || '';
+                const company = form.querySelector('[name="company"]')?.value?.trim() || '';
+                const email = form.querySelector('[name="email"]')?.value?.trim() || '';
+                const subject = form.querySelector('[name="subject"]')?.value?.trim() || '';
+                const message = form.querySelector('[name="message"]')?.value?.trim() || '';
+
+                const leadRow = {
+                    full_name: name || 'Red Bull Portal Inquiry',
+                    phone: '-',
+                    email,
+                    units_count: null,
+                    state: company || 'Red Bull Portal',
+                    product_interest: subject || 'Red Bull Merchandisers Inquiry',
+                    message: company ? `[Company: ${company}] ${message}` : message,
+                    source_page: `${currentSlug}_${sourceSuffix}`
+                };
+
+                const notifyPayload = {
+                    nombre: company ? `${name} (${company})` : name,
+                    email,
+                    telefono: '-',
+                    estado: company || 'Red Bull Portal',
+                    modelo: subject || 'Red Bull Merchandisers Inquiry',
+                    sku: 'Portal Red Bull',
+                    cantidad: 'Portal Red Bull',
+                    mensaje: message || 'Sin comentarios adicionales',
+                    fecha: new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' })
+                };
+
+                let dbOk = false;
+                let notifyOk = false;
+
+                try {
+                    const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
+                    if (sb) {
+                        const { error } = await sb.from('leads').insert([leadRow]);
+                        if (!error) dbOk = true;
+                        else console.warn('Portal lead DB notice:', error);
+                    }
+                } catch (err) {
+                    console.warn('Portal lead DB error:', err);
+                }
+
+                try {
+                    const res = await fetch('/api/notify-lead', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(notifyPayload)
+                    });
+                    if (res.ok) notifyOk = true;
+                } catch (err) {
+                    try {
+                        const fallbackRes = await fetch(webhookUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(notifyPayload)
+                        });
+                        if (fallbackRes.ok) notifyOk = true;
+                    } catch (fallbackErr) {
+                        console.warn('Portal notify webhook error:', fallbackErr);
+                    }
+                }
+
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                }
+
+                if (dbOk || notifyOk) {
+                    if (feedback) {
+                        feedback.style.color = '#00457C';
+                        feedback.innerText = 'Thank you. Your inquiry has been sent to our team and we will follow up shortly.';
+                        feedback.style.display = 'block';
+                    }
+                    form.reset();
+                } else if (feedback) {
+                    feedback.style.color = '#dc2626';
+                    feedback.innerText = 'We could not deliver your message right now. Please try again or email marketing@imberacooling.com.';
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    }
+
     // Inicializar
     if (currentSlug === 'redbull') {
         const unlocked = await ensureRedBullAccess();
         if (!unlocked) return;
     }
 
+    initPortalContactForms();
     await loadPortalData();
 });

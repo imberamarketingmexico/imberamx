@@ -998,7 +998,7 @@ window.IMBERA_PORTALS_DATA = {
             weight_lbs: 'R290',
             electrical_req: 'DOE17, UL NSF, UL (TBC)',
             display_order: 35,
-            is_active: true
+            is_active: false
         },
         {
             id: 'prod-rb-36',
