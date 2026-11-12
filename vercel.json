@@ -49,7 +49,7 @@
       ]
     },
     {
-      "source": "/(images|fonts)/(.*)",
+      "source": "/(images|fonts|docs)/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -247,6 +247,14 @@
     {
       "source": "/encuesta/",
       "destination": "/encuesta/index.html"
+    },
+    {
+      "source": "/storage/v1/object/public/product-images/:path*",
+      "destination": "/images/productos/:path*"
+    },
+    {
+      "source": "/storage/v1/object/public/product-docs/:path*",
+      "destination": "/docs/fichas/:path*"
     },
     {
       "source": "/storage/v1/object/public/:path*",

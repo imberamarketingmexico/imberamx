@@ -818,7 +818,7 @@ async function initCatalog() {
             return `
                 <div class="catalog-item" data-href="${targetUrl}" role="link" tabindex="0" aria-label="Ver detalles de ${displayName}">
                     <div class="item-img">
-                        <img src="${p.main_image || 'images/Enfriador_G3D42_Especial.jpg'}" alt="${displayName} - Código ${p.sku}" loading="lazy">
+                        <img src="${(typeof window.toProxiedStorageUrl === 'function' ? window.toProxiedStorageUrl(p.main_image) : p.main_image) || 'images/Enfriador_G3D42_Especial.jpg'}" alt="${displayName} - Código ${p.sku}" loading="lazy">
                     </div>
                     <div class="item-info">
                         <h3>${displayName}</h3>

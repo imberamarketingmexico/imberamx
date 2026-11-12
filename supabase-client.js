@@ -11,9 +11,15 @@ if (typeof supabase !== 'undefined' && supabase.createClient) {
     supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
-// Helper universal para enmascarar URLs de Supabase Storage bajo el dominio principal
+// Helper universal para mapear URLs de Supabase Storage a assets locales bajo el dominio principal
 window.toProxiedStorageUrl = function(url) {
     if (!url || typeof url !== 'string') return url || '';
+    if (url.includes('/storage/v1/object/public/product-images/')) {
+        return url.replace(/.*\/storage\/v1\/object\/public\/product-images\//, '/images/productos/');
+    }
+    if (url.includes('/storage/v1/object/public/product-docs/')) {
+        return url.replace(/.*\/storage\/v1\/object\/public\/product-docs\//, '/docs/fichas/');
+    }
     return url.replace(/^https:\/\/qezrauybkpzcenqilwcw\.supabase\.co\/storage\/v1\/object\/public\//, '/storage/v1/object/public/');
 };
 
