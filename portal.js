@@ -157,16 +157,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const local = key ? localBySku.get(key) : null;
                 if (!local) return p;
 
-                const isPlaceholderImg = !p.image_url || p.image_url.includes('Enfriador_VR17.jpg');
                 return {
                     ...p,
                     is_active: local.is_active === false ? false : p.is_active,
-                    image_url: (isPlaceholderImg && local.image_url) ? local.image_url : p.image_url,
-                    spec_sheet_url: (!p.spec_sheet_url && local.spec_sheet_url) ? local.spec_sheet_url : p.spec_sheet_url,
-                    material_description: p.material_description || local.material_description,
-                    can_capacity: p.can_capacity || local.can_capacity,
-                    refrigerant: p.refrigerant || local.refrigerant,
-                    certifications: p.certifications || local.certifications
+                    image_url: local.image_url || p.image_url,
+                    spec_sheet_url: local.spec_sheet_url || p.spec_sheet_url,
+                    material_description: local.material_description || p.material_description,
+                    can_capacity: local.can_capacity || p.can_capacity,
+                    refrigerant: local.refrigerant || p.refrigerant,
+                    certifications: local.certifications || p.certifications,
+                    category: local.category || p.category || p.door_count
                 };
             }).filter(p => p.is_active !== false);
         }
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return `
                 <div class="portal-card" data-sku="${escapeHtml(p.sku)}">
                     <div class="portal-card-thumb-wrap">
-                        <img src="${imgSrc}" alt="${escapeHtml(modelName)}" class="portal-card-thumb" loading="lazy" onerror="this.src='/images/Enfriador_VR17.jpg'">
+                        <img src="${imgSrc}" alt="${escapeHtml(modelName)}" class="portal-card-thumb" loading="lazy" onerror="if(!this.dataset.errored){this.dataset.errored='1';this.src='/images/Enfriador_VR17.jpg';}">
                     </div>
                     <span class="portal-card-sku">${escapeHtml(modelName)}</span>
                     <h3 class="portal-card-title">${escapeHtml(categoryName)}</h3>
