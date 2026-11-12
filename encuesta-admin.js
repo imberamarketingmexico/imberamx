@@ -112,12 +112,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 'c435d7fc-df38-4163-a9d8-bc8fb42fc3b8',
                 '78ef7043-e164-436a-8c98-0255c36db07c',
                 '28d2e0d7-76da-4aa8-94bd-156ff4cf28d5',
-                '3dc7787a-3a40-490b-860c-d993cde8eb3e'
+                '3dc7787a-3a40-490b-860c-d993cde8eb3e',
+                'd62a67d7-8bb0-42bf-9ae5-31e8d5c8021a' // Prueba reciente Mauricio Rojas
             ]);
+
+            // IDs eliminados manualmente por el superadmin
+            let deletedLocally = [];
+            try {
+                deletedLocally = JSON.parse(localStorage.getItem('imb_deleted_encuesta_ids') || '[]');
+            } catch(e) {}
+            const excludedIds = new Set([...TEST_RESPONSE_IDS, ...deletedLocally]);
 
             // Visitas filtradas (descartando pruebas previas al lanzamiento real)
             allVisits = (visitsRes.data || []).filter(v => new Date(v.created_at) >= new Date('2026-11-11T18:00:00Z'));
-            allResponses = (responsesRes.data || []).filter(r => !TEST_RESPONSE_IDS.has(r.id));
+            allResponses = (responsesRes.data || []).filter(r => !excludedIds.has(r.id));
 
             console.log(`[SuperAdmin] Cargadas ${allVisits.length} visitas y ${allResponses.length} respuestas reales.`);
 
@@ -509,6 +517,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
+                // 1. Guardar en exclusión persistente de localStorage para que nunca regrese al refrescar
+                try {
+                    const deleted = JSON.parse(localStorage.getItem('imb_deleted_encuesta_ids') || '[]');
+                    if (!deleted.includes(id)) {
+                        deleted.push(id);
+                        localStorage.setItem('imb_deleted_encuesta_ids', JSON.stringify(deleted));
+                    }
+                } catch(e) {}
+
+                // 2. Intentar eliminar en Supabase directamente
                 const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
                 if (sb) {
                     try {
