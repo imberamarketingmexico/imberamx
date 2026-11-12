@@ -105,10 +105,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 sb.from('encuesta_respuestas').select('*').order('created_at', { ascending: false })
             ]);
 
-            allVisits = visitsRes.data || [];
-            allResponses = responsesRes.data || [];
+            // IDs de pruebas previas a excluir (conservando al cliente real Jose Manuel Chavez / DSA y futuras respuestas)
+            const TEST_RESPONSE_IDS = new Set([
+                '004d18a6-8e7e-456b-a495-a7cad66f02b2',
+                '46debd7e-9f3f-454f-8ca1-7a759dd05ef6',
+                'c435d7fc-df38-4163-a9d8-bc8fb42fc3b8',
+                '78ef7043-e164-436a-8c98-0255c36db07c',
+                '28d2e0d7-76da-4aa8-94bd-156ff4cf28d5',
+                '3dc7787a-3a40-490b-860c-d993cde8eb3e'
+            ]);
 
-            console.log(`[SuperAdmin] Cargadas ${allVisits.length} visitas y ${allResponses.length} respuestas.`);
+            // Visitas filtradas (descartando pruebas previas al lanzamiento real)
+            allVisits = (visitsRes.data || []).filter(v => new Date(v.created_at) >= new Date('2026-11-11T18:00:00Z'));
+            allResponses = (responsesRes.data || []).filter(r => !TEST_RESPONSE_IDS.has(r.id));
+
+            console.log(`[SuperAdmin] Cargadas ${allVisits.length} visitas y ${allResponses.length} respuestas reales.`);
 
             updateKpis();
             try {
@@ -467,8 +478,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${formatP8Badge(r.p8_answer)}</td>
                     <td>${formatRatingBadge(r.p9_rating)}</td>
                     <td>${formatRatingBadge(r.p10_rating)}</td>
-                    <td>
+                    <td style="white-space: nowrap;">
                         <button type="button" class="btn-view-detail" data-idx="${idx}">Ver Detalle</button>
+                        <button type="button" class="btn-delete-row" data-id="${r.id}" title="Eliminar encuesta" style="margin-left: 6px; background: #fee2e2; border: 1px solid #fca5a5; color: #dc2626; border-radius: 6px; padding: 6px 9px; cursor: pointer; font-size: 11.5px; transition: all 0.15s ease;">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `;
@@ -481,6 +495,34 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', () => {
                 const idx = parseInt(btn.getAttribute('data-idx'), 10);
                 showDetailModal(dataList[idx]);
+            });
+        });
+
+        // Eventos para eliminar respuesta individual
+        tableBody.querySelectorAll('.btn-delete-row').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = btn.getAttribute('data-id');
+                const target = allResponses.find(x => x.id === id);
+                const nombreTarget = target?.nombre || target?.respuestas_json?.nombre || 'Anónimo';
+                if (!confirm(`¿Estás seguro de eliminar la encuesta de "${nombreTarget}"?`)) return;
+
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+                const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
+                if (sb) {
+                    try {
+                        const { error } = await sb.from('encuesta_respuestas').delete().eq('id', id);
+                        if (error) console.warn('Aviso Supabase delete:', error);
+                    } catch (e) {
+                        console.warn(e);
+                    }
+                }
+
+                allResponses = allResponses.filter(x => x.id !== id);
+                updateKpis();
+                try { renderCharts(); } catch (e) {}
+                renderTable(allResponses);
             });
         });
     }

@@ -106,3 +106,20 @@ ALTER TABLE public.encuesta_respuestas ADD COLUMN IF NOT EXISTS nombre TEXT;
 ALTER TABLE public.encuesta_respuestas ADD COLUMN IF NOT EXISTS empresa TEXT;
 ALTER TABLE public.encuesta_respuestas ADD COLUMN IF NOT EXISTS rol TEXT;
 ALTER TABLE public.encuesta_respuestas ADD COLUMN IF NOT EXISTS rol_otro TEXT;
+
+-- 6. POLÍTICAS DE ELIMINACIÓN (Permitir a SuperAdmin eliminar respuestas o visitas)
+DROP POLICY IF EXISTS "Permitir eliminacion encuestas universal" ON public.encuesta_respuestas;
+DROP POLICY IF EXISTS "Permitir eliminacion visitas universal" ON public.encuesta_visitas;
+
+CREATE POLICY "Permitir eliminacion encuestas universal" 
+ON public.encuesta_respuestas FOR DELETE TO public 
+USING (true);
+
+CREATE POLICY "Permitir eliminacion visitas universal" 
+ON public.encuesta_visitas FOR DELETE TO public 
+USING (true);
+
+-- 7. REINICIO DE PRUEBAS A DATOS REALES (EJECUTAR EN SUPABASE SQL EDITOR):
+-- Conserva únicamente el registro real de Jose Manuel Chavez (DSA) y elimina las pruebas previas:
+-- DELETE FROM public.encuesta_respuestas WHERE id != '9f007766-e209-4d99-95d2-28e320375610';
+-- DELETE FROM public.encuesta_visitas WHERE created_at < '2026-11-11T18:00:00Z';
