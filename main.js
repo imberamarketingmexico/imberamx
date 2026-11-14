@@ -904,11 +904,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mobile Mega Menu Accordion
     const hasMegamenu = document.querySelector('.has-megamenu');
-    const mobileAccordionToggle = document.querySelector('.mobile-accordion-toggle');
+    const prodToggle = document.querySelector('.has-megamenu .mobile-accordion-toggle');
     const prodLink = document.getElementById('link-productos');
 
-    if (mobileAccordionToggle && hasMegamenu) {
-        mobileAccordionToggle.addEventListener('click', (e) => {
+    if (prodToggle && hasMegamenu) {
+        prodToggle.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             hasMegamenu.classList.toggle('mobile-open');
@@ -920,6 +920,28 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.innerWidth <= 992) {
                 e.preventDefault();
                 if (hasMegamenu) hasMegamenu.classList.toggle('mobile-open');
+            }
+        });
+    }
+
+    // Mobile Unidades de Negocio Dropdown Accordion
+    const hasDropdown = document.querySelector('.has-dropdown');
+    const dropToggle = document.querySelector('.has-dropdown .mobile-accordion-toggle');
+    const unidadesLink = document.getElementById('link-unidades');
+
+    if (dropToggle && hasDropdown) {
+        dropToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            hasDropdown.classList.toggle('mobile-open');
+        });
+    }
+
+    if (unidadesLink) {
+        unidadesLink.addEventListener('click', (e) => {
+            if (window.innerWidth <= 992) {
+                e.preventDefault();
+                if (hasDropdown) hasDropdown.classList.toggle('mobile-open');
             }
         });
     }
@@ -937,8 +959,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Close mobile drawer when clicking any page link
-    document.querySelectorAll('#navbar a:not(#link-productos)').forEach(link => {
+    // Close mobile drawer when clicking any page link (except dropdown / megamenu triggers)
+    document.querySelectorAll('#navbar a:not(#link-productos):not(#link-unidades):not(.dropdown-trigger)').forEach(link => {
         link.addEventListener('click', () => {
             if (window.innerWidth <= 992 && !link.classList.contains('mega-title')) {
                 closeMobileDrawer();

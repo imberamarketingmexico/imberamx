@@ -361,6 +361,26 @@
       "destination": "/404.html"
     },
     {
+      "source": "/healthcare",
+      "destination": "/healthcare.html"
+    },
+    {
+      "source": "/cuartos-frios",
+      "destination": "/cuartos-frios.html"
+    },
+    {
+      "source": "/clientes-corporativos",
+      "destination": "/clientes-corporativos.html"
+    },
+    {
+      "source": "/retail",
+      "destination": "/retail.html"
+    },
+    {
+      "source": "/refacciones",
+      "destination": "/refacciones.html"
+    },
+    {
       "source": "/producto/:path*",
       "destination": "/producto"
     },

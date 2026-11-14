@@ -310,12 +310,13 @@ ul {
 .nav-links {
     display: flex;
     justify-content: center;
-    gap: 50px; /* Increased from 30px */
+    gap: clamp(20px, 2.5vw, 42px);
 }
 
 .nav-links > li > a,
 .nav-links .mobile-nav-link-row > a,
-#link-productos {
+#link-productos,
+.dropdown-trigger {
     color: #ffffff !important;
     display: inline-flex;
     align-items: center;
@@ -333,7 +334,10 @@ ul {
 .nav-links .mobile-nav-link-row > a:hover,
 .nav-links > li.has-megamenu:hover .mobile-nav-link-row > a,
 .nav-links > li.has-megamenu:hover #link-productos,
-#link-productos:hover {
+.nav-links > li.has-dropdown:hover .mobile-nav-link-row > a,
+.nav-links > li.has-dropdown:hover .dropdown-trigger,
+#link-productos:hover,
+.dropdown-trigger:hover {
     color: #22c55e !important; /* Verde claro visible */
     opacity: 1 !important;
 }
@@ -347,7 +351,8 @@ ul {
     color: inherit;
 }
 
-.nav-links > li.has-megamenu:hover .desktop-arrow {
+.nav-links > li.has-megamenu:hover .desktop-arrow,
+.nav-links > li.has-dropdown:hover .desktop-arrow {
     transform: rotate(180deg);
     color: #22c55e !important;
 }
@@ -366,18 +371,23 @@ ul {
     position: absolute;
     top: 100%;
     left: 0;
-    background: var(--white);
-    min-width: 270px; /* Wider to comfortably fit 'Sierras y rebanadoras' */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    background: #ffffff;
+    min-width: 260px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
     border-radius: 0 0 12px 12px;
+    border-top: 3px solid #1ebb55;
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
-    transition: var(--transition);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 999;
+    list-style: none;
+    padding: 8px 0;
+    margin: 0;
 }
 
-.has-dropdown:hover .dropdown {
+.has-dropdown:hover .dropdown,
+.has-dropdown:focus-within .dropdown {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
@@ -385,16 +395,20 @@ ul {
 
 .dropdown li {
     width: 100%;
+    list-style: none;
 }
 
 .dropdown li a {
     display: block;
-    padding: 13px 22px;
-    border-bottom: 1px solid #f0f0f0;
-    color: var(--text-color);
-    white-space: nowrap; /* Prevents wrapping and layout breaks */
-    font-size: 14px;
-    font-weight: 500;
+    padding: 12px 22px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b !important;
+    white-space: nowrap;
+    font-size: 14.5px;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.2s ease;
+    text-decoration: none;
 }
 
 .dropdown li:last-child a {
@@ -405,7 +419,7 @@ ul {
 .dropdown li a:hover {
     background: #f8fafc;
     padding-left: 28px;
-    color: var(--primary-color);
+    color: #1ebb55 !important;
 }
 
 /* ==========================================================================
@@ -3155,6 +3169,58 @@ ul {
 
     .has-megamenu.mobile-open .mobile-accordion-toggle i {
         transform: rotate(180deg);
+    }
+
+    .has-dropdown.mobile-open .mobile-accordion-toggle {
+        background: #1ebb55;
+        color: #ffffff;
+    }
+
+    .has-dropdown.mobile-open .mobile-accordion-toggle i {
+        transform: rotate(180deg);
+    }
+
+    .has-dropdown .dropdown {
+        position: static;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.06);
+        border: none;
+        border-radius: 12px;
+        padding: 6px 12px;
+        margin: 0 0 14px;
+        box-shadow: none;
+        display: none;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        list-style: none;
+    }
+
+    .has-dropdown.mobile-open .dropdown {
+        display: block !important;
+    }
+
+    .has-dropdown .dropdown li a {
+        display: block;
+        padding: 12px 10px;
+        color: rgba(255, 255, 255, 0.9) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        font-size: 15px;
+        font-weight: 500;
+        background: transparent;
+        text-decoration: none;
+    }
+
+    .has-dropdown .dropdown li:last-child a {
+        border-bottom: none;
+        border-radius: 0;
+    }
+
+    .has-dropdown .dropdown li a:hover,
+    .has-dropdown .dropdown li a:active {
+        color: #22c55e !important;
+        background: transparent;
+        padding-left: 14px;
     }
 
     .megamenu-panel {
