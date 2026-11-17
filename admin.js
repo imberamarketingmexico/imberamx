@@ -992,9 +992,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             .toLowerCase()
             .trim();
 
-        // 1. elidana.sanchez@aeritek.com : Puebla, Veracruz, Tlaxcala, Oaxaca
+        // 1. elidiana.sanchez@aeritek.com : Puebla, Veracruz, Tlaxcala, Oaxaca
         if (['puebla', 'veracruz', 'tlaxcala', 'oaxaca'].some(s => clean.includes(s))) {
-            return { email: 'elidana.sanchez@aeritek.com', nombre: 'Elidana Sánchez', estado: rawState };
+            return { email: 'elidiana.sanchez@aeritek.com', nombre: 'Elidiana Sánchez', estado: rawState };
         }
         // 2. saul.benavente@aeritek.com : Chiapas, Tabasco, Campeche, Yucatán, Quintana Roo
         if (['chiapas', 'tabasco', 'campeche', 'yucatan', 'quintana roo'].some(s => clean.includes(s))) {

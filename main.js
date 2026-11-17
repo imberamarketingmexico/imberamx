@@ -763,11 +763,11 @@ document.addEventListener('DOMContentLoaded', () => {
             .toLowerCase()
             .trim();
 
-        // 1. elidana.sanchez@aeritek.com : Puebla, Veracruz, Tlaxcala, Oaxaca
+        // 1. elidiana.sanchez@aeritek.com : Puebla, Veracruz, Tlaxcala, Oaxaca
         if (['puebla', 'veracruz', 'tlaxcala', 'oaxaca'].some(s => clean.includes(s))) {
             return {
-                email: 'elidana.sanchez@aeritek.com',
-                nombre: 'Elidana Sánchez',
+                email: 'elidiana.sanchez@aeritek.com',
+                nombre: 'Elidiana Sánchez',
                 estado: rawState
             };
         }
