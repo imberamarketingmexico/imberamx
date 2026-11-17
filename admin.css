@@ -1411,3 +1411,179 @@ input[type=number] {
     align-items: center;
 }
 
+/* ==============================================================================
+   DISTRIBUTOR LEADS ACCOUNTING PANEL
+   ============================================================================== */
+.distributor-accounting-panel {
+    background: #ffffff;
+    border: 1px solid var(--admin-border);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.dist-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.dist-header-title h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--admin-text-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dist-header-title p {
+    margin: 3px 0 0 0;
+    font-size: 12.5px;
+    color: var(--admin-text-muted);
+}
+
+.dist-header-badge {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dist-header-badge strong {
+    color: var(--admin-primary);
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.distributor-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+}
+
+.dist-metric-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 14px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.dist-metric-card:hover {
+    background: #ffffff;
+    border-color: var(--admin-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 45, 98, 0.08);
+}
+
+.dist-metric-card.active {
+    background: #f0f7ff;
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 2px rgba(0, 45, 98, 0.18);
+}
+
+.dist-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.dist-avatar-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.avatar-elidiana { background: #fdf2f8; color: #db2777; }
+.avatar-saul { background: #ecfdf5; color: #059669; }
+.avatar-fernando { background: #e0f2fe; color: #0284c7; }
+.avatar-ascencion { background: #fffbeb; color: #d97706; }
+.avatar-vergara { background: #eef2ff; color: #4f46e5; }
+.avatar-gastelum { background: #f1f5f9; color: #475569; }
+
+.dist-card-data {
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+}
+
+.dist-count-num {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 21px;
+    font-weight: 800;
+    color: var(--admin-text-dark);
+    line-height: 1;
+}
+
+.dist-count-unit {
+    font-size: 10px;
+    color: var(--admin-text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.dist-card-name {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+.dist-card-email {
+    font-size: 10px;
+    color: var(--admin-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 6px;
+}
+
+.dist-card-states {
+    font-size: 9.5px;
+    color: #94a3b8;
+    line-height: 1.25;
+    margin-top: auto;
+    border-top: 1px dashed #e2e8f0;
+    padding-top: 6px;
+}
+
+@media (max-width: 1400px) {
+    .distributor-cards-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .distributor-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .distributor-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+

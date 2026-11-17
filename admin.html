@@ -246,6 +246,118 @@
                 <!-- TAB 2: PROSPECTOS / LEADS CRM -->
                 <!-- ========================================================================= -->
                 <section id="tab-leads" class="tab-pane">
+                    
+                    <!-- CONTABILIDAD DE LEADS POR DISTRIBUIDOR -->
+                    <div class="distributor-accounting-panel">
+                        <div class="dist-header-row">
+                            <div class="dist-header-title">
+                                <h3><i class="fa-solid fa-paper-plane" style="color: var(--admin-primary);"></i> Envíos a Distribuidores</h3>
+                                <p>Contabilidad y métricas de prospectos enrutados automáticamente según la zona geográfica.</p>
+                            </div>
+                            <div class="dist-header-badge">
+                                <span>Total Enrutados:</span>
+                                <strong id="distKpiTotal">0</strong>
+                            </div>
+                        </div>
+
+                        <div class="distributor-cards-grid">
+                            <!-- 1. Elidiana Sánchez -->
+                            <div class="dist-metric-card" data-dist="elidiana" title="Clic para filtrar prospectos de Elidiana">
+                                <div class="dist-card-top">
+                                    <div class="dist-avatar-box avatar-elidiana">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+                                    <div class="dist-card-data">
+                                        <span class="dist-count-num" id="distKpiElidiana">0</span>
+                                        <span class="dist-count-unit">leads</span>
+                                    </div>
+                                </div>
+                                <div class="dist-card-name">Elidiana Sánchez</div>
+                                <div class="dist-card-email">elidiana.sanchez@aeritek.com</div>
+                                <div class="dist-card-states">Puebla, Veracruz, Tlaxcala, Oaxaca</div>
+                            </div>
+
+                            <!-- 2. Saúl Benavente -->
+                            <div class="dist-metric-card" data-dist="saul" title="Clic para filtrar prospectos de Saúl">
+                                <div class="dist-card-top">
+                                    <div class="dist-avatar-box avatar-saul">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+                                    <div class="dist-card-data">
+                                        <span class="dist-count-num" id="distKpiSaul">0</span>
+                                        <span class="dist-count-unit">leads</span>
+                                    </div>
+                                </div>
+                                <div class="dist-card-name">Saúl Benavente</div>
+                                <div class="dist-card-email">saul.benavente@aeritek.com</div>
+                                <div class="dist-card-states">Chiapas, Tabasco, Campeche, Yucatán, Q. Roo</div>
+                            </div>
+
+                            <!-- 3. Fernando Vázquez -->
+                            <div class="dist-metric-card" data-dist="fernando" title="Clic para filtrar prospectos de Fernando">
+                                <div class="dist-card-top">
+                                    <div class="dist-avatar-box avatar-fernando">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+                                    <div class="dist-card-data">
+                                        <span class="dist-count-num" id="distKpiFernando">0</span>
+                                        <span class="dist-count-unit">leads</span>
+                                    </div>
+                                </div>
+                                <div class="dist-card-name">Fernando Vázquez</div>
+                                <div class="dist-card-email">fernando.vazquez@aeritek.com</div>
+                                <div class="dist-card-states">Jalisco, Gto, Qro, Mich, Ags, Col, Nay, Hgo</div>
+                            </div>
+
+                            <!-- 4. Ascención Zúñiga -->
+                            <div class="dist-metric-card" data-dist="ascencion" title="Clic para filtrar prospectos de Ascención">
+                                <div class="dist-card-top">
+                                    <div class="dist-avatar-box avatar-ascencion">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+                                    <div class="dist-card-data">
+                                        <span class="dist-count-num" id="distKpiAscencion">0</span>
+                                        <span class="dist-count-unit">leads</span>
+                                    </div>
+                                </div>
+                                <div class="dist-card-name">Ascención Zúñiga</div>
+                                <div class="dist-card-email">ascencion.zuniga@aeritek.com</div>
+                                <div class="dist-card-states">Nuevo León, Tamps, SLP, Zac, Coahuila</div>
+                            </div>
+
+                            <!-- 5. José Vergara -->
+                            <div class="dist-metric-card" data-dist="vergara" title="Clic para filtrar prospectos de José Vergara">
+                                <div class="dist-card-top">
+                                    <div class="dist-avatar-box avatar-vergara">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+                                    <div class="dist-card-data">
+                                        <span class="dist-count-num" id="distKpiVergara">0</span>
+                                        <span class="dist-count-unit">leads</span>
+                                    </div>
+                                </div>
+                                <div class="dist-card-name">José Vergara</div>
+                                <div class="dist-card-email">jose.vergara@aeritek.com</div>
+                                <div class="dist-card-states">CDMX, Edo. Méx, Morelos, Guerrero</div>
+                            </div>
+
+                            <!-- 6. José Gastélum -->
+                            <div class="dist-metric-card" data-dist="gastelum" title="Clic para filtrar prospectos de José Gastélum">
+                                <div class="dist-card-top">
+                                    <div class="dist-avatar-box avatar-gastelum">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+                                    <div class="dist-card-data">
+                                        <span class="dist-count-num" id="distKpiGastelum">0</span>
+                                        <span class="dist-count-unit">leads</span>
+                                    </div>
+                                </div>
+                                <div class="dist-card-name">José Gastélum</div>
+                                <div class="dist-card-email">jose.gastelum@aeritek.com</div>
+                                <div class="dist-card-states">Resto del país / Otros estados</div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="content-toolbar">
                         <div class="toolbar-search">
                             <i class="fa-solid fa-magnifying-glass"></i>

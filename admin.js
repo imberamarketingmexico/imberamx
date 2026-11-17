@@ -480,6 +480,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             allLeads = data;
             renderLeadsTable(allLeads);
             if (badgeLeadsCount) badgeLeadsCount.innerText = allLeads.length;
+            renderDistributorKPIs(allLeads);
         } else {
             leadsTableBody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-danger">Error al cargar prospectos.</td></tr>';
         }
@@ -1025,6 +1026,53 @@ document.addEventListener('DOMContentLoaded', async () => {
         return { email: 'jose.gastelum@aeritek.com', nombre: 'José Gastélum', estado: rawState };
     }
 
+    let selectedDistributorFilter = 'all';
+
+    function renderDistributorKPIs(leads) {
+        const counts = {
+            elidiana: 0,
+            saul: 0,
+            fernando: 0,
+            ascencion: 0,
+            vergara: 0,
+            gastelum: 0
+        };
+        let total = 0;
+
+        (leads || []).forEach(l => {
+            const dist = getDistributorForState(l.state);
+            const email = (dist.email || '').toLowerCase();
+
+            if (email.includes('elidiana') || email.includes('elidana')) {
+                counts.elidiana++;
+            } else if (email.includes('saul')) {
+                counts.saul++;
+            } else if (email.includes('fernando')) {
+                counts.fernando++;
+            } else if (email.includes('ascencion') || email.includes('ascencio')) {
+                counts.ascencion++;
+            } else if (email.includes('vergara')) {
+                counts.vergara++;
+            } else {
+                counts.gastelum++;
+            }
+            total++;
+        });
+
+        const setTxt = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = Number(val || 0).toLocaleString();
+        };
+
+        setTxt('distKpiTotal', total);
+        setTxt('distKpiElidiana', counts.elidiana);
+        setTxt('distKpiSaul', counts.saul);
+        setTxt('distKpiFernando', counts.fernando);
+        setTxt('distKpiAscencion', counts.ascencion);
+        setTxt('distKpiVergara', counts.vergara);
+        setTxt('distKpiGastelum', counts.gastelum);
+    }
+
     function renderLeadsTable(leads) {
         if (!leadsTableBody) return;
         if (leads.length === 0) {
@@ -1144,12 +1192,62 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    function initDistributorCardsFilter() {
+        const cards = document.querySelectorAll('.dist-metric-card');
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                const distKey = card.getAttribute('data-dist');
+                if (card.classList.contains('active')) {
+                    card.classList.remove('active');
+                    selectedDistributorFilter = 'all';
+                } else {
+                    cards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    selectedDistributorFilter = distKey;
+                }
+                applyLeadFilters();
+            });
+        });
+
+        const totalBadge = document.querySelector('.dist-header-badge');
+        if (totalBadge) {
+            totalBadge.style.cursor = 'pointer';
+            totalBadge.title = 'Clic para mostrar todos los prospectos';
+            totalBadge.addEventListener('click', () => {
+                cards.forEach(c => c.classList.remove('active'));
+                selectedDistributorFilter = 'all';
+                applyLeadFilters();
+            });
+        }
+    }
+
+    initDistributorCardsFilter();
+
     function applyLeadFilters() {
         const query = (searchLeadsInput?.value || '').toLowerCase();
         const status = filterLeadStatus?.value || 'all';
 
         const filtered = allLeads.filter(l => {
             const dist = getDistributorForState(l.state);
+            const email = (dist.email || '').toLowerCase();
+
+            let matchesDist = true;
+            if (selectedDistributorFilter !== 'all') {
+                if (selectedDistributorFilter === 'elidiana') {
+                    matchesDist = email.includes('elidiana') || email.includes('elidana');
+                } else if (selectedDistributorFilter === 'saul') {
+                    matchesDist = email.includes('saul');
+                } else if (selectedDistributorFilter === 'fernando') {
+                    matchesDist = email.includes('fernando');
+                } else if (selectedDistributorFilter === 'ascencion') {
+                    matchesDist = email.includes('ascencion') || email.includes('ascencio');
+                } else if (selectedDistributorFilter === 'vergara') {
+                    matchesDist = email.includes('vergara');
+                } else if (selectedDistributorFilter === 'gastelum') {
+                    matchesDist = email.includes('gastelum');
+                }
+            }
+
             const matchesQuery = (
                 (l.full_name && l.full_name.toLowerCase().includes(query)) ||
                 (l.phone && l.phone.includes(query)) ||
@@ -1160,7 +1258,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 (l.product_interest && l.product_interest.toLowerCase().includes(query))
             );
             const matchesStatus = (status === 'all' || l.status === status);
-            return matchesQuery && matchesStatus;
+            return matchesDist && matchesQuery && matchesStatus;
         });
 
         renderLeadsTable(filtered);
