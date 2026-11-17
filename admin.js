@@ -979,8 +979,52 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
     // --------------------------------------------------------------------------
-    // 5. LEADS TABLE & FILTERS
+    // 5. LEADS TABLE & FILTERS (CON ENRUTAMIENTO DE DISTRIBUIDOR)
     // --------------------------------------------------------------------------
+    function getDistributorForState(rawState) {
+        if (!rawState || typeof rawState !== 'string') {
+            return { email: 'jose.gastelum@aeritek.com', nombre: 'José Gastélum', estado: 'No especificado' };
+        }
+
+        const clean = rawState
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .trim();
+
+        // 1. elidana.sanchez@aeritek.com : Puebla, Veracruz, Tlaxcala, Oaxaca
+        if (['puebla', 'veracruz', 'tlaxcala', 'oaxaca'].some(s => clean.includes(s))) {
+            return { email: 'elidana.sanchez@aeritek.com', nombre: 'Elidana Sánchez', estado: rawState };
+        }
+        // 2. saul.benavente@aeritek.com : Chiapas, Tabasco, Campeche, Yucatán, Quintana Roo
+        if (['chiapas', 'tabasco', 'campeche', 'yucatan', 'quintana roo'].some(s => clean.includes(s))) {
+            return { email: 'saul.benavente@aeritek.com', nombre: 'Saúl Benavente', estado: rawState };
+        }
+        // 3. fernando.vazquez@aeritek.com : Aguascalientes, Hidalgo, Guanajuato, Michoacán, Querétaro, Colima, Jalisco, Nayarit
+        if (['aguascalientes', 'hidalgo', 'guanajuato', 'michoacan', 'queretaro', 'colima', 'jalisco', 'nayarit'].some(s => clean.includes(s))) {
+            return { email: 'fernando.vazquez@aeritek.com', nombre: 'Fernando Vázquez', estado: rawState };
+        }
+        // 4. ascencio.zuniga@aeritek.com : Nuevo León, Tamaulipas, San Luis Potosí, Zacatecas, Coahuila
+        if (['nuevo leon', 'tamaulipas', 'san luis potosi', 'zacatecas', 'coahuila'].some(s => clean.includes(s))) {
+            return { email: 'ascencio.zuniga@aeritek.com', nombre: 'Ascencio Zúñiga', estado: rawState };
+        }
+        // 5. jose.vergara@aeritek.com : Ciudad de México (CDMX), Estado de México, Morelos, Guerrero
+        if (
+            clean.includes('cdmx') ||
+            clean.includes('ciudad de mexico') ||
+            clean.includes('distrito federal') ||
+            clean.includes('estado de mexico') ||
+            clean.includes('edomex') ||
+            clean.includes('morelos') ||
+            clean.includes('guerrero') ||
+            clean === 'mexico'
+        ) {
+            return { email: 'jose.vergara@aeritek.com', nombre: 'José Vergara', estado: rawState };
+        }
+        // 6. jose.gastelum@aeritek.com : Todos los demás estados faltantes
+        return { email: 'jose.gastelum@aeritek.com', nombre: 'José Gastélum', estado: rawState };
+    }
+
     function renderLeadsTable(leads) {
         if (!leadsTableBody) return;
         if (leads.length === 0) {
@@ -990,6 +1034,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         leadsTableBody.innerHTML = leads.map(l => {
             const dateStr = new Date(l.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+            const dist = getDistributorForState(l.state);
             return `
                 <tr>
                     <td><small>${dateStr}</small></td>
@@ -1003,7 +1048,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         ${l.source_page ? `<br><small class="text-muted">Origen: ${l.source_page}</small>` : ''}
                     </td>
                     <td>${l.units_count || 1} pza(s)</td>
-                    <td><i class="fa-solid fa-location-dot text-muted"></i> ${l.state || 'N/A'}</td>
+                    <td>
+                        <div><i class="fa-solid fa-location-dot text-muted"></i> <strong>${l.state || 'N/A'}</strong></div>
+                        <div style="margin-top:4px;"><span class="badge" style="font-size:11px; font-weight:600; background:#e0f2fe; color:#0369a1; padding:3px 8px; border-radius:12px; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-user-check"></i> ${dist.nombre}</span></div>
+                    </td>
                     <td>
                         <select class="select-filter lead-status-select" data-id="${l.id}">
                             <option value="nuevo" ${l.status === 'nuevo' ? 'selected' : ''}>Nuevo</option>
@@ -1040,6 +1088,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             btn.addEventListener('click', () => {
                 const leadId = btn.getAttribute('data-id');
                 const l = allLeads.find(x => x.id === leadId);
+                const dist = getDistributorForState(l ? l.state : '');
                 if (l && leadModal && leadModalContent) {
                     leadModalContent.innerHTML = `
                         <p><strong>Fecha:</strong> ${new Date(l.created_at).toLocaleString()}</p>
@@ -1047,6 +1096,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <p><strong>Teléfono:</strong> <a href="tel:${l.phone}">${l.phone}</a></p>
                         <p><strong>Correo:</strong> <a href="mailto:${l.email}">${l.email}</a></p>
                         <p><strong>Estado / Región:</strong> ${l.state || 'N/A'}</p>
+                        <p><strong>Distribuidor Asignado:</strong> <span style="color:#0284c7; font-weight:700;">${dist.nombre}</span> &lt;<a href="mailto:${dist.email}">${dist.email}</a>&gt;</p>
                         <p><strong>Equipo de Interés:</strong> ${l.product_interest || 'General'}</p>
                         <p><strong>Unidades:</strong> ${l.units_count || 1}</p>
                         <p><strong>Mensaje / Comentarios:</strong></p>
@@ -1099,10 +1149,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         const status = filterLeadStatus?.value || 'all';
 
         const filtered = allLeads.filter(l => {
+            const dist = getDistributorForState(l.state);
             const matchesQuery = (
                 (l.full_name && l.full_name.toLowerCase().includes(query)) ||
                 (l.phone && l.phone.includes(query)) ||
                 (l.email && l.email.toLowerCase().includes(query)) ||
+                (l.state && l.state.toLowerCase().includes(query)) ||
+                (dist.nombre && dist.nombre.toLowerCase().includes(query)) ||
+                (dist.email && dist.email.toLowerCase().includes(query)) ||
                 (l.product_interest && l.product_interest.toLowerCase().includes(query))
             );
             const matchesStatus = (status === 'all' || l.status === status);

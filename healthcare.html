@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <!-- Google tag (gtag.js) -->
@@ -1648,6 +1648,13 @@
           message: `Empresa: ${document.getElementById('f-emp').value.trim()}\n${document.getElementById('f-msg').value.trim()}`,
           source_page: 'healthcare'
         };
+
+        const distributor = (typeof window.getDistributorByState === 'function')
+          ? window.getDistributorByState(leadData.state)
+          : null;
+        if (distributor) {
+          leadData.notes = `Distribuidor asignado: ${distributor.nombre} (${distributor.email})`;
+        }
 
         try {
           const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;

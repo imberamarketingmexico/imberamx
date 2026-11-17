@@ -447,6 +447,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 source_page: 'detalle-producto'
             };
 
+            const distributor = (typeof window.getDistributorByState === 'function')
+                ? window.getDistributorByState(payload.state)
+                : null;
+            if (distributor) {
+                payload.notes = `Distribuidor asignado: ${distributor.nombre} (${distributor.email})`;
+            }
+
             try {
                 const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
                 if (!sb) throw new Error('Supabase no disponible.');
@@ -454,7 +461,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const { data, error } = await sb.from('leads').insert([payload]);
                 if (error) throw error;
 
-                // Send automated notification via Power Automate to marketing@imberacooling.com
+                // Send automated notification via Power Automate to Distributor + CC Marketing
                 if (typeof window.sendLeadNotification === 'function') {
                     window.sendLeadNotification({
                         nombre: payload.full_name,

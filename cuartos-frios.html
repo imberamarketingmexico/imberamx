@@ -1045,20 +1045,63 @@
                                     <input type="tel" id="cf-telefono" placeholder="A 10 dígitos" required>
                                 </div>
                             </div>
-                            <div class="cf-form-group">
-                                <label for="cf-interes">Producto o Solución de interés *</label>
-                                <div class="cf-select-wrapper">
-                                    <select id="cf-interes" required>
-                                        <option value="" disabled selected>Selecciona una opción</option>
-                                        <option value="Unidades Condensadoras">Unidades Condensadoras</option>
-                                        <option value="Unidades Evaporadoras">Unidades Evaporadoras</option>
-                                        <option value="Puertas Reach In">Puertas Reach In</option>
-                                        <option value="Estantería y Racks">Estantería y Racks</option>
-                                        <option value="Monitoreo Inteligente de Frío">Monitoreo Inteligente de Frío</option>
-                                        <option value="Proyecto Integral de Cuarto Frío">Proyecto Integral de Cuarto Frío</option>
-                                        <option value="Otro">Otro requerimiento</option>
-                                    </select>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="currentColor" style="pointer-events:none;"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,48,88H208a8,8,0,0,1,5.66,13.66Z"/></svg>
+                            <div class="cf-form-group row">
+                                <div class="cf-input-wrap">
+                                    <label for="cf-interes">Producto o Solución de interés *</label>
+                                    <div class="cf-select-wrapper">
+                                        <select id="cf-interes" required>
+                                            <option value="" disabled selected>Selecciona una opción</option>
+                                            <option value="Unidades Condensadoras">Unidades Condensadoras</option>
+                                            <option value="Unidades Evaporadoras">Unidades Evaporadoras</option>
+                                            <option value="Puertas Reach In">Puertas Reach In</option>
+                                            <option value="Estantería y Racks">Estantería y Racks</option>
+                                            <option value="Monitoreo Inteligente de Frío">Monitoreo Inteligente de Frío</option>
+                                            <option value="Proyecto Integral de Cuarto Frío">Proyecto Integral de Cuarto Frío</option>
+                                            <option value="Otro">Otro requerimiento</option>
+                                        </select>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="currentColor" style="pointer-events:none;"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,48,88H208a8,8,0,0,1,5.66,13.66Z"/></svg>
+                                    </div>
+                                </div>
+                                <div class="cf-input-wrap">
+                                    <label for="cf-estado">Estado de la República *</label>
+                                    <div class="cf-select-wrapper">
+                                        <select id="cf-estado" required>
+                                            <option value="" disabled selected>Selecciona tu estado</option>
+                                            <option value="Aguascalientes">Aguascalientes</option>
+                                            <option value="Baja California">Baja California</option>
+                                            <option value="Baja California Sur">Baja California Sur</option>
+                                            <option value="Campeche">Campeche</option>
+                                            <option value="Chiapas">Chiapas</option>
+                                            <option value="Chihuahua">Chihuahua</option>
+                                            <option value="Ciudad de México">Ciudad de México (CDMX)</option>
+                                            <option value="Coahuila">Coahuila</option>
+                                            <option value="Colima">Colima</option>
+                                            <option value="Durango">Durango</option>
+                                            <option value="Estado de México">Estado de México</option>
+                                            <option value="Guanajuato">Guanajuato</option>
+                                            <option value="Guerrero">Guerrero</option>
+                                            <option value="Hidalgo">Hidalgo</option>
+                                            <option value="Jalisco">Jalisco</option>
+                                            <option value="Michoacán">Michoacán</option>
+                                            <option value="Morelos">Morelos</option>
+                                            <option value="Nayarit">Nayarit</option>
+                                            <option value="Nuevo León">Nuevo León</option>
+                                            <option value="Oaxaca">Oaxaca</option>
+                                            <option value="Puebla">Puebla</option>
+                                            <option value="Querétaro">Querétaro</option>
+                                            <option value="Quintana Roo">Quintana Roo</option>
+                                            <option value="San Luis Potosí">San Luis Potosí</option>
+                                            <option value="Sinaloa">Sinaloa</option>
+                                            <option value="Sonora">Sonora</option>
+                                            <option value="Tabasco">Tabasco</option>
+                                            <option value="Tamaulipas">Tamaulipas</option>
+                                            <option value="Tlaxcala">Tlaxcala</option>
+                                            <option value="Veracruz">Veracruz</option>
+                                            <option value="Yucatán">Yucatán</option>
+                                            <option value="Zacatecas">Zacatecas</option>
+                                        </select>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="currentColor" style="pointer-events:none;"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,48,88H208a8,8,0,0,1,5.66,13.66Z"/></svg>
+                                    </div>
                                 </div>
                             </div>
                             <div class="cf-form-group">
@@ -1151,12 +1194,19 @@
         submitBtn.disabled = true;
         submitBtn.innerHTML = 'Enviando... <i class="fa-solid fa-spinner fa-spin"></i>';
 
+        const selectedState = document.getElementById('cf-estado')?.value || 'No especificado';
+        const distributor = (typeof window.getDistributorByState === 'function')
+          ? window.getDistributorByState(selectedState)
+          : null;
+
         const leadData = {
           full_name: document.getElementById('cf-nombre').value.trim(),
           email: document.getElementById('cf-email').value.trim(),
           phone: document.getElementById('cf-telefono').value.trim(),
+          state: selectedState,
           product_interest: `Cuartos Fríos: ${document.getElementById('cf-interes').value}`,
           message: `Empresa: ${document.getElementById('cf-empresa').value.trim()}\nDetalles: ${document.getElementById('cf-mensaje').value.trim()}`,
+          notes: distributor ? `Distribuidor asignado: ${distributor.nombre} (${distributor.email})` : null,
           source_page: 'cuartos-frios'
         };
 
@@ -1171,7 +1221,7 @@
               nombre: leadData.full_name,
               email: leadData.email,
               telefono: leadData.phone,
-              estado: 'N/A',
+              estado: selectedState,
               modelo: leadData.product_interest,
               sku: 'CUARTOS-FRIOS',
               mensaje: leadData.message,
