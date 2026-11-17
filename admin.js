@@ -1004,9 +1004,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (['aguascalientes', 'hidalgo', 'guanajuato', 'michoacan', 'queretaro', 'colima', 'jalisco', 'nayarit'].some(s => clean.includes(s))) {
             return { email: 'fernando.vazquez@aeritek.com', nombre: 'Fernando Vázquez', estado: rawState };
         }
-        // 4. ascencio.zuniga@aeritek.com : Nuevo León, Tamaulipas, San Luis Potosí, Zacatecas, Coahuila
+        // 4. ascencion.zuniga@aeritek.com : Nuevo León, Tamaulipas, San Luis Potosí, Zacatecas, Coahuila
         if (['nuevo leon', 'tamaulipas', 'san luis potosi', 'zacatecas', 'coahuila'].some(s => clean.includes(s))) {
-            return { email: 'ascencio.zuniga@aeritek.com', nombre: 'Ascencio Zúñiga', estado: rawState };
+            return { email: 'ascencion.zuniga@aeritek.com', nombre: 'Ascención Zúñiga', estado: rawState };
         }
         // 5. jose.vergara@aeritek.com : Ciudad de México (CDMX), Estado de México, Morelos, Guerrero
         if (

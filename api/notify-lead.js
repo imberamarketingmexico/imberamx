@@ -47,11 +47,11 @@ export function getDistributorForState(rawState) {
         };
     }
 
-    // 4. ascencio.zuniga@aeritek.com : Nuevo León, Tamaulipas, San Luis Potosí, Zacatecas, Coahuila
+    // 4. ascencion.zuniga@aeritek.com : Nuevo León, Tamaulipas, San Luis Potosí, Zacatecas, Coahuila
     if (['nuevo leon', 'tamaulipas', 'san luis potosi', 'zacatecas', 'coahuila'].some(s => clean.includes(s))) {
         return {
-            email: 'ascencio.zuniga@aeritek.com',
-            nombre: 'Ascencio Zúñiga',
+            email: 'ascencion.zuniga@aeritek.com',
+            nombre: 'Ascención Zúñiga',
             estado: rawState
         };
     }
