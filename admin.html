@@ -29,7 +29,202 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="admin.css?v=20261027_v6">
+    <link rel="stylesheet" href="admin.css?v=20261117_v2">
+    <style>
+        /* DISTRIBUTOR ACCOUNTING PANEL & CARDS */
+        .distributor-accounting-panel {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 22px 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+        }
+        .dist-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #f1f5f9;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .dist-header-title h3 {
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dist-header-title p {
+            margin: 0;
+            font-size: 13px;
+            color: #64748b;
+        }
+        .dist-header-badge {
+            background: linear-gradient(135deg, #002D62, #0284c7);
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+            transition: all 0.2s ease;
+        }
+        .dist-header-badge:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+        }
+        .dist-header-badge strong {
+            font-size: 16px;
+            font-weight: 800;
+            background: rgba(255, 255, 255, 0.25);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        .distributor-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 14px;
+        }
+        .dist-metric-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-top: 4px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 16px 14px 14px;
+            transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        }
+        .dist-metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(0, 45, 98, 0.1);
+            border-color: #cbd5e1;
+        }
+        .dist-metric-card.card-elidiana { border-top-color: #f43f5e; }
+        .dist-metric-card.card-saul { border-top-color: #10b981; }
+        .dist-metric-card.card-fernando { border-top-color: #0284c7; }
+        .dist-metric-card.card-ascencion { border-top-color: #f59e0b; }
+        .dist-metric-card.card-vergara { border-top-color: #6366f1; }
+        .dist-metric-card.card-gastelum { border-top-color: #0d9488; }
+
+        .dist-metric-card.active {
+            background: #f0f7ff !important;
+            border-color: #0284c7 !important;
+            border-top-width: 5px;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.25), 0 8px 20px rgba(0, 45, 98, 0.12) !important;
+        }
+
+        .dist-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .dist-avatar-box {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+        .avatar-elidiana { background: #ffe4e6; color: #e11d48; }
+        .avatar-saul { background: #d1fae5; color: #059669; }
+        .avatar-fernando { background: #e0f2fe; color: #0284c7; }
+        .avatar-ascencion { background: #fef3c7; color: #d97706; }
+        .avatar-vergara { background: #e0e7ff; color: #4f46e5; }
+        .avatar-gastelum { background: #ccfbf1; color: #0f766e; }
+
+        .dist-card-data {
+            text-align: right;
+        }
+        .dist-count-num {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1;
+            display: block;
+        }
+        .dist-count-unit {
+            font-size: 10px;
+            color: #94a3b8;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .dist-card-zone {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 3px;
+        }
+        .card-elidiana .dist-card-zone { color: #e11d48; }
+        .card-saul .dist-card-zone { color: #059669; }
+        .card-fernando .dist-card-zone { color: #0284c7; }
+        .card-ascencion .dist-card-zone { color: #d97706; }
+        .card-vergara .dist-card-zone { color: #4f46e5; }
+        .card-gastelum .dist-card-zone { color: #0f766e; }
+
+        .dist-card-name {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1.25;
+            margin-bottom: 2px;
+        }
+        .dist-card-email {
+            font-size: 10.5px;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 12px;
+        }
+        .dist-card-states {
+            font-size: 10.5px;
+            color: #64748b;
+            line-height: 1.35;
+            margin-top: auto;
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 8px;
+            background: #f8fafc;
+            margin-left: -14px;
+            margin-right: -14px;
+            margin-bottom: -14px;
+            padding: 8px 12px;
+            border-radius: 0 0 13px 13px;
+        }
+        @media (max-width: 1440px) {
+            .distributor-cards-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 860px) {
+            .distributor-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 520px) {
+            .distributor-cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="/images/favicon.jpg?v=20261028">
     <link rel="shortcut icon" href="/images/favicon.jpg?v=20261028">
@@ -262,99 +457,105 @@
 
                         <div class="distributor-cards-grid">
                             <!-- 1. Elidiana Sánchez -->
-                            <div class="dist-metric-card" data-dist="elidiana" title="Clic para filtrar prospectos de Elidiana">
+                            <div class="dist-metric-card card-elidiana" data-dist="elidiana" title="Clic para filtrar prospectos de Elidiana">
                                 <div class="dist-card-top">
                                     <div class="dist-avatar-box avatar-elidiana">
-                                        <i class="fa-solid fa-user"></i>
+                                        <i class="fa-solid fa-user-tie"></i>
                                     </div>
                                     <div class="dist-card-data">
                                         <span class="dist-count-num" id="distKpiElidiana">0</span>
                                         <span class="dist-count-unit">leads</span>
                                     </div>
                                 </div>
+                                <div class="dist-card-zone">Zona Centro-Golfo</div>
                                 <div class="dist-card-name">Elidiana Sánchez</div>
-                                <div class="dist-card-email">elidiana.sanchez@aeritek.com</div>
-                                <div class="dist-card-states">Puebla, Veracruz, Tlaxcala, Oaxaca</div>
+                                <div class="dist-card-email" title="elidiana.sanchez@aeritek.com">elidiana.sanchez@aeritek.com</div>
+                                <div class="dist-card-states"><i class="fa-solid fa-location-dot" style="color:#e11d48; margin-right:4px;"></i> Puebla, Veracruz, Tlaxcala, Oaxaca</div>
                             </div>
 
                             <!-- 2. Saúl Benavente -->
-                            <div class="dist-metric-card" data-dist="saul" title="Clic para filtrar prospectos de Saúl">
+                            <div class="dist-metric-card card-saul" data-dist="saul" title="Clic para filtrar prospectos de Saúl">
                                 <div class="dist-card-top">
                                     <div class="dist-avatar-box avatar-saul">
-                                        <i class="fa-solid fa-user"></i>
+                                        <i class="fa-solid fa-user-tie"></i>
                                     </div>
                                     <div class="dist-card-data">
                                         <span class="dist-count-num" id="distKpiSaul">0</span>
                                         <span class="dist-count-unit">leads</span>
                                     </div>
                                 </div>
+                                <div class="dist-card-zone">Zona Sureste</div>
                                 <div class="dist-card-name">Saúl Benavente</div>
-                                <div class="dist-card-email">saul.benavente@aeritek.com</div>
-                                <div class="dist-card-states">Chiapas, Tabasco, Campeche, Yucatán, Q. Roo</div>
+                                <div class="dist-card-email" title="saul.benavente@aeritek.com">saul.benavente@aeritek.com</div>
+                                <div class="dist-card-states"><i class="fa-solid fa-location-dot" style="color:#059669; margin-right:4px;"></i> Chiapas, Tabasco, Campeche, Yucatán, Q. Roo</div>
                             </div>
 
                             <!-- 3. Fernando Vázquez -->
-                            <div class="dist-metric-card" data-dist="fernando" title="Clic para filtrar prospectos de Fernando">
+                            <div class="dist-metric-card card-fernando" data-dist="fernando" title="Clic para filtrar prospectos de Fernando">
                                 <div class="dist-card-top">
                                     <div class="dist-avatar-box avatar-fernando">
-                                        <i class="fa-solid fa-user"></i>
+                                        <i class="fa-solid fa-user-tie"></i>
                                     </div>
                                     <div class="dist-card-data">
                                         <span class="dist-count-num" id="distKpiFernando">0</span>
                                         <span class="dist-count-unit">leads</span>
                                     </div>
                                 </div>
+                                <div class="dist-card-zone">Zona Bajío-Occidente</div>
                                 <div class="dist-card-name">Fernando Vázquez</div>
-                                <div class="dist-card-email">fernando.vazquez@aeritek.com</div>
-                                <div class="dist-card-states">Jalisco, Gto, Qro, Mich, Ags, Col, Nay, Hgo</div>
+                                <div class="dist-card-email" title="fernando.vazquez@aeritek.com">fernando.vazquez@aeritek.com</div>
+                                <div class="dist-card-states"><i class="fa-solid fa-location-dot" style="color:#0284c7; margin-right:4px;"></i> Jalisco, Gto, Qro, Mich, Ags, Col, Nay, Hgo</div>
                             </div>
 
                             <!-- 4. Ascención Zúñiga -->
-                            <div class="dist-metric-card" data-dist="ascencion" title="Clic para filtrar prospectos de Ascención">
+                            <div class="dist-metric-card card-ascencion" data-dist="ascencion" title="Clic para filtrar prospectos de Ascención">
                                 <div class="dist-card-top">
                                     <div class="dist-avatar-box avatar-ascencion">
-                                        <i class="fa-solid fa-user"></i>
+                                        <i class="fa-solid fa-user-tie"></i>
                                     </div>
                                     <div class="dist-card-data">
                                         <span class="dist-count-num" id="distKpiAscencion">0</span>
                                         <span class="dist-count-unit">leads</span>
                                     </div>
                                 </div>
+                                <div class="dist-card-zone">Zona Norte</div>
                                 <div class="dist-card-name">Ascención Zúñiga</div>
-                                <div class="dist-card-email">ascencion.zuniga@aeritek.com</div>
-                                <div class="dist-card-states">Nuevo León, Tamps, SLP, Zac, Coahuila</div>
+                                <div class="dist-card-email" title="ascencion.zuniga@aeritek.com">ascencion.zuniga@aeritek.com</div>
+                                <div class="dist-card-states"><i class="fa-solid fa-location-dot" style="color:#d97706; margin-right:4px;"></i> Nuevo León, Tamps, SLP, Zac, Coahuila</div>
                             </div>
 
                             <!-- 5. José Vergara -->
-                            <div class="dist-metric-card" data-dist="vergara" title="Clic para filtrar prospectos de José Vergara">
+                            <div class="dist-metric-card card-vergara" data-dist="vergara" title="Clic para filtrar prospectos de José Vergara">
                                 <div class="dist-card-top">
                                     <div class="dist-avatar-box avatar-vergara">
-                                        <i class="fa-solid fa-user"></i>
+                                        <i class="fa-solid fa-user-tie"></i>
                                     </div>
                                     <div class="dist-card-data">
                                         <span class="dist-count-num" id="distKpiVergara">0</span>
                                         <span class="dist-count-unit">leads</span>
                                     </div>
                                 </div>
+                                <div class="dist-card-zone">Zona Metropolitana / Centro</div>
                                 <div class="dist-card-name">José Vergara</div>
-                                <div class="dist-card-email">jose.vergara@aeritek.com</div>
-                                <div class="dist-card-states">CDMX, Edo. Méx, Morelos, Guerrero</div>
+                                <div class="dist-card-email" title="jose.vergara@aeritek.com">jose.vergara@aeritek.com</div>
+                                <div class="dist-card-states"><i class="fa-solid fa-location-dot" style="color:#4f46e5; margin-right:4px;"></i> CDMX, Edo. Méx, Morelos, Guerrero</div>
                             </div>
 
                             <!-- 6. José Gastélum -->
-                            <div class="dist-metric-card" data-dist="gastelum" title="Clic para filtrar prospectos de José Gastélum">
+                            <div class="dist-metric-card card-gastelum" data-dist="gastelum" title="Clic para filtrar prospectos de José Gastélum">
                                 <div class="dist-card-top">
                                     <div class="dist-avatar-box avatar-gastelum">
-                                        <i class="fa-solid fa-user"></i>
+                                        <i class="fa-solid fa-user-tie"></i>
                                     </div>
                                     <div class="dist-card-data">
                                         <span class="dist-count-num" id="distKpiGastelum">0</span>
                                         <span class="dist-count-unit">leads</span>
                                     </div>
                                 </div>
+                                <div class="dist-card-zone">Zona Pacífico / Resto</div>
                                 <div class="dist-card-name">José Gastélum</div>
-                                <div class="dist-card-email">jose.gastelum@aeritek.com</div>
-                                <div class="dist-card-states">Resto del país / Otros estados</div>
+                                <div class="dist-card-email" title="jose.gastelum@aeritek.com">jose.gastelum@aeritek.com</div>
+                                <div class="dist-card-states"><i class="fa-solid fa-location-dot" style="color:#0d9488; margin-right:4px;"></i> Resto del país / Otros estados</div>
                             </div>
                         </div>
                     </div>
