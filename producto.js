@@ -436,6 +436,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registrando cotización...';
             }
 
+            const enteredCity = document.getElementById('pq_city')?.value?.trim() || '';
+
             const payload = {
                 full_name: document.getElementById('pq_name')?.value?.trim(),
                 phone: document.getElementById('pq_phone')?.value?.trim(),
@@ -450,16 +452,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             const distributor = (typeof window.getDistributorByState === 'function')
                 ? window.getDistributorByState(payload.state)
                 : null;
-            if (distributor) {
-                payload.notes = `Distribuidor asignado: ${distributor.nombre} (${distributor.email})`;
-            }
+            payload.notes = [
+                distributor ? `Distribuidor asignado: ${distributor.nombre} (${distributor.email})` : null,
+                enteredCity ? `Ciudad: ${enteredCity}` : null
+            ].filter(Boolean).join(' | ');
 
             try {
                 const sb = window.imberaSupabase ? window.imberaSupabase.client() : null;
                 if (!sb) throw new Error('Supabase no disponible.');
 
-                const { data, error } = await sb.from('leads').insert([payload]);
-                if (error) throw error;
+                let insertSuccess = false;
+                if (enteredCity) {
+                    try {
+                        const res = await sb.from('leads').insert([{ ...payload, city: enteredCity }]);
+                        if (!res.error) insertSuccess = true;
+                    } catch(e) {}
+                }
+                if (!insertSuccess) {
+                    const { data, error } = await sb.from('leads').insert([payload]);
+                    if (error) throw error;
+                }
 
                 // Send automated notification via Power Automate to Distributor + CC Marketing
                 if (typeof window.sendLeadNotification === 'function') {
@@ -468,6 +480,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         email: payload.email,
                         telefono: payload.phone,
                         estado: payload.state,
+                        ciudad: enteredCity,
                         modelo: payload.product_interest,
                         sku: document.getElementById('pSkuCode')?.innerText?.trim() || '',
                         mensaje: payload.message || '',

@@ -100,11 +100,14 @@ export default async function handler(req, res) {
     try {
         const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
         const rawState = (body.estado || body.state || '').trim();
+        const rawCity = (body.ciudad || body.city || '').trim();
         const distributor = getDistributorForState(rawState);
 
         const enrichedBody = {
             ...body,
             estado: rawState || 'No especificado',
+            ciudad: rawCity || 'No especificada',
+            city: rawCity || 'No especificada',
             // Enrutamiento automático
             distribuidor_email: distributor.email,
             distribuidor_nombre: distributor.nombre,
@@ -115,7 +118,7 @@ export default async function handler(req, res) {
             cc: 'marketing@imberacooling.com',
             copia: 'marketing@imberacooling.com',
             distribuidor: `${distributor.nombre} <${distributor.email}>`,
-            asunto: `Nuevo Prospecto Imbera [${rawState || 'General'}] - ${body.nombre || body.full_name || 'Prospecto Web'}`
+            asunto: `Nuevo Prospecto Imbera [${rawCity ? rawCity + ', ' : ''}${rawState || 'General'}] - ${body.nombre || body.full_name || 'Prospecto Web'}`
         };
 
         const response = await fetch(webhookUrl, {

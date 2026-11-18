@@ -1083,6 +1083,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         leadsTableBody.innerHTML = leads.map(l => {
             const dateStr = new Date(l.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
             const dist = getDistributorForState(l.state);
+            const city = l.city || (l.notes && l.notes.match(/Ciudad:\s*([^|]+)/)?.[1]?.trim()) || '';
             return `
                 <tr>
                     <td><small>${dateStr}</small></td>
@@ -1097,7 +1098,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </td>
                     <td>${l.units_count || 1} pza(s)</td>
                     <td>
-                        <div><i class="fa-solid fa-location-dot text-muted"></i> <strong>${l.state || 'N/A'}</strong></div>
+                        <div><i class="fa-solid fa-location-dot text-muted"></i> <strong>${city ? city + ', ' : ''}${l.state || 'N/A'}</strong></div>
                         <div style="margin-top:4px;"><span class="badge" style="font-size:11px; font-weight:600; background:#e0f2fe; color:#0369a1; padding:3px 8px; border-radius:12px; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-user-check"></i> ${dist.nombre}</span></div>
                     </td>
                     <td>
@@ -1137,6 +1138,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const leadId = btn.getAttribute('data-id');
                 const l = allLeads.find(x => x.id === leadId);
                 const dist = getDistributorForState(l ? l.state : '');
+                const city = l ? (l.city || (l.notes && l.notes.match(/Ciudad:\s*([^|]+)/)?.[1]?.trim()) || '') : '';
                 if (l && leadModal && leadModalContent) {
                     leadModalContent.innerHTML = `
                         <p><strong>Fecha:</strong> ${new Date(l.created_at).toLocaleString()}</p>
@@ -1144,6 +1146,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <p><strong>Teléfono:</strong> <a href="tel:${l.phone}">${l.phone}</a></p>
                         <p><strong>Correo:</strong> <a href="mailto:${l.email}">${l.email}</a></p>
                         <p><strong>Estado / Región:</strong> ${l.state || 'N/A'}</p>
+                        ${city ? `<p><strong>Ciudad / Municipio:</strong> <strong>${city}</strong></p>` : ''}
                         <p><strong>Distribuidor Asignado:</strong> <span style="color:#0284c7; font-weight:700;">${dist.nombre}</span> &lt;<a href="mailto:${dist.email}">${dist.email}</a>&gt;</p>
                         <p><strong>Equipo de Interés:</strong> ${l.product_interest || 'General'}</p>
                         <p><strong>Unidades:</strong> ${l.units_count || 1}</p>
@@ -1248,11 +1251,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
+            const city = l.city || (l.notes && l.notes.match(/Ciudad:\s*([^|]+)/)?.[1]?.trim()) || '';
+
             const matchesQuery = (
                 (l.full_name && l.full_name.toLowerCase().includes(query)) ||
                 (l.phone && l.phone.includes(query)) ||
                 (l.email && l.email.toLowerCase().includes(query)) ||
                 (l.state && l.state.toLowerCase().includes(query)) ||
+                (city && city.toLowerCase().includes(query)) ||
                 (dist.nombre && dist.nombre.toLowerCase().includes(query)) ||
                 (dist.email && dist.email.toLowerCase().includes(query)) ||
                 (l.product_interest && l.product_interest.toLowerCase().includes(query))

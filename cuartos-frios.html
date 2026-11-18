@@ -1103,6 +1103,10 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="currentColor" style="pointer-events:none;"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,48,88H208a8,8,0,0,1,5.66,13.66Z"/></svg>
                                     </div>
                                 </div>
+                                <div class="cf-input-wrap">
+                                    <label for="cf-ciudad">Ciudad o Municipio</label>
+                                    <input type="text" id="cf-ciudad" placeholder="Ingresa tu ciudad o municipio">
+                                </div>
                             </div>
                             <div class="cf-form-group">
                                 <label for="cf-mensaje">Detalles del proyecto</label>
@@ -1195,6 +1199,7 @@
         submitBtn.innerHTML = 'Enviando... <i class="fa-solid fa-spinner fa-spin"></i>';
 
         const selectedState = document.getElementById('cf-estado')?.value || 'No especificado';
+        const enteredCity = document.getElementById('cf-ciudad')?.value?.trim() || '';
         const distributor = (typeof window.getDistributorByState === 'function')
           ? window.getDistributorByState(selectedState)
           : null;
@@ -1206,7 +1211,10 @@
           state: selectedState,
           product_interest: `Cuartos Fríos: ${document.getElementById('cf-interes').value}`,
           message: `Empresa: ${document.getElementById('cf-empresa').value.trim()}\nDetalles: ${document.getElementById('cf-mensaje').value.trim()}`,
-          notes: distributor ? `Distribuidor asignado: ${distributor.nombre} (${distributor.email})` : null,
+          notes: [
+            distributor ? `Distribuidor asignado: ${distributor.nombre} (${distributor.email})` : null,
+            enteredCity ? `Ciudad: ${enteredCity}` : null
+          ].filter(Boolean).join(' | '),
           source_page: 'cuartos-frios'
         };
 
@@ -1222,6 +1230,7 @@
               email: leadData.email,
               telefono: leadData.phone,
               estado: selectedState,
+              ciudad: enteredCity,
               modelo: leadData.product_interest,
               sku: 'CUARTOS-FRIOS',
               mensaje: leadData.message,

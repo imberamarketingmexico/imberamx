@@ -833,6 +833,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             const rawState = lead.estado || lead.state || 'No especificado';
+            const rawCity = (lead.ciudad || lead.city || '').trim();
             const distributor = (typeof window.getDistributorByState === 'function')
                 ? window.getDistributorByState(rawState)
                 : { email: 'jose.gastelum@aeritek.com', nombre: 'José Gastélum' };
@@ -853,6 +854,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 email: lead.email || '',
                 telefono: lead.telefono || lead.phone || '',
                 estado: rawState,
+                ciudad: rawCity || 'No especificada',
+                city: rawCity || 'No especificada',
                 modelo: lead.modelo || lead.product_interest || 'Consulta General',
                 sku: lead.sku || 'N/A',
                 cantidad: unitsText,
@@ -867,7 +870,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cc: 'marketing@imberacooling.com',
                 copia: 'marketing@imberacooling.com',
                 distribuidor: `${distributor.nombre} <${distributor.email}>`,
-                asunto: `Nuevo Prospecto Imbera [${rawState}] - ${lead.nombre || lead.full_name || 'Prospecto Web'}`
+                asunto: `Nuevo Prospecto Imbera [${rawCity ? rawCity + ', ' : ''}${rawState}] - ${lead.nombre || lead.full_name || 'Prospecto Web'}`
             };
 
             fetch('/api/notify-lead', {
@@ -905,6 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const isContactoPage = window.location.pathname.toLowerCase().includes('contacto');
             const selectedState = contactForm.querySelector('[name="estado"]')?.value || null;
+            const enteredCity = contactForm.querySelector('[name="ciudad"]')?.value?.trim() || null;
             const distributor = (typeof window.getDistributorByState === 'function')
                 ? window.getDistributorByState(selectedState)
                 : null;
@@ -917,7 +921,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 state: selectedState,
                 product_interest: contactForm.querySelector('[name="interes"]')?.value?.trim() || null,
                 message: contactForm.querySelector('[name="mensaje"]')?.value?.trim() || null,
-                notes: distributor ? `Distribuidor asignado: ${distributor.nombre} (${distributor.email})` : null,
+                notes: [
+                    distributor ? `Distribuidor asignado: ${distributor.nombre} (${distributor.email})` : null,
+                    enteredCity ? `Ciudad: ${enteredCity}` : null
+                ].filter(Boolean).join(' | '),
                 source_page: isContactoPage ? 'contacto' : 'inicio'
             };
 
@@ -927,10 +934,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error('Supabase no está inicializado.');
                 }
 
-                const { data, error } = await sb.from('leads').insert([formData]);
-
-                if (error) {
-                    throw error;
+                let insertSuccess = false;
+                if (enteredCity) {
+                    try {
+                        const res = await sb.from('leads').insert([{ ...formData, city: enteredCity }]);
+                        if (!res.error) insertSuccess = true;
+                    } catch(e) {}
+                }
+                if (!insertSuccess) {
+                    const { data, error } = await sb.from('leads').insert([formData]);
+                    if (error) throw error;
                 }
 
                 // Trigger Power Automate notification in background to Distributor + CC Marketing
@@ -940,6 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         email: formData.email,
                         telefono: formData.phone,
                         estado: formData.state,
+                        ciudad: enteredCity,
                         modelo: formData.product_interest || (isContactoPage ? 'Formulario de Contacto' : 'Formulario de Inicio'),
                         sku: 'N/A',
                         mensaje: formData.message || '',

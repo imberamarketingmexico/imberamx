@@ -1491,6 +1491,10 @@
                                 </select>
                             </div>
                             <div class="hc-fg full">
+                                <label>Ciudad o Municipio</label>
+                                <input type="text" id="f-ciudad" placeholder="Ingresa tu ciudad o municipio">
+                            </div>
+                            <div class="hc-fg full">
                                 <label>Equipos de interés</label>
                                 <div class="hc-equipo-checks" id="eq-checks">
                                     <label class="hc-chk-item"><input type="checkbox" value="VMC01A"> VMC01A</label>
@@ -1639,6 +1643,8 @@
         btn.disabled = true;
         btn.textContent = 'Enviando...';
 
+        const enteredCity = document.getElementById('f-ciudad')?.value?.trim() || '';
+
         const leadData = {
           full_name: `${document.getElementById('f-nom').value.trim()} ${document.getElementById('f-ape').value.trim()}`,
           phone: document.getElementById('f-tel').value.trim(),
@@ -1646,6 +1652,10 @@
           state: document.getElementById('f-edo').value,
           product_interest: `Healthcare: ${equipos.join(', ') || 'General'}${selectedVol ? ' | Vol: ' + selectedVol : ''}`,
           message: `Empresa: ${document.getElementById('f-emp').value.trim()}\n${document.getElementById('f-msg').value.trim()}`,
+          notes: [
+            distributor ? `Distribuidor asignado: ${distributor.nombre} (${distributor.email})` : null,
+            enteredCity ? `Ciudad: ${enteredCity}` : null
+          ].filter(Boolean).join(' | '),
           source_page: 'healthcare'
         };
 
@@ -1653,7 +1663,10 @@
           ? window.getDistributorByState(leadData.state)
           : null;
         if (distributor) {
-          leadData.notes = `Distribuidor asignado: ${distributor.nombre} (${distributor.email})`;
+          leadData.notes = [
+            `Distribuidor asignado: ${distributor.nombre} (${distributor.email})`,
+            enteredCity ? `Ciudad: ${enteredCity}` : null
+          ].filter(Boolean).join(' | ');
         }
 
         try {
@@ -1668,6 +1681,7 @@
               email: leadData.email,
               telefono: leadData.phone,
               estado: leadData.state,
+              ciudad: enteredCity,
               modelo: leadData.product_interest,
               sku: 'HEALTHCARE',
               mensaje: leadData.message,
