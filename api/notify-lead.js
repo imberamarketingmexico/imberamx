@@ -99,13 +99,18 @@ export default async function handler(req, res) {
 
     try {
         const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
-        const rawState = (body.estado || body.state || '').trim();
+        let rawState = (body.estado_solo || body.estado || body.state || '').trim();
+        if (rawState.includes('(Ciudad:')) {
+            rawState = rawState.split('(Ciudad:')[0].trim();
+        }
         const rawCity = (body.ciudad || body.city || '').trim();
         const distributor = getDistributorForState(rawState);
+        const estadoFormateado = rawCity ? `${rawState} (Ciudad: ${rawCity})` : (rawState || 'No especificado');
 
         const enrichedBody = {
             ...body,
-            estado: rawState || 'No especificado',
+            estado: estadoFormateado,
+            estado_solo: rawState || 'No especificado',
             ciudad: rawCity || 'No especificada',
             city: rawCity || 'No especificada',
             // Enrutamiento automático

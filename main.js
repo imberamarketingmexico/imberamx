@@ -848,12 +848,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             const notesText = (lead.mensaje || lead.message || '').trim();
+            const estadoFormateado = rawCity ? `${rawState} (Ciudad: ${rawCity})` : rawState;
 
             const body = {
                 nombre: lead.nombre || lead.full_name || 'Prospecto Web',
                 email: lead.email || '',
                 telefono: lead.telefono || lead.phone || '',
-                estado: rawState,
+                estado: estadoFormateado,
+                estado_solo: rawState,
                 ciudad: rawCity || 'No especificada',
                 city: rawCity || 'No especificada',
                 modelo: lead.modelo || lead.product_interest || 'Consulta General',
