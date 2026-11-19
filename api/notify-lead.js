@@ -104,15 +104,16 @@ export default async function handler(req, res) {
             rawState = rawState.split('(Ciudad:')[0].trim();
         }
         const rawCity = (body.ciudad || body.city || '').trim();
+        const hasCity = rawCity && rawCity.toLowerCase() !== 'no especificada';
         const distributor = getDistributorForState(rawState);
-        const estadoFormateado = rawCity ? `${rawState} (Ciudad: ${rawCity})` : (rawState || 'No especificado');
+        const estadoFormateado = hasCity ? `${rawState} (Ciudad: ${rawCity})` : (rawState || 'No especificado');
 
         const enrichedBody = {
             ...body,
             estado: estadoFormateado,
             estado_solo: rawState || 'No especificado',
-            ciudad: rawCity || 'No especificada',
-            city: rawCity || 'No especificada',
+            ciudad: hasCity ? rawCity : 'No especificada',
+            city: hasCity ? rawCity : 'No especificada',
             // Enrutamiento automático
             distribuidor_email: distributor.email,
             distribuidor_nombre: distributor.nombre,
@@ -123,7 +124,7 @@ export default async function handler(req, res) {
             cc: 'marketing@imberacooling.com',
             copia: 'marketing@imberacooling.com',
             distribuidor: `${distributor.nombre} <${distributor.email}>`,
-            asunto: `Nuevo Prospecto Imbera [${rawCity ? rawCity + ', ' : ''}${rawState || 'General'}] - ${body.nombre || body.full_name || 'Prospecto Web'}`
+            asunto: `Nuevo Prospecto Imbera [${hasCity ? rawCity + ', ' : ''}${rawState || 'General'}] - ${body.nombre || body.full_name || 'Prospecto Web'}`
         };
 
         const response = await fetch(webhookUrl, {

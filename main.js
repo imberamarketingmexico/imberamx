@@ -848,7 +848,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             const notesText = (lead.mensaje || lead.message || '').trim();
-            const estadoFormateado = rawCity ? `${rawState} (Ciudad: ${rawCity})` : rawState;
+            const hasCity = rawCity && rawCity.toLowerCase() !== 'no especificada';
+            const estadoFormateado = hasCity ? `${rawState} (Ciudad: ${rawCity})` : rawState;
 
             const body = {
                 nombre: lead.nombre || lead.full_name || 'Prospecto Web',
@@ -856,8 +857,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 telefono: lead.telefono || lead.phone || '',
                 estado: estadoFormateado,
                 estado_solo: rawState,
-                ciudad: rawCity || 'No especificada',
-                city: rawCity || 'No especificada',
+                ciudad: hasCity ? rawCity : 'No especificada',
+                city: hasCity ? rawCity : 'No especificada',
                 modelo: lead.modelo || lead.product_interest || 'Consulta General',
                 sku: lead.sku || 'N/A',
                 cantidad: unitsText,
@@ -872,7 +873,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cc: 'marketing@imberacooling.com',
                 copia: 'marketing@imberacooling.com',
                 distribuidor: `${distributor.nombre} <${distributor.email}>`,
-                asunto: `Nuevo Prospecto Imbera [${rawCity ? rawCity + ', ' : ''}${rawState}] - ${lead.nombre || lead.full_name || 'Prospecto Web'}`
+                asunto: `Nuevo Prospecto Imbera [${hasCity ? rawCity + ', ' : ''}${rawState}] - ${lead.nombre || lead.full_name || 'Prospecto Web'}`
             };
 
             fetch('/api/notify-lead', {
