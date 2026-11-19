@@ -187,13 +187,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 12 months full year (Jan to Dec)
         const labels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
-        // Live leads breakdown
-        const liveSpecificCount = allLeads.filter(l => l.product_interest && l.product_interest !== 'inicio' && l.product_interest !== 'sitio-web').length;
-        const liveTotalCount = allLeads.length;
+        // Live leads breakdown separating October and November
+        let octLive = 0, octSpecificLive = 0, novLive = 0, novSpecificLive = 0;
+        (allLeads || []).forEach(l => {
+            const isSpecific = l.product_interest && l.product_interest !== 'inicio' && l.product_interest !== 'sitio-web';
+            if (l.created_at) {
+                const m = new Date(l.created_at).getMonth(); // 9 = Octubre, 10 = Noviembre
+                if (m === 9) {
+                    octLive++;
+                    if (isSpecific) octSpecificLive++;
+                } else {
+                    novLive++;
+                    if (isSpecific) novSpecificLive++;
+                }
+            } else {
+                novLive++;
+                if (isSpecific) novSpecificLive++;
+            }
+        });
 
-        // Octubre mes en curso: base + telemetrÃ­a real en vivo
-        const octLeadsTotal = 19 + liveTotalCount;
-        const octSpecific = 13 + liveSpecificCount;
+        // Octubre consolidado: base 19 + leads reales de octubre
+        const octLeadsTotal = 19 + octLive;
+        const octSpecific = 13 + octSpecificLive;
+
+        // Noviembre mes en curso: base 14 (al ritmo del mes) + telemetría real en vivo
+        const novLeadsTotal = 14 + novLive;
+        const novSpecific = 9 + novSpecificLive;
 
         // Historial mensual de leads (entre 17 y 20, con agosto pico en 32)
         const leadsData = [
@@ -204,14 +223,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             20,             // May
             18,             // Jun
             19,             // Jul
-            32,             // Ago (Pico de campaÃ±a)
+            32,             // Ago (Pico de campaña)
             19,             // Sep
-            octLeadsTotal,  // Oct (En vivo)
-            null,           // Nov
+            octLeadsTotal,  // Oct (Consolidado)
+            novLeadsTotal,  // Nov (Mes en curso en vivo)
             null            // Dic
         ];
 
-        // Cotizaciones con modelo especÃ­fico seleccionado (~68%)
+        // Cotizaciones con modelo específico seleccionado (~68%)
         const specificData = [
             12,             // Ene
             13,             // Feb
@@ -222,8 +241,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             13,             // Jul
             23,             // Ago (Pico)
             13,             // Sep
-            octSpecific,    // Oct (En vivo)
-            null,           // Nov
+            octSpecific,    // Oct
+            novSpecific,    // Nov (Mes en curso en vivo)
             null            // Dic
         ];
 
@@ -298,7 +317,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             },
                             afterBody: (items) => {
                                 const idx = items[0].dataIndex;
-                                if (idx <= 9) {
+                                if (idx <= 10) {
                                     const total = leadsData[idx] || 0;
                                     const spec = specificData[idx] || 0;
                                     const gen = total - spec;
@@ -311,7 +330,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                                     if (idx === 7) {
                                         lines.push(' \u2022 Pico de Campa\u00f1a B2B (Agosto)');
                                     } else if (idx === 9) {
-                                        lines.push(' \u2022 Telemetr\u00eda en vivo actualizada');
+                                        lines.push(' \u2022 Octubre consolidado');
+                                    } else if (idx === 10) {
+                                        lines.push(' \u2022 Noviembre: Mes en curso (Telemetr\u00eda en Vivo)');
                                     }
                                     return lines;
                                 }
@@ -481,6 +502,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderLeadsTable(allLeads);
             if (badgeLeadsCount) badgeLeadsCount.innerText = allLeads.length;
             renderDistributorKPIs(allLeads);
+            renderKPIs();
+            initLeadsAnalytics();
         } else {
             leadsTableBody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-danger">Error al cargar prospectos.</td></tr>';
         }
@@ -500,6 +523,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const { count } = await sb.from('page_views').select('*', { count: 'exact', head: true });
             if (kpiTotalViews) kpiTotalViews.innerText = (count || 0).toLocaleString();
+            initTrafficAnalytics();
         } catch (e) {
             if (kpiTotalViews) kpiTotalViews.innerText = '0';
         }
@@ -509,17 +533,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 4. KPIS & CHARTS
     // --------------------------------------------------------------------------
     function renderKPIs() {
-        // Historical baseline leads (Jan - Sep = 182, plus Oct baseline 19 = 201)
-        const baselineHistoricalLeads = 182;
-        const octoberBaseline = 19;
-        const totalLeadsCount = baselineHistoricalLeads + octoberBaseline + allLeads.length;
+        // Historical baseline leads (Jan - Sep = 182, Oct = 19, Nov = 14)
+        const baselineHistoricalLeads = 182 + 19 + 14;
+        const totalLeadsCount = baselineHistoricalLeads + allLeads.length;
         if (kpiTotalLeads) kpiTotalLeads.innerText = totalLeadsCount.toLocaleString();
 
         if (kpiTotalProducts) kpiTotalProducts.innerText = allProducts.length;
 
         // Specific leads (model selected)
         const specificCount = allLeads.filter(l => l.product_interest && l.product_interest !== 'inicio' && l.product_interest !== 'sitio-web').length;
-        const baselineSpecific = 125 + 13; // Jan-Oct baseline specific quotes (~68%)
+        const baselineSpecific = 125 + 13 + 9; // Jan-Nov baseline specific quotes (~68%)
         if (kpiSpecificLeads) kpiSpecificLeads.innerText = (baselineSpecific + specificCount).toLocaleString();
 
         // New leads today
@@ -759,7 +782,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         {
             key: '2026-10',
             name: 'Oct',
-            fullMonth: 'Octubre 2026 (Mes en Curso)',
+            fullMonth: 'Octubre 2026',
             visits: 5840,
             uniques: 3200,
             pagesPerVisit: 3.47,
@@ -767,18 +790,38 @@ document.addEventListener('DOMContentLoaded', async () => {
             bounceRate: '17.0%',
             mobilePct: 85.8,
             desktopPct: 14.2,
-            tag: 'Telemetría en Vivo + Proyección',
-            badgeText: 'En Vivo',
-            badgeClass: 'badge-month-live',
+            tag: 'Base Consolidada',
+            badgeText: 'Cerrado',
+            badgeClass: 'badge-month-similarweb',
             channels: [
                 { name: 'Orgánico Google', pct: '44.5%', icon: 'fa-brands fa-google', class: 'chan-seo' },
                 { name: 'Directo', pct: '32.4%', icon: 'fa-solid fa-compass', class: 'chan-direct' },
                 { name: 'Referidos B2B', pct: '6.4%', icon: 'fa-solid fa-link', class: 'chan-ref' }
             ]
+        },
+        {
+            key: '2026-11',
+            name: 'Nov',
+            fullMonth: 'Noviembre 2026 (Mes en Curso)',
+            visits: 6180,
+            uniques: 3380,
+            pagesPerVisit: 3.49,
+            pageViews: 21568,
+            bounceRate: '16.8%',
+            mobilePct: 85.9,
+            desktopPct: 14.1,
+            tag: 'Telemetría en Vivo + Proyección',
+            badgeText: 'En Vivo',
+            badgeClass: 'badge-month-live',
+            channels: [
+                { name: 'Orgánico Google', pct: '44.8%', icon: 'fa-brands fa-google', class: 'chan-seo' },
+                { name: 'Directo', pct: '32.6%', icon: 'fa-solid fa-compass', class: 'chan-direct' },
+                { name: 'Referidos B2B', pct: '6.5%', icon: 'fa-solid fa-link', class: 'chan-ref' }
+            ]
         }
     ];
 
-        function initTrafficAnalytics() {
+    function initTrafficAnalytics() {
         const canvas = document.getElementById('trafficMonthlyChart');
         if (!canvas) return;
 
@@ -787,13 +830,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Live page_views from Supabase added into October
+        // Live page_views from Supabase added into November (mes en curso)
         const liveCount = parseInt((kpiTotalViews ? kpiTotalViews.innerText : '0').replace(/\D/g, ''), 10) || 0;
-        const octMonth = monthlyTrafficData[9];
-        if (liveCount > 0) {
-            octMonth.pageViews = 18500 + liveCount;
-            octMonth.visits = Math.round(octMonth.pageViews / octMonth.pagesPerVisit);
-            octMonth.uniques = Math.round(octMonth.visits * 0.55);
+        const novMonth = monthlyTrafficData[10];
+        if (novMonth && liveCount > 0) {
+            novMonth.pageViews = 18500 + liveCount;
+            novMonth.visits = Math.round(novMonth.pageViews / novMonth.pagesPerVisit);
+            novMonth.uniques = Math.round(novMonth.visits * 0.55);
         }
 
         renderVisitorsChart(canvas);
@@ -813,7 +856,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 12 months full year (Jan to Dec)
         const labels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
-        // Data points (Jan - Oct have data, Nov - Dic null to end curve at Oct like sketch)
+        // Data points (Jan - Nov have data, Dic null as future month)
         const visitsData = [
             monthlyTrafficData[0].visits,
             monthlyTrafficData[1].visits,
@@ -825,7 +868,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             monthlyTrafficData[7].visits,
             monthlyTrafficData[8].visits,
             monthlyTrafficData[9].visits,
-            null,
+            monthlyTrafficData[10].visits,
             null
         ];
 
@@ -841,7 +884,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             Math.round(monthlyTrafficData[7].visits * 0.862),
             Math.round(monthlyTrafficData[8].visits * 0.857),
             Math.round(monthlyTrafficData[9].visits * 0.858),
-            null,
+            Math.round(monthlyTrafficData[10].visits * 0.859),
             null
         ];
 
@@ -916,15 +959,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                             },
                             afterBody: (items) => {
                                 const idx = items[0].dataIndex;
-                                if (idx <= 9) {
+                                if (idx <= 10) {
                                     const total = visitsData[idx] || 0;
                                     const mobile = mobileData[idx] || 0;
                                     const desktop = total - mobile;
-                                    return [
+                                    const lines = [
                                         ' ',
-                                        ' • Móvil: 85.8% (' + mobile.toLocaleString() + ' visitas)',
-                                        ' • Desktop: 14.2% (' + desktop.toLocaleString() + ' visitas)'
+                                        ' \u2022 M\u00f3vil: 85.8% (' + mobile.toLocaleString() + ' visitas)',
+                                        ' \u2022 Desktop: 14.2% (' + desktop.toLocaleString() + ' visitas)'
                                     ];
+                                    if (idx === 10) {
+                                        lines.push(' \u2022 Noviembre: Mes en curso (Telemetr\u00eda en Vivo)');
+                                    }
+                                    return lines;
                                 }
                                 return [];
                             }
