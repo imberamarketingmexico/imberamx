@@ -71,7 +71,7 @@
       ]
     },
     {
-      "source": "/(supabase\\.js|papaparse\\.min\\.js|fonts\\.css)",
+      "source": "/(supabase\\.js|papaparse\\.min\\.js|chart\\.min\\.js|fonts\\.css)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -80,7 +80,29 @@
       ]
     },
     {
-      "source": "/(categoria\\.js|main\\.js|producto\\.js|catalog-data\\.js|admin\\.js|admin\\.css|chart\\.min\\.js|portal\\.js|portal\\.css|portals-data\\.js)",
+      "source": "/(llms\\.txt|\\.well-known/llms\\.txt|robots\\.txt)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/(categoria\\.js|main\\.js|producto\\.js|catalog-data\\.js|portal\\.js|portal\\.css|portals-data\\.js)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/(admin\\.js|admin\\.css)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -228,6 +250,10 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/.well-known/llms.txt",
+      "destination": "/llms.txt"
+    },
     {
       "source": "/encuesta/superadmin",
       "destination": "/encuesta/superadmin/index.html"
