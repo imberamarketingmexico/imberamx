@@ -1025,6 +1025,11 @@
                     </div>
                     <div class="cf-contact-form-container">
                         <form id="cuartos-contact-form" class="cf-contact-form" onsubmit="enviarCuartosFriosLead(event)">
+                            <!-- Honeypot anti-bot (invisible para usuarios) -->
+                            <div style="display:none !important; visibility:hidden !important; opacity:0; position:absolute; left:-9999px; height:0; width:0; overflow:hidden;" aria-hidden="true">
+                                <label for="company_website_hp_cf">Pagina web (no llenar)</label>
+                                <input type="text" id="company_website_hp_cf" name="company_website_hp" tabindex="-1" autocomplete="new-password">
+                            </div>
                             <div class="cf-form-group row">
                                 <div class="cf-input-wrap">
                                     <label for="cf-nombre">Nombre completo *</label>
@@ -1066,7 +1071,7 @@
                                     <label for="cf-estado">Estado de la República *</label>
                                     <div class="cf-select-wrapper">
                                         <select id="cf-estado" required>
-                                            <option value="" disabled selected>Selecciona tu estado</option>
+                                            <option value="" disabled selected>Selecciona tu estado *</option>
                                             <option value="Aguascalientes">Aguascalientes</option>
                                             <option value="Baja California">Baja California</option>
                                             <option value="Baja California Sur">Baja California Sur</option>
@@ -1198,7 +1203,33 @@
         submitBtn.disabled = true;
         submitBtn.innerHTML = 'Enviando... <i class="fa-solid fa-spinner fa-spin"></i>';
 
-        const selectedState = document.getElementById('cf-estado')?.value || 'No especificado';
+        // 1. Trampa Honeypot: Campo oculto anti-spam
+        const hpVal = form.querySelector('[name="company_website_hp"]')?.value;
+        if (hpVal && hpVal.trim() !== '') {
+            console.warn('[Seguridad Anti-Bot] Lead de cuartos frios bloqueado por trampa honeypot.');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            return;
+        }
+
+        // 2. Validacion obligatoria de Estado de la Republica
+        const stateSelect = document.getElementById('cf-estado');
+        const selectedState = stateSelect?.value?.trim() || '';
+        if (!selectedState || selectedState.toLowerCase().includes('selecciona')) {
+            alert('Por favor selecciona tu Estado de la Rep\u00FAblica en el men\u00FA desplegable para continuar.');
+            if (stateSelect) stateSelect.focus();
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            return;
+        }
+
+        const enteredEmail = document.getElementById('cf-email')?.value?.trim() || '';
+        if (typeof window.isBlockedSpamEmail === 'function' && window.isBlockedSpamEmail(enteredEmail)) {
+            alert('El correo electr\u00F3nico ingresado no es v\u00E1lido o pertenece a un dominio restringido (@somewhere.com). Por favor ingresa una cuenta corporativa o personal v\u00E1lida.');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            return;
+        }
         const enteredCity = document.getElementById('cf-ciudad')?.value?.trim() || '';
         const distributor = (typeof window.getDistributorByState === 'function')
           ? window.getDistributorByState(selectedState)

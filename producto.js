@@ -436,6 +436,30 @@ document.addEventListener('DOMContentLoaded', async () => {
                 submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registrando cotización...';
             }
 
+            // 1. Trampa Honeypot Anti-Bot
+            const honeypotVal = quoteForm.querySelector('[name="company_website_hp"]')?.value;
+            if (honeypotVal && honeypotVal.trim() !== '') {
+                console.warn('[Seguridad Anti-Bot] Cotizacion bloqueada por trampa honeypot.');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+                return;
+            }
+
+            // 2. Validacion obligatoria de Estado de la Republica
+            const stateSelect = document.getElementById('pq_state');
+            const selectedState = stateSelect?.value?.trim() || '';
+            if (!selectedState || selectedState.toLowerCase().includes('selecciona')) {
+                alert('Por favor selecciona tu Estado de la Rep\u00FAblica en el men\u00FA desplegable para poder canalizar tu cotizaci\u00F3n.');
+                if (stateSelect) stateSelect.focus();
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+                return;
+            }
+
             const enteredCity = document.getElementById('pq_city')?.value?.trim() || '';
             const enteredEmail = document.getElementById('pq_email')?.value?.trim() || '';
 
@@ -448,7 +472,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alert('El correo electrónico ingresado no es válido o pertenece a un dominio restringido (@somewhere.com). Por favor ingresa una cuenta corporativa o personal válida.');
                 if (submitBtn) {
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.innerHTML = originalText;
                 }
                 return;
             }
@@ -458,7 +482,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 phone: document.getElementById('pq_phone')?.value?.trim(),
                 email: enteredEmail,
                 units_count: parseInt(document.getElementById('pq_units')?.value, 10) || 1,
-                state: document.getElementById('pq_state')?.value || null,
+                state: selectedState,
                 product_interest: document.getElementById('quoteModelField')?.value || 'Detalle de producto',
                 message: document.getElementById('pq_notes')?.value?.trim() || null,
                 source_page: 'detalle-producto'

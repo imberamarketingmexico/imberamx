@@ -375,6 +375,11 @@
 
                             <form action="javascript:void(0);" method="POST" class="main-form" id="contactoPageForm" autocomplete="off">
                                 <input type="hidden" name="csrf_token" id="contactoCsrfToken" value="imb_csrf_secure_token">
+                                <!-- Honeypot anti-bot (invisible para usuarios) -->
+                                <div style="display:none !important; visibility:hidden !important; opacity:0; position:absolute; left:-9999px; height:0; width:0; overflow:hidden;" aria-hidden="true">
+                                    <label for="company_website_hp_contacto">Pagina web (no llenar)</label>
+                                    <input type="text" id="company_website_hp_contacto" name="company_website_hp" tabindex="-1" autocomplete="new-password">
+                                </div>
                                 <div class="form-grid">
                                     <div class="form-group">
                                         <label for="nombre">Nombre completo *</label>
@@ -403,8 +408,8 @@
                                     
                                     <div class="form-group full-width">
                                         <label for="estado">Estado de la República</label>
-                                        <select id="estado" name="estado">
-                                            <option value="">Selecciona tu estado</option>
+                                        <select id="estado" name="estado" required>
+                                            <option value="" disabled selected>Selecciona tu estado *</option>
                                             <option value="Aguascalientes">Aguascalientes</option>
                                             <option value="Baja California">Baja California</option>
                                             <option value="Baja California Sur">Baja California Sur</option>

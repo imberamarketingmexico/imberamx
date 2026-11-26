@@ -927,8 +927,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.innerText = 'Enviando...';
             }
 
+            // 1. Trampa Honeypot Anti-Bot (si el campo invisible fue completado por un bot, abortar de inmediato)
+            const honeypotVal = contactForm.querySelector('[name="company_website_hp"]')?.value;
+            if (honeypotVal && honeypotVal.trim() !== '') {
+                console.warn('[Seguridad Anti-Bot] Envio bloqueado por trampa honeypot.');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalBtnText;
+                }
+                return;
+            }
+
+            // 2. Validacion obligatoria de Estado de la Republica (no permitir avanzar sin seleccionar estado)
+            const stateInput = contactForm.querySelector('[name="estado"]');
+            const selectedState = stateInput?.value?.trim() || '';
+            if (!selectedState || selectedState.toLowerCase().includes('selecciona')) {
+                alert('Por favor selecciona tu Estado de la Rep\u00FAblica en el men\u00FA desplegable para poder canalizar tu solicitud.');
+                if (stateInput) stateInput.focus();
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalBtnText;
+                }
+                return;
+            }
+
             const isContactoPage = window.location.pathname.toLowerCase().includes('contacto');
-            const selectedState = contactForm.querySelector('[name="estado"]')?.value || null;
             const enteredCity = contactForm.querySelector('[name="ciudad"]')?.value?.trim() || null;
             const distributor = (typeof window.getDistributorByState === 'function')
                 ? window.getDistributorByState(selectedState)

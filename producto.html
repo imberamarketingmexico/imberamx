@@ -432,6 +432,11 @@
 
                 <form class="product-quote-form" id="productQuoteForm" action="javascript:void(0);" method="POST" autocomplete="off">
                     <input type="hidden" name="csrf_token" id="productCsrfToken" value="imb_csrf_secure_token">
+                    <!-- Honeypot anti-bot (invisible para usuarios) -->
+                    <div style="display:none !important; visibility:hidden !important; opacity:0; position:absolute; left:-9999px; height:0; width:0; overflow:hidden;" aria-hidden="true">
+                        <label for="company_website_hp_prod">Pagina web (no llenar)</label>
+                        <input type="text" id="company_website_hp_prod" name="company_website_hp" tabindex="-1" autocomplete="new-password">
+                    </div>
                     <input type="hidden" id="quoteModelField" name="product_interest" value="Cotización de producto">
 
                     <div class="form-grid">
@@ -458,7 +463,7 @@
                         <div class="form-group">
                             <label for="pq_state">Estado de la República *</label>
                             <select id="pq_state" name="state" required>
-                                <option value="" disabled selected>Selecciona tu estado</option>
+                                <option value="" disabled selected>Selecciona tu estado *</option>
                                 <option value="Aguascalientes">Aguascalientes</option>
                                 <option value="Baja California">Baja California</option>
                                 <option value="Baja California Sur">Baja California Sur</option>
