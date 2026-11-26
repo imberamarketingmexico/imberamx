@@ -495,10 +495,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    function isBlockedSpamEmail(email) {
+        if (!email || typeof email !== 'string') return false;
+        const clean = email.toLowerCase().trim();
+        return clean === 'john.doe@somewhere.com' ||
+               clean.endsWith('@somewhere.com') ||
+               clean.includes('somewhere.com') ||
+               clean.startsWith('john.doe@');
+    }
+
     async function fetchLeads() {
         const { data, error } = await sb.from('leads').select('*').order('created_at', { ascending: false });
         if (data && !error) {
-            allLeads = data;
+            // Detección y purga automática de correos spam (@somewhere.com, John.Doe) en Supabase
+            const spamLeads = data.filter(l => isBlockedSpamEmail(l.email));
+            if (spamLeads.length > 0) {
+                console.warn(`[Seguridad] Se detectaron ${spamLeads.length} leads de spam. Purgando de la base de datos...`);
+                for (const sp of spamLeads) {
+                    try {
+                        await sb.from('leads').delete().eq('id', sp.id);
+                        console.info(`[Seguridad] Lead spam eliminado id=${sp.id} (${sp.email})`);
+                    } catch (e) {
+                        console.error('Error al purgar lead de spam:', sp.id, e);
+                    }
+                }
+            }
+
+            // Filtrar prospectos limpios en memoria (excluye al 100% cualquier cuenta spam de conteos y tablas)
+            allLeads = data.filter(l => !isBlockedSpamEmail(l.email));
             renderLeadsTable(allLeads);
             if (badgeLeadsCount) badgeLeadsCount.innerText = allLeads.length;
             renderDistributorKPIs(allLeads);
@@ -1162,6 +1186,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <button type="button" class="btn-table-action btn-view-lead" data-id="${l.id}" title="Ver detalles y notas">
                                 <i class="fa-solid fa-eye"></i>
                             </button>
+                            <button type="button" class="btn-table-action btn-delete-lead" data-id="${l.id}" title="Eliminar prospecto" style="color: #dc2626; margin-left: 4px;">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -1214,6 +1241,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                         alert('Notas guardadas con éxito.');
                         leadModal.classList.remove('active');
                     });
+                }
+            });
+        });
+
+        // Attach delete lead listeners
+        document.querySelectorAll('.btn-delete-lead').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const leadId = btn.getAttribute('data-id');
+                const leadObj = allLeads.find(x => x.id === leadId);
+                const leadName = leadObj ? (leadObj.full_name || leadObj.email) : 'este prospecto';
+                if (confirm(`¿Estás seguro de eliminar el prospecto "${leadName}" de forma permanente?`)) {
+                    try {
+                        const { error } = await sb.from('leads').delete().eq('id', leadId);
+                        if (error) throw error;
+                        allLeads = allLeads.filter(x => x.id !== leadId);
+                        renderLeadsTable(allLeads);
+                        if (badgeLeadsCount) badgeLeadsCount.innerText = allLeads.length;
+                        renderDistributorKPIs(allLeads);
+                        renderKPIs();
+                        initLeadsAnalytics();
+                    } catch (err) {
+                        alert('No se pudo eliminar el prospecto: ' + err.message);
+                    }
                 }
             });
         });

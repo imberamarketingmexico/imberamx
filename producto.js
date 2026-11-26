@@ -437,11 +437,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             const enteredCity = document.getElementById('pq_city')?.value?.trim() || '';
+            const enteredEmail = document.getElementById('pq_email')?.value?.trim() || '';
+
+            // Bloqueo Anti-Spam: Rechazar correos falsos / bots de @somewhere.com
+            const isSpam = typeof window.isBlockedSpamEmail === 'function'
+                ? window.isBlockedSpamEmail(enteredEmail)
+                : (enteredEmail.toLowerCase().includes('somewhere.com') || enteredEmail.toLowerCase() === 'john.doe@somewhere.com');
+
+            if (isSpam) {
+                alert('El correo electrónico ingresado no es válido o pertenece a un dominio restringido (@somewhere.com). Por favor ingresa una cuenta corporativa o personal válida.');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                }
+                return;
+            }
 
             const payload = {
                 full_name: document.getElementById('pq_name')?.value?.trim(),
                 phone: document.getElementById('pq_phone')?.value?.trim(),
-                email: document.getElementById('pq_email')?.value?.trim(),
+                email: enteredEmail,
                 units_count: parseInt(document.getElementById('pq_units')?.value, 10) || 1,
                 state: document.getElementById('pq_state')?.value || null,
                 product_interest: document.getElementById('quoteModelField')?.value || 'Detalle de producto',

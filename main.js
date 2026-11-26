@@ -826,9 +826,27 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /* ==========================================================================
+       Blacklist / Filtro Anti-Spam: Bloqueo de cuentas spam (@somewhere.com, John.Doe)
+       ========================================================================== */
+    window.isBlockedSpamEmail = function(email) {
+        if (!email || typeof email !== 'string') return false;
+        const clean = email.toLowerCase().trim();
+        return clean === 'john.doe@somewhere.com' ||
+               clean.endsWith('@somewhere.com') ||
+               clean.includes('somewhere.com') ||
+               clean.startsWith('john.doe@');
+    };
+
+    /* ==========================================================================
        Power Automate Webhook: Automated Lead Notification to Distributor + CC Marketing
        ========================================================================== */
     window.sendLeadNotification = function(lead) {
+        if (!lead || !lead.email) return;
+        if (window.isBlockedSpamEmail(lead.email)) {
+            console.warn('[Seguridad] Notificación a distribuidor cancelada: correo en lista negra:', lead.email);
+            return;
+        }
+
         const webhookUrl = 'https://default8059ac4314d440839d010804d7a579.80.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/f9f2be7048b2446b9fa90c0cf8864a97/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WeBE8A3U7gpiXqEYiKhPB9V3UzWhXqCUzVXkdrDxUvg';
         
         try {
@@ -916,10 +934,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? window.getDistributorByState(selectedState)
                 : null;
 
+            const enteredEmail = contactForm.querySelector('[name="email"]')?.value?.trim() || '';
+
+            // Bloqueo Anti-Spam: Rechazar correos falsos / bots de @somewhere.com
+            if (window.isBlockedSpamEmail && window.isBlockedSpamEmail(enteredEmail)) {
+                alert('El correo electrónico ingresado no es válido o pertenece a un dominio restringido (@somewhere.com). Por favor ingresa una cuenta corporativa o personal válida.');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalBtnText;
+                }
+                return;
+            }
+
             const formData = {
                 full_name: contactForm.querySelector('[name="nombre"]')?.value?.trim() || '',
                 phone: contactForm.querySelector('[name="telefono"]')?.value?.trim() || '',
-                email: contactForm.querySelector('[name="email"]')?.value?.trim() || '',
+                email: enteredEmail,
                 units_count: parseInt(contactForm.querySelector('[name="cantidad"]')?.value, 10) || null,
                 state: selectedState,
                 product_interest: contactForm.querySelector('[name="interes"]')?.value?.trim() || null,
